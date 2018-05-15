@@ -1,0 +1,45 @@
+<h1>Generic Lists</h1>
+<p>If we were looking for something more similar to what we call arrays in languages like JavaScript look no further than Generic Lists, or just simply Lists. Lists are an implementation of linked lists that act very much like the dynamically sizing arrays of these other languages. Once you create a list you are able to freely add and remove things as well as access values by index independent of a declared size. This is because&nbsp;list, just like arrays in JavaScript, are actually just objects with indexed attributes that act as the values of an array. Lists still need a type associated with them just the same as every other variable in C#. To get started with Lists we just need to be sure to include the class of generics to our project page by adding the following line at the top:</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">using System.Collections.Generic;
+</code><div class="toolbar"></div></pre>
+<p>From there we can go about creating a very simple list to work with...</p>
+<pre data-language="swift" class=" code-toolbar language-swift"><code class="  language-swift">//Initializing an empty list of Motorcycle Manufacturers
+List&lt;string&gt; bikes = new List&lt;string&gt;();
+//Use the Add function in a similar fashion to push
+bikes.Add("Kawasaki");
+bikes.Add("Triumph");
+bikes.Add("BMW");
+bikes.Add("Moto Guzzi");
+bikes.Add("Harley Davidson");
+bikes.Add("Suzuki");
+//Accessing a generic list value is the same as you would an array
+Console.WriteLine(bikes[2]); //Prints "BMW"
+Console.WriteLine("We currently know of {0} motorcycle manufacturers.", bikes.Count);
+</code><div class="toolbar"></div></pre>
+<p>This seems easy enough, but what is all this <strong>&lt;string&gt;</strong> stuff going on? This is what is called a generic type and it is a way for objects to be created with various different types. But wait didn't we say earlier that variables can't just change types? This is still true! Once a list is created with a type specified it can not be changed; however, thanks to generics we can use the blueprint for a List to make a list of Strings and a different list of Ints with them functioning the same outside of the types of data they can hold.</p>
+<h2>Iterating through a list</h2>
+<p>Similar to how we were able to access a list just as we had accessed an array we can also iterate through a list exactly as we had with an array. This all goes back to the nice fact that though a list is an object it is nice enough to keep attributes referenceable by indexing through the use of [] brackets.</p>
+<pre data-language="swift" class=" code-toolbar language-swift"><code class="  language-swift">//Using our array of motorcycle manufacturers from before
+//we can easily loop through the list of them with a C-style for loop
+//this time, however, Count is the attribute for a number of items.
+Console.WriteLine("The current manufacturers we have seen are:");
+for (var idx = 0; idx &lt; bikes.Count; idx++)
+{
+ Console.WriteLine("-" + bikes[idx]);
+}
+// Insert a new item between a specific index
+bikes.Insert(2, "Yamaha");
+//Removal from Generic List
+//Remove is a lot like Javascript array pop, but searches for a specified value
+//In this case we are removing all manufacturers located in Japan
+bikes.Remove("Suzuki");
+bikes.Remove("Yamaha");
+bikes.RemoveAt(0); //RemoveAt has no return value however
+//The updated list can then be iterated through using a foreach loop
+Console.WriteLine("List of Non-Japanese Manufacturers:");
+foreach (string manu in bikes)
+{
+ Console.WriteLine("-" + manu);
+}
+</code><div class="toolbar"></div></pre>
+<p>There are a lot of methods predefined on the List class, but these are simply some of the most common and how to use them. For a full list of the C# Generic List method, you can check out the link <a href="https://msdn.microsoft.com/en-us/library/6sh2ey19(v=vs.110).aspx" target="_blank">here</a>. Make sure you don't get lost in too much documentation as much of it will come with time and even more so will only be useful on rare occasions.</p>

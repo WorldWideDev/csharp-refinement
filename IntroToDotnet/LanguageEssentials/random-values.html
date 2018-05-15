@@ -1,0 +1,36 @@
+<h2>Generating Random Values in C#</h2>
+<p>The ability to generate random values is given to us&nbsp;from the namespace System. To make use of this functionality is quite simple, but there are just some&nbsp;key "gotcha"s that we should bring to light before working with randoms, so that we don't find ourselves in a bit of a bind later on. First off, to begin we need to create a random object.</p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">Random rand = new Random();
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>What this object does is act&nbsp;like a generator for all things random! On construction it will take a snapshot of our system&nbsp;clock-time to utilize for generating pseudo-random values. Once we have this random object constructed there are a few methods available but one in particular that&nbsp;we are going to focus on is the&nbsp;.Next method.</p>
+<h4>.Next</h4>
+<p>The .Next method is focused completely on performing a mathematical operation on the seed value that the random object holds and producing a new pseudo-random value. <strong>The best way to produce consecutive random values is to continue to call the .Next method</strong>. Calling the .Next method gives us 4 versions that all have the same functionality with slight differences</p>
+<table border="1">
+<tbody><tr>
+<th><strong>Method</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+<tr><td>.Next()</td><td>A 32-bit signed integer that is greater than or equal to 0 and less than maxValue</td></tr>
+<tr><td>.Next(Int32)</td><td>Similar to .Next() but the provided parameter represents the maxValue</td></tr>
+<tr><td>.Next(Int32, Int32)</td><td>Similar to .Next() but the provided parameters represent the minValue and maxValue for the range of number to randomize between</td></tr>
+<tr><td>.NextDouble()</td><td>Returns a random floating-point number that is greater than or equal to 0.0, and less than 1.0.</td></tr>
+</tbody></table>
+<p><br></p>
+<p>So making use of our random object, we can generate 10 random values between 2 and 8 by calling .Next(2,8) in a for loop. The code for making such a loop is provided below:</p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">Random rand = new Random();
+for(int val = 0; val &lt; 10; val++)
+{
+    //Prints the next random value between 2 and 8
+    Console.WriteLine(rand.Next(2,8));
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p> If however we had created this loop with our random object constructed inside of the the loop, we would have a problem!!</p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">for(int val = 0; val &lt; 10; val++)
+{
+        Random rand  = new Random();
+    //This will print the same generated value each time!!!
+    Console.WriteLine(rand.Next(2,8));
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>The reason for this is that now our random object we are working with is being instantiated each time we&nbsp;loop. This is essentially the same as if we were working with ten&nbsp;separate Random objects. Each of these Random objects are created so fast in our for loop that they have the same snapshot of the system clock-time and therefore produce the same .Next value. An overly simplified example of this process is as follows...</p>
+<p>If our snapshot value was 2 and our .Next function establishes that it adds 7 to this value and reassigns it; subsequently calling .Next will produce a nice&nbsp;incrementing&nbsp;chain of 9, 16, 23, 30, etc. Now if instead we have ten&nbsp;snapshots that are all the value 2 and call .Next on each of them; they will all produce the value 9! Our Random object just&nbsp;uses a&nbsp;more mathematically advanced set of instructions when calling .Next to produce values that feel more or less "random". If the same value is sent to the .Next function it will always produce the same series of results!&nbsp;This is why it is important to work with only one random object that we will&nbsp;use .Next on over and over as needed.</p>

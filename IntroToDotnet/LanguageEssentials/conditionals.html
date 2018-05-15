@@ -1,0 +1,62 @@
+<h1>Conditionals</h1>
+<div>We use conditionals to <strong>execute code based on a specific logical condition</strong>. For example, let's say we are having a party for NBA Legends. We only want to allow players with at least 5 rings. We could write the logic something like this:</div>
+<pre data-language="swift" class="rainbow">//Declare a variable called rings that is of the Int Type
+int rings = 5;
+if (rings &gt;= 5)
+{
+    Console.WriteLine("You are welcome to join the party");
+}
+else
+{
+    Console.WriteLine("Go win some more rings");
+}
+</pre>
+<p>If we have more than one condition we can add an <em>else if</em> statement:</p>
+<pre data-language="swift" class="rainbow">int rings = 5;
+if (rings &gt;= 5)
+{
+    Console.WriteLine("You are welcome to join the party");
+}
+else if (rings &gt; 2)
+{
+    Console.WriteLine("Decent...but {0} rings aren't enough", rings);
+}
+else
+{
+    Console.WriteLine("Go win some more rings");
+}
+</pre>
+<p>We used two comparison operators here. First, we checked if rings were greater than equal to 5. We also checked if rings were greater than 2. Here is a list of C#'s comparison operators:</p>
+<h2>Comparison Operators</h2>
+<h2><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3758/handouts/chapter3758_7081_comparison-fix.png"></h2>
+<h2>Equality vs. Identity</h2>
+<p>
+ <strong> There is a difference between equality and identity</strong>. For example == checks whether the instances on the left and the right are equal. <strong>Two instances can be equal, but they don't need to have the same location in memory</strong>. You can check if two instances are one in the same and share the same memory location by using identity operators. The identity operator in C# is actually a method rather than a keyword and can be performed by invoking <strong>A.Equals(B) with A and B being the respective variables.</strong></p>
+<h2>Logical Operators</h2>
+<p>
+ <img src="http://i.imgur.com/pZx0B28.png" style="width: 397px;"></p>
+<p>We can use Logical Operators in our Conditionals as well. Let's say we want to change the criteria for entering our NBA Legends party. Let's say you have to have at least 5 rings AND have the name Kobe to enter the party:</p>
+<pre data-language="swift" class="rainbow">int rings = 5;
+//By placing the keyword const in front of a variable declaration
+//you establish it as constant and immutable
+const string name = "Kobe";
+if (rings &gt;= 5 &amp;&amp; name == "Kobe")
+{
+  Console.WriteLine("Welcome to the party {0}, congratulations on your {1} rings", name, rings);
+}
+</pre>
+<p>We can change our criteria and say that you have to have at least 5 rings or have at least 3 All-Star appearances.</p>
+<pre data-language="swift" class="active_pre rainbow">int rings = 5;
+int numOfAllStarAppearances = 17;
+if (rings &gt;= 5 || numOfAllStarAppearances &gt; 3)
+{
+  Console.WriteLine("Welcome, you are truly a legend");
+}
+</pre>
+<p>Or we can just let in everyone who is not crazy.</p>
+<pre data-language="swift" class="rainbow">bool crazy = true;
+if (!crazy)
+{
+    Console.WriteLine("Let's party!");
+}
+</pre>

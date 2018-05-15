@@ -1,0 +1,96 @@
+<h1>Arrays</h1>
+<p>With all programming languages, we often need to combine related values into a collection under a single variable name. With C#, there are quite a few ways we can do this, but the first one we will go over is the Array. Arrays in C# are similar to other languages we have worked with, such as Javascript or Python, in that they are <strong>a numerically indexed collection of values.</strong> However, unlike these other languages, Arrays in C# must have an exact length that is specified when the array is created, and this length cannot be changed.</p>
+<pre data-language="swift" class=" code-toolbar  language-swift"><code class="  language-swift">// Declaring an array of length 5, initialized by default to all zeroes
+int[] numArray = new int[5];
+// Declaring an array with pre-populated values
+// For Arrays initialized this way, the length is determined by the size of the given data
+int[] numArray2 = {1,2,3,4,6};
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>The [ ] brackets denote the Array type, and preceding the brackets we place the type of the values that we will store. Just like all other variables we have created so far, an array in C# must have an associated data type that (like length) is immutable. Anything that is placed inside of the array during or after declaration must conform to this value type. It is possible to declare an array without initialization, but you must use the "new" operator once you do define the array's values.</p>
+<pre data-language="swift" class=" code-toolbar  language-swift"><code class="  language-swift">int[] array3;
+array3 = new int[] {1,3,5,7,9};
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p><strong>Accessing Arrays</strong></p>
+<p>Arrays are zero-indexed. This means that the first value within an <em>array</em>&nbsp;is stored at index 0. The second value within an Array resides at index 1, and so on. &nbsp;</p>
+<pre data-language="swift" class=" code-toolbar  language-swift"><code class="  language-swift">int[] arrayOfInts = {1, 2, 3, 4, 5};
+Console.WriteLine(arrayOfInts[0]);    // The first number lives at index 0.
+Console.WriteLine(arrayOfInts[1]);    // The second number lives at index 1.
+Console.WriteLine(arrayOfInts[2]);    // The third number lives at index 2.
+Console.WriteLine(arrayOfInts[3]);    // The fourth number lives at index 3.
+Console.WriteLine(arrayOfInts[4]);    // The fifth and final number lives at index 4.
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>We can redefine the value at a particular index as well (once the array has an initial set of values).</p>
+<pre data-language="swift" class=" code-toolbar  language-swift"><code class="  language-swift">int[] arr = {1, 2, 3, 4};
+Console.WriteLine("The first number of the arr is " + arr[0]); 
+arr[0] = 8;
+Console.WriteLine("The first number of the arr is now " + arr[0]);
+// The array has now changed!
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<h2>Iterating through an array</h2>
+<p>It would be quite tedious to move through an array by accessing each index by value; imagine if our array had 1000+ values!! Luckily we can use our knowledge from the last chapter to access each array index with a <em>loop</em>. This process (looping through all&nbsp;array indices) is called <strong>iterating.</strong></p>
+<pre data-language="swift" class=" code-toolbar  language-swift"><code class="  language-swift">string[] myCars = new string[4] { "Mazda Miata", "Ford Model T", "Dodge Challenger", "Nissan 300zx"};
+// The 'Length' property tells us how many values are in the Array (4 in our example here). 
+// We can use this to determine where the loop ends: Length-1 is the index of the last value. 
+for (int idx = 0; idx &lt; myCars.Length; idx++)
+{
+    Console.WriteLine("I own a {0}", myCars[idx]);
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>This is good, but because this is such a common occurrence, C# goes even further. The C# language includes another type of loop called a <strong>foreach</strong>, for exactly this type of operation. A <em>foreach</em> loop just needs a variable that holds each indexed value of the array temporarily and will loop through all of them from there.</p>
+<pre data-language="swift" class=" code-toolbar  language-swift"><code class="  language-swift">string[] myCars = new string[4] { "Mazda Miata", "Ford Model T", "Dodge Challenger", "Nissan 300zx"}; 
+foreach (string car in myCars)
+{
+    // We no longer need the index, because variable 'car' already contains each indexed value
+    Console.WriteLine("I own a {0}", car);
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<h2>Multidimensional Arrays</h2>
+<p>In certain instances, you may need to hold an array inside another array you have initialized. In this case, you must create the original array with this in mind and specify not only the number of inner arrays&nbsp;but also the size of each of these inner arrays. This is called a multidimensional array because it builds out a grid of sorts based on the various indexes.&nbsp;</p>
+<p>Although Multidimensional arrays are good to know, they do not show up in code all that often!</p>
+<pre data-language="swift" class=" code-toolbar  language-swift"><code class="  language-swift">// Multidimensional array declaration
+// This example contains 3 arrays -- each of these is length 2 -- all initialized to zeroes.
+int [,] array2D = new int[3,2];
+// This is equivalent to:
+//  int [,] array2D = new int[3,2]  {  { 0,0 }, { 0,0 }, { 0,0 } }; 
+// This example has 2 large rows that each contain 3 arrays -- and each of those arrays is length 4.
+int[,,] array3D = new int[2,3,4] 
+    {
+        {  { 45,1,16,17 }, { 4,47,21,68 }, { 21,28,32,76 }  },
+        {  { 11,0,85,42 }, { 9,10,14,96 }, { 66,99,33,12 }  }
+    };
+// Directly accessing a multidimensional array
+Console.WriteLine(array2D[0,1]);   // prints 0
+Console.WriteLine(array3D[1,0,3]); // prints 42
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>Multidimensional arrays are quickly and neatly defined, but they do pose one important requirement. They require that they are perfectly rectangular, with all inner arrays having the same length. What if we need to vary the lengths of inner arrays? This leads to a third way of creating arrays called a jagged array. Though initialized and accessed differently, jagged arrays set out to accomplish the same task of holding arrays within array except without the need for uniform inner array sizes.</p>
+<pre data-language="swift" class=" code-toolbar  language-swift"><code class="  language-swift">// Jagged array declaration
+int[][] jaggedArray = new int[3][];
+jaggedArray[0] = new int[5];
+jaggedArray[1] = new int[4]; 
+jaggedArray[2] = new int[2];
+int[][] jaggedArray2 = new int[][] {
+    new int[] {1,3,5,7,9},
+    new int[] {0,2},
+    new int[] {11,22,33,44}
+};
+// Short-hand form
+int[][] jaggedArray3 = {
+    new int[] {1,3,5,7,9},
+    new int[] {0,2},
+    new int[] {11,22,33,44}
+};
+// You can even mix jagged and multi-dimensional arrays
+int[][,] jaggedArray4 = new int[3][,] 
+{
+    new int[,] { {1,3}, {5,7} },
+    new int[,] { {0,2}, {4,6}, {8,10} },
+    new int[,] { {11,22}, {99,88}, {0,9} } 
+};
+// Working through each array in a jagged array
+foreach(int[] innerArr in jaggedArray){
+    Console.WriteLine("Inner array length is {0}", innerArr.Length);
+}
+// Accessing a jagged array
+Console.WriteLine(jaggedArray2[0][1]); // 3
+Console.WriteLine(jaggedArray3[2][3]); // 44
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>

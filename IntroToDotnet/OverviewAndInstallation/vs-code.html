@@ -1,0 +1,23 @@
+<h1>Working with C#.NET &amp; Console</h1>
+<p>C# is a language that can be used in a multitude of fields solving a wide variety of problems. Like many other computer programming languages, there are many different environments and ways of running C# code. The ASP.NET Core Framework web space environment we will be working with conveniently comes with its own base structure and compiler that we can make use of. It gets better, Visual Studio Code comes with terminal integration allowing us to work from one centralized location the entire time.</p>
+<h2>Starting up a new Console App</h2>
+<p><strong>Note: You must restart your terminal (both bash and VS Code) after install for any of these commands to work</strong></p>
+<p>To start a new project we can build out a scaffold of a console application using some of the terminal commands that have been installed for us. This can be accomplished using any terminal client of your choice; however, VS Code also comes with a built-in bash terminal emulator that will also have everything we need <strong>(this can be opened in Windows, Linux, and, MacOS using Control+` shortcut)</strong>.</p>
+<p>Now in the terminal, we need to build out the directory where our C# project will live:</p>
+<pre data-language="bash" class="rainbow">mkdir first_csharp
+cd first_csharp
+</pre>
+<p>Unlike other frameworks such as Rails, C# requires that we build the top level directory first, then initialize the base project inside. So once we have that in place and have navigated into this directory we can run the following command:</p>
+<pre data-language="bash" class="rainbow">dotnet new console
+</pre>
+<p>With this command, two files are built for us, a Program.cs file which is the starting point of our project where we will be adding most of our code for now and a project.json file, which&nbsp;is where we list the dependencies(packages) for our project. When we run the <code>restore</code> command a script will read our project.json and NuGet will attempt to download the appropriate packages. Any time we edit our project.json file we must&nbsp;<code>restore</code>&nbsp;again to make sure that our packages are updated.</p>
+<p>
+ <strong><em>This command must be run with every new project to install the base packages too!</em></strong></p>
+<pre data-language="bash" class="rainbow">dotnet restore
+</pre>
+<p>With this in place, the configuration of our very basic c# console program is in place. What we need to do from here is open the entire directory in VS Code. With the Omnisharp extension and Intellisense debug tool (which we&nbsp;will cover more&nbsp;later on) things can get screwy if it has more than one project to look over at a time, so it is important to open a project from its top level directory and be sure to close this project folder before switching to another.</p>
+<p>
+ <img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/firstconsole.png" alt="Example of Program.cs File"></p>
+<p>Finally, to run this application and have it display the string "Hello World", we just need to use the terminal run command inside the file structure:</p>
+<pre data-language="bash" class="rainbow">dotnet run
+</pre>

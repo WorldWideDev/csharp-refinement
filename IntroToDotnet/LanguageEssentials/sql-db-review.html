@@ -1,0 +1,26 @@
+<h1>SQL Model Construction and Queries</h1>
+<p>
+ <strong>(If you are feeling confident with MySql Queries and building DB schema you may skip this section!)</strong></p>
+<p>At this point, it's past time that we get working with some persistent data! Databases are a major part of every field in programming and this holds especially true for the web. The database we will be working with here will be the Open-Source Relation Database called MySQL(You may have heard of it before :D).</p>
+<p>To start out, we first need a way to send queries to our database to build out schemas and tables where we can insert our data. An easy way to do this is to make use of the visual tool MySQL Workbench. MySQL Workbench can be downloaded from the following link if you do not already have it installed on your machine:</p>
+<p>
+ <a href="https://www.mysql.com/products/workbench/" target="_blank">https://www.mysql.com/products/workbench/</a></p>
+<p>With MySQL Workbench installed we are going to begin working on building out our ERD diagrams then running queries for the newly created tables.</p>
+<h2>Why ERD?</h2>
+<p>ERD is a process of laying out your tables and establishing relationships between them, making your data relational. Just about any data imaginable can be stored in a relational matter, there really isn't anything you can't do using a relational database like MySQL. Later, you will learn non-relational databases where everything is stored in a single table. There are pros and cons for both, but we find it's much easier to go from a relational database to a non-relational database.</p>
+<p>To build out our ERD diagrams we should probably make sure we can connect to our Database at all first. There are only a few steps involved at this point, but they are all pretty critical.</p>
+<ul>
+ <li>Start MAMP and Launch your Server</li> <li>If the MySQL Server checkbox is green you should be good there</li> <li>Launching a new instance of MySQL Workbench user or add a new MySQL Connection</li> <li>The connection should be configured to be pointing to localhost and the port MySQL is running on</li> <li>
+ <p>Enter your Username and Password (typically "root") and double click the new connection</p><p>
+  <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3758/handouts/chapter3758_7268_newsqlconnction.png" alt="sql connection img">
+ </p></li> <li>If all worked out you should now be at a query prompt</li></ul>
+<h2>Building an ERD Model</h2>
+<p>To begin building an ERD model or diagram click the + button at the bottom of the Workbench home screen next to "Models". From there you will need to click to create a new ERD Diagram. You should now be at a screen that looks something like the image below</p>
+<p>
+ <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3758/handouts/chapter3758_7273_newERD.png" alt="New ERD Diagram"></p>
+<p>Once you created a new Table, we have an id field which should be toggled to auto-incrementing so that each newly added record stores at a different id value. We can add a table from here like above and then begin to add columns such as first_name and last_name to this table. As a standard practice, we need to add a created_at and updated_at column as well.</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4015/handouts/chapter4015_7322_ColumnSetup.png"></p>
+<p>From here we are ready to make use of this model and integrate it with our database. To do this all we must do is connect it with <strong>Database&gt;Forward Engineer...</strong>. We will be able to hit next through most of these prompt, we just have to be sure we are directing to our newly established Database Connection.</p>
+<h2>Running SQL Queries</h2>
+<p>Now that we have a Database connection setup and an ERD Model added to it, we can begin querying our database. The main operations that we will typically run are the CRUD commands. These are Create, Read, Update, and Destroy. The chart below will show examples of how to run these commands in SQL:</p>
+<figure><img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/SQL-Queriesv2.png"></figure>

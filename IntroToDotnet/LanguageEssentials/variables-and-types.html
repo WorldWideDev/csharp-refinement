@@ -1,0 +1,149 @@
+<h1>Variables</h1>
+<p>
+As mentioned in the previous tab, C# deals with variables slightly differently than languages such as Javascript or Python, because it uses Static typing. This basically means that all variables declared in C# must have a value type associated with them prior to the code being executed.</p>
+<p>
+In JavaScript, we can create different variables without ever specifying a type because the runtime&nbsp;will&nbsp;do this for us.</p>
+<pre data-language="javascript" class="rainbow">var name = "Tim";
+var age = 30;
+var height = 1.905;
+var blueEyed = false;
+</pre>
+<p>
+In C# though, we must make sure that the compiler is able to determine the type of each variable while building the project.</p>
+<pre data-language="csharp" class="rainbow">string name = "Todd";
+int age = 32;
+double height = 1.875;
+bool blueEyed = true;
+</pre>
+<p>
+With C# if we forget to specify a variable type the compiler will quickly throw us an error. Similarly, if you attempt to assign a value to a variable that does not conform to its specified type the compiler will come back with a type-mismatch error. Below is a chart of some of the primitive types that exist in C# along with&nbsp;a description of their use case,&nbsp;size of the memory space they occupy, and example values stored.</p>
+<h5>Basic C# DataTypes:</h5>
+<table border="1">
+    <thead><tr>
+            <th>
+                Name
+            </th>
+            <th>
+                System Class Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Bitsize</th>
+            <th>
+                Example
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                int
+            </td>
+            <td>
+                Int32
+            </td>
+            <td>
+                An integer value between -2,147,483,648 and 2,147,483,647
+            </td>
+            <td>
+                32-bits
+            </td>
+            <td>
+                40,000
+            </td>
+        </tr>
+        <tr>
+            <td>
+                long
+            </td>
+            <td>
+                Int64
+            </td>
+            <td>
+                An integer between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807
+            </td>
+            <td>
+                64-bits
+            </td>
+            <td>
+                3,000,000,000
+            </td>
+        </tr>
+        <tr>
+            <td>
+                short
+            </td>
+            <td>
+                Int16
+            </td>
+            <td>
+                An integer between -32,768 and 32,767
+            </td>
+            <td>
+                16-bits
+            </td>
+            <td>
+                342
+            </td>
+        </tr>
+        <tr>
+            <td>
+                float
+            </td>
+            <td>
+                Single
+            </td>
+            <td>A floating point number between -3.402823e38 and 3.402823e38
+            </td>
+            <td>
+                32-bits
+            </td>
+            <td>
+                3.14159
+            </td>
+        </tr>
+        <tr>
+            <td>
+                double
+            </td>
+            <td>
+                Double
+            </td>
+            <td>A floating point number between -1.79769313486232e308 and 1.79769313486232e308. Allows more precision than a float.</td>
+            <td>
+                64-bits
+            </td>
+            <td>3.1415926535897932</td>
+        </tr>
+        <tr>
+            <td>
+                char
+            </td>
+            <td>
+                Char
+            </td>
+            <td>
+                One unicode character
+            </td>
+            <td>
+                16-bits
+            </td>
+            <td>
+                'g'
+            </td>
+        </tr>
+        <tr>
+            <td>
+                bool
+            </td>
+            <td>
+                Boolean
+            </td>
+            <td>
+                A true or false value
+            </td>
+            <td>
+                8-bits
+            </td>

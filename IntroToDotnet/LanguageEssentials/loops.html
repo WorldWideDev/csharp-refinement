@@ -1,0 +1,48 @@
+<h1>Loops</h1>
+<p>Computers are really good at two things: <strong>storing information</strong>, and <strong>doing something over and over again</strong>. If we want to execute a set of code repeatedly for a given number of iterations or until it reaches a specific condition, we will use loops. There are two basic types of loops: the for loop and the while loop. We <strong>use the for loop when we know beforehand how many times we are going to have to repeat the code</strong> while we <strong>use the while loop when we&nbsp;don't&nbsp;know how many times we have to&nbsp;run the code, but we know we have to run the code until it reaches a particular condition.</strong> However, at their core, they are both the same, you can do anything a for loop does with a while loop and vice versa.</p>
+<h2>For Loops</h2>
+<p>A <strong>for loop performs a set of code in a specific range, sequence, or collection</strong>. For now, we will focus on using the "C styled" for loop with a range. Go ahead and run the following code below, in a new project, and see what the output is in the Console when you run.</p>
+<pre data-language="swift">// loop from 1 to 5 including 5
+for (int i = 1; i &lt;= 5; i++)
+{
+    Console.WriteLine(i);
+}
+// loop from 1 to 5 excluding 5
+for (int i = 1; i &lt; 5; i++)
+{
+    Console.WriteLine(i);
+}
+</pre>
+<p>You can just as easily use variables to create a range as well!</p>
+<pre data-language="swift">int start = 0;
+int end = 5;
+// loop from start to end including end
+for (int i = start; i &lt;= end; i++)
+{
+    Console.WriteLine(i);
+}
+// loop from start to end excluding end
+for (int i = start; i &lt; end; i++)
+{
+    Console.WriteLine(i);
+}
+</pre>
+<p>The C-style for loops are built with the separate initialization, condition, and increment(execution) clauses all separated by semicolons. As for what each section is used for, the initialization is only run once when the loop is first reached to establish a starting point. The condition is checked at the beginning of every loop cycle and if it ever evaluates to be false it will stop the loop. The increment or execution clause runs at the end of each cycle of the loop and is mostly used to move the variable built-in initialization along toward the conditional.</p>
+<h2>While Loops</h2>
+<p style="line-height: 18px;">A <strong>while loop is used to loop for an unknown number of times.</strong>&nbsp;Unlike a For loop where you first specify a variable and how to change it, in a while loop, we simply specify a condition. Anything that we write with a for loop can be written with a while loop. Let's see how we can convert our for-in loops to while loops.</p>
+<p style="line-height: 18px;">We can re-write this <em><strong>for-in</strong></em>&nbsp;loop...</p>
+<pre data-language="swift">//The execution section does not always have to use ++
+for (int i = 1; i &lt; 6; i = i + 1)
+{
+    Console.WriteLine(i);
+}
+</pre>
+<p style="line-height: 18px;">... as a <strong><em>while</em></strong>&nbsp;loop.</p>
+<pre data-language="swift">int i = 1;
+while (i &lt; 6)
+{
+    Console.WriteLine(i);
+    i = i + 1;
+}
+</pre>
+<p style="line-height: 18px;">Note that the while loop syntax requires us to create our own bounds. In later assignments, you may find situations where you don't know how many times you will need to repeat before entering the loop in these situations it is important to know how to use a while loop.</p>

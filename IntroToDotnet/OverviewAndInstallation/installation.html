@@ -1,0 +1,94 @@
+<h1>Install</h1>
+<p>
+    For this course, we need to first get a few things installed before rolling right into the&nbsp;material. Some of these things might not be used until a little later, but it is nice to get them out of the way upfront.
+</p>
+<h2>Installing Visual Studio Code</h2>
+<p>
+    While it is entirely possible to go through this course using any text editor you want or a full IDE like full Visual Studio
+    <strong>
+        we highly recommend installing and working with Visual Studio Code.
+    </strong>
+    It is a good in between of the barebones standard text editor and the magic Visual Studio can provide while also being completely cross-platform to boot.
+</p>
+<p>
+    All you need to do to get the latest version of VS Code is go to
+    <a href="https://code.visualstudio.com/" target="_blank">https://code.visualstudio.com</a>
+    and click the download button.
+</p>
+<h2>
+    Installing the 'C# for Visual Studio Code' plugin from OmniSharp
+</h2>
+<p>
+    The OmniSharp plugin will give us a ton of extra features when working with C# code in Visual Studio Code -- such as ASP.NET syntax highlighting, early (pre-compile) error detection, code suggestions and completion, and insight into different class functionality. It is easy to add: simply open a new instance of VS Code, find it on the Extensions menu, and install+enable.&nbsp;
+</p>
+<p>
+    <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3757/handouts/chapter3757_7096_OmniSharp.png" alt="Omnisharp VSCode Install">
+</p>
+<h2>Installing ASP.NET Core</h2>
+<h3>
+    <strong>Windows Specific</strong>
+</h3>
+<p>
+    All you need to do for installing .NET Core for Windows is to install the .NET Core SDK provided. Follow&nbsp;the installation instructions&nbsp;and afterward, you will have everything good to go!
+</p>
+<p>
+    <a href="https://download.microsoft.com/download/2/9/3/293BC432-348C-4D1C-B628-5AC8AB7FA162/dotnet-sdk-2.1.3-win-x64.exe" target="_blank">Download 2.1.3 SDK 64-bit</a>
+</p>
+<p>
+    <a href="https://download.microsoft.com/download/2/9/3/293BC432-348C-4D1C-B628-5AC8AB7FA162/dotnet-sdk-2.1.3-win-x86.exe" target="_blank">Download 2.1.3 SDK 32-bit</a>
+    <br>
+</p>
+<h3>
+    <strong>MacOS Specific</strong>
+</h3>
+<p>
+    Before installing the .NET Core SDK on Mac OS you need to have the latest version of OpenSSL set up. The easiest way to get OpenSSL is by using Homebrew. If you do not already have Homebrew you can download and install it by going to
+    <a href="http://brew.sh/" target="_blank">their Homepage</a>
+    . Once installed, do the following in terminal...
+</p>
+<pre data-language="bash" class="rainbow">brew install openssl
+ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/
+ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/
+</pre>
+<p>
+    From there we can download the .NET Core SDK v1.1&nbsp;for Mac by clicking the link below!
+</p>
+<p>
+    <a href="https://download.microsoft.com/download/2/9/3/293BC432-348C-4D1C-B628-5AC8AB7FA162/dotnet-sdk-2.1.3-osx-x64.pkg" target="_blank">Download 2.1.3 SDK</a>
+</p>
+<h3>
+    <strong>Linux Specific</strong>
+</h3>
+<p>
+    Due to the nature of Linux and the many distros available, it is best that you navigate to Microsoft's official .NET Core page
+    <a href="https://www.microsoft.com/net/core" target="_blank">HERE</a>
+    and follow the instruction provided for you system up to installing the .NET Core SDK. Base Project creation will be covered in the next tab so you can skip that for now.
+</p>
+<h2>Installing MySQL Server</h2>
+<p>
+    <strong>
+        Note if you have taken Python or PHP, you most likely already have MySQL installed and can skip this step.
+    </strong>
+    Otherwise you may review the installation steps from the Python
+    SQL Chapter.  Test your MySQL server connection by invoking a MySQL shell from your terminal (this assumes you have an administrative user "root" with a password of "root")
+    </p>
+<pre>mysql -u root -p</pre>
+<p></p>
+<h2>Nuget</h2>
+<p>
+    With any framework we&nbsp;need to draw in packages that other people have written to supplement our code. Most package managers are designed for use with a specfic language or framework. For Python packages we use
+    <code>pip</code>
+    , for Node we use
+    <code>npm</code>
+    , Ruby has
+    <code>RubyGems</code>
+    , and Microsoft's family of .NET products use
+    <code>NuGet</code>
+    .
+    <a href="http://www.nuget.org" target="_blank">www.nuget.org</a>
+    hosts all the packages that we will pull in as dependencies. We don't actually have to do any extra work to enable NuGet, it will be used under the hood by ASP.NET Core. Unlike
+    <code>pip</code>
+    or
+    <code>npm</code>
+    we won't be using NuGet from the commandline to install packages one by one. ASP.NET Core lets us write all of our package dependencies in a json file which can then be used to install all of them with a single command.
+</p>

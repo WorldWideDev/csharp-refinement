@@ -1,0 +1,36 @@
+<h2>Writing to the Console</h2>
+<p>When we initially set up a base .NET app in our <em>Intro to .NET</em> section using the <code>dotnet new</code> command, we ended up with some code in our Program.cs that looked&nbsp;something like this...</p>
+<pre data-language="csharp" class="rainbow">using System;
+namespace ConsoleApplication
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            Console.WriteLine("Hello World!");
+        }
+    }
+}
+</pre>
+<p>Inside our Main function, we see the function of&nbsp;<strong>Console.WriteLine().</strong>&nbsp;This is a function provided to us from the System library that will be our main means of console string output. This function accepts a value and will&nbsp;display the value passed to it&nbsp;to the terminal window as a single line.</p>
+<pre data-language="csharp" class="rainbow">Console.WriteLine("Using Console.WriteLine, you can output any string to the terminal/console");
+</pre>
+<p>Even more so, for variables that are not inherently strings, so long as the type has a valid ToString method (such as an integer), Console.WriteLine will&nbsp;display it as a string with no explicit type conversion needed!</p>
+<pre data-language="csharp" class="rainbow">int favoriteNum = 42;
+Console.WriteLine("You can even directly print numbers such as the one below...");
+Console.WriteLine(favoriteNum);
+</pre>
+<p>The mixing strings and other variables&nbsp;can also be accomplished by placing tokens inside your output string and supplying the WriteLine function with additional parameters or by making use of string concatenation.</p>
+<pre data-language="csharp" class="rainbow">//Making use of tokens makes injection of variables into strings quite simple
+Console.WriteLine("The {0} cow, jumped over the {1}, {2} times!", "brown", "Moon", 7);
+//Results in "The brown cow, jumped over the Moon, 7 times!"
+//We can also make use of string concatenation, though, if preferred
+string name = "David";
+Console.WriteLine(10 + " Chickens attacked " + name);
+//Results in "10 Chickens attacked David"
+</pre>
+<p>You can even perform operations directly on a string by making use of string interpolation.</p>
+<pre data-language="csharp" class="rainbow">string interpol = $"The answer to 2 + 7 is {2+7}";
+Console.WriteLine(interpol);
+//Outputs "The answer to 2 + 7 is 9"
+</pre>

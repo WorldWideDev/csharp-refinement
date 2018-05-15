@@ -1,0 +1,170 @@
+<h1>OOP with C#</h1>
+<iframe src="https://player.vimeo.com/video/206176729?title=0&amp;byline=0&amp;portrait=0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="vimeo_responsive" style="width: 938px; height: 703.5px;" width="640" height="480" frameborder="0"></iframe>
+<p>
+ Object Oriented Programming (OOP) is a key paradigm of the C# language and is extensively used in the ASP.NET Core framework so it is a critical skill for us to learn. The main focal point of OOP in C# is class creation. Classes define what objects we can build, how we can interact with them, and how they themselves interact with our program. A simple way to look at classes is&nbsp;as a blueprint of functions and properties&nbsp;that we want as&nbsp;an instance of this class, AKA an Object, to hold. It may be easier to see as we begin working with them so let's jump right into basic creation.</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">//Make sure to include the Vehicle class separate from the Program class
+public class Vehicle
+{
+    //Accessibility of variables is defaulted to internal
+    //so we must add the public keyword to anything we
+    //want to allow outside access to.
+    public int numPassengers = 2;
+}
+</code><div class="toolbar"></div></pre>
+<p>
+ This is all it takes to define a class. In order to create an object of a&nbsp;class,&nbsp;though, we must invoke our class as a new object reference. <strong>Take special note where we put each piece of this code in our Program.cs file!</strong></p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">public class Program
+{
+    public static void Main(string[] args)
+    {
+        // Notice the type for the new object reference
+        // is the same as the class name
+        Vehicle myVehicle = new Vehicle();
+        Console.WriteLine("My vehicle can hold " + myVehicle.numPassengers + " people");
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>
+ With this in our Main function, we have declared the variable of myVehicle to be an instance(&nbsp;or object ) of the class Vehicle. We also added a&nbsp;property of numPassengers to the class, that becomes part of the object variable when it is created. If we wanted to pass a&nbsp;variable to this object when creating it to change some of its properties, such as the numPassengers variable, we need to include a function inside the class called a constructor. As the name implies, constructors are functions that exist to "construct" instances of a class.&nbsp;A constructor is called the moment an object is created using the <strong>new</strong> keyword and just requires adding a function with the same name as the Class.</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">public class Vehicle
+{
+     public int numPassengers;
+     //Notice the Constructor function doesn't need
+     //a return type or the static keyword
+     public Vehicle(int val = 0)
+     {
+          numPassengers = val;
+     }
+}
+</code><div class="toolbar"></div></pre>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">public class Program
+{
+    public static void Main(string[] args)
+    {
+        //Adding a value to the object; then passes it to the constructor
+        Vehicle myVehicle = new Vehicle(7);
+        Console.WriteLine("My vehicle can hold " + myVehicle.numPassengers + " people");
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>If we want all instances of our class to have some initial value, the constructor is the place to do it!</p>
+<h2>Class Methods</h2>
+<p>
+ We have learned at this point that you can write functions that can be called without instantiating an object by using the static keyword, but what if we actually want to make a function a part of an object and why might we want this? First off, in order to do this, all we need to do is not include the static keyword! Easy enough, but it still begs the question of why? Once we make a function attached to an instantiated object, which we will henceforth&nbsp;refer to as a<strong>&nbsp;method</strong>, that method now directly correlates to that particular object and only manipulates that data stored within it. Let's try this out on our Vehicle class and see if it becomes a little clearer.</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">public class Vehicle
+{
+     public int numPassengers;
+     public double distance = 0.0;
+     public Vehicle(int val)
+     {
+          numPassengers = val;
+     }
+     public void Move(double miles)
+     {
+        distance += miles;
+     }
+}
+</code><div class="toolbar"></div></pre>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">public class Program
+{
+    public static void Main(string[] args)
+    {
+        //We create two separate objects of class-Vehicle
+        Vehicle car = new Vehicle(5);
+        Vehicle bike = new Vehicle(1);
+        //Notice they both have the same starting distance travelled
+        Console.WriteLine(car.distance); //Prints 0
+        Console.WriteLine(bike.distance); //Also Prints 0
+        //The Move method however only effects the distance of the object it is referencing!!
+        car.Move(70.8);
+        Console.WriteLine(car.distance); //Now is printing 70.8
+        Console.WriteLine(bike.distance); //Still prints 0
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p> Also, notice how with this method we included the void keyword as before to specify the return type of the function. Every method similar to functions needs a return type associated with it.&nbsp;If we wanted to return a value rather than void from a method, we can easily do that just as before when we were creating&nbsp;functions.<br></p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">public int Move(double miles)
+{
+    distance += miles;
+    return (int)distance;
+}
+</code><div class="toolbar"></div></pre>
+<h2>Method Overloading</h2>
+<p>One of the awesome features that is provided by C# that doesn't&nbsp;exist in some of the other languages, is the ability to&nbsp;overload&nbsp;methods. This is the process of building multiple methods with the same name, but different expected parameters. Based on what you pass the method when you call it&nbsp;the system can figure out which version to run. The way the system does this is that in memory .NET&nbsp;stores&nbsp;a method as being the return type, method name, and parameters. Any variation on either of these three will result in a separate method being created.&nbsp;This ends up being a super useful and critical skill in ASP.NET Core development so let's pay particular attention to this.</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">public class Vehicle
+{
+    public int numPassengers;
+    public double distance = 0.0;
+ 
+    //Constructors can be overloaded 
+    //The first maybe being for a new vehicle
+    public Vehicle(int val)
+    {
+        numPassengers = val;
+    }
+ 
+    //The second for preowned with milage already
+    public Vehicle(int val, double odo)
+    {
+        numPassengers = val;
+        distance = odo;
+    }
+ 
+    //Methods can also be overloaded for handling different parameters
+    public int Move(double miles)
+    {
+        distance += miles;
+        return (int)distance;
+    }
+ 
+    //If a boolean is included in this version of the method call
+    //it may be measuring in km rather than miles.
+    public int Move(double miles, bool km)
+    {
+        //Convert the KM measurement to miles
+        if (km == true)
+        {
+            miles = miles * 0.62;
+        }
+        distance += miles;
+        return (int)distance;
+    }
+    //Even a change to a return type will produce a different method
+    public void Move(double miles)
+    {
+        distance += miles;
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>
+ We can even improve on this last segment of code by reusing some of the code we already have and apply DRY principles by making the overloaded version of the Move function call the first version!</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">public int Move(double miles)
+{
+    distance += miles;
+    return (int)distance;
+}
+public int Move(double miles, bool km)
+{
+    // Convert the KM measurement to miles
+    if (km == true)
+    {
+        miles = miles * 0.62;
+    }
+    return Move(miles);
+}
+</code><div class="toolbar"></div></pre>
+<h2>Getter and Setter</h2>
+<p>
+ Commonly in C#.NET programs and even more frequently in the ASP.NET stack, we may find the need to process data before saving it to a variable space and as such need to implement a few lines of code. We could add this code to your constructor function, but very quickly this can lead to some convolution. Often, instead of this, we might see lines of code that look like the following...</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">private _numPassengers = 5;
+public int numPassengers {
+ get { return _numPassengers }
+ set { _numPassengers = value; }
+}
+</code><div class="toolbar"></div></pre>
+<p>
+ What this is doing is using the .NET built-in property Getter and Setter Methods. They allow us to easily add code for access and updating of variable fields while also obscuring the methods of doing so from the rest of our code. If we want to implement these functions as pure accessors (perhaps as future placeholders) with no current additional lines, they can be shortened even further.</p>
+<pre data-language="c#" class=" code-toolbar language-c"><code class="# # # # # # # # # # language-c language-c language-c language-c language-c language-c language-c language-c language-c language-c">public int numPassenger { get; set; }
+</code><div class="toolbar"></div></pre>
+<p>
+ This is the most typical usage, as it standardizes implementation and allows for the&nbsp;easy extension as needed.</p>
