@@ -1,0 +1,15 @@
+*remove Chapter Overview module
+ORDER:
+1. Course Overview
+2. Compiled Languages
+3. Intro to Runtimes
+4. Compilers/Runtimes Quiz
+5. Welcome to .NET------------
+6. What is C#? (can we get the space out of the title?)
+7. Microsoft Tools and Ecosystem
+8. Open Source, Cross-Platform---------
+9. .NET Core
+10. Installation
+11. Sample C# App
+12. VS Code
+13. Recap
