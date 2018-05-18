@@ -4,20 +4,12 @@
 </p>
 <h2>Installing Visual Studio Code</h2>
 <p>
-    While it is entirely possible to go through this course using any text editor or a full IDE like full Visual Studio,
-    <strong>
-        we highly recommend installing and working with Visual Studio Code.
-    </strong>
-    It is an excellent tool that provides more than standard text editors (like git integration and debugging), but is more lightweight than a full IDE like Visual Studio.
+    While it is entirely possible to go through this course using any text editor or a full IDE like full Visual Studio, <strong>we highly recommend installing and working with Visual Studio Code.</strong> It is an excellent tool that provides more than standard text editors, but is more lightweight than a full IDE like Visual Studio.
 </p>
 <p>
-    All you need to do to get the latest version of VS Code is go to
-    <a href="https://code.visualstudio.com/" target="_blank">https://code.visualstudio.com</a>
-    and click the download button.
+    All you need to do to get the latest version of VS Code is go to <a href="https://code.visualstudio.com/" target="_blank">https://code.visualstudio.com</a> and click the download button.
 </p>
-<h2>
-    Installing the 'C# for Visual Studio Code' plugin from OmniSharp
-</h2>
+<h2>Installing the 'C# for Visual Studio Code' plugin from OmniSharp</h2>
 <p>
     The OmniSharp plugin will give us a ton of extra features when working with C# code in Visual Studio Code, such as ASP.NET syntax highlighting, early (pre-compile) error detection, code suggestions and completion, and insight into different class functionality. It is easy to add: 
     <ol>
@@ -33,6 +25,7 @@
 <h2>Installing .NET Core</h2>
 
 <p>Even though .NET Core is relatively young, there have already been several versions released. We are currently using SDK Version: <b>2.0.3</b>, which you can download <a href="https://www.microsoft.com/net/download/all">here</a> by first selecting the correct version, and then selecting the installer specific to your operating system.</p>
+<p><strong>If you had any terminal windows open during installation (including in VS Code), be sure to restart them before proceeding so that the dotnet commands will be recognized in your terminal.</strong></p>
 
 <h3>
     <strong>MacOS Specific</strong>
@@ -63,5 +56,3 @@ ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/
 <h2>NuGet</h2>
 <p>
     Microsoft's family of .NET products uses a package manager called <a href="http://www.nuget.org" target="_blank">NuGet</a>. A package manager is simply a tool that helps us bring outside packages into our code. The core NuGet features we need actually came with our SDK installation, so we don't need to do any additional work to use it, but we will be using it indirectly throughout the course to install various packages. (Most package managers are designed for use with a specific language or framework. In Python we used <code>pip</code>, node has <code>npm</code>, Ruby has <code>RubyGems</code>).</p>
-
-<p><strong>Note: If you have any terminal windows open (including VS Code), be sure to restart them before proceeding.</strong></p>
