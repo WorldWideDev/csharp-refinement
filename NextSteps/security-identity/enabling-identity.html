@@ -1,0 +1,76 @@
+<h1>Enabling Identity</h1>
+<p>
+ Now that we've completed our installation we need to configure our app to take advantage of Identity's tools. Identity relies on Users having a specific set of attributes as defined by the <code>IdentityUser</code> class. By default, our <code>IdentityUser</code>s come with Id, Email, Password, and UserName fields in addition to a number of specialized fields that we'll learn more about later. We aren't limited to just using the default fields, however, by extending <code>IdentityUser</code> with our own class we can add any additional information we want. Suppose we want our Users to be able to post messages:</p>
+<h4>Message.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">namespace YourNamespace.Models
+{
+    public class Message : BaseEntity
+    {
+        public string MessageText { get; set: }
+        public string UserId { get; set; }
+        public User User { get; set; }
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>We'll extend IdentityUser so that our Users have a List of Messages:</p>
+<h4>User.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Collections.Generic;
+namespace YourNamespace.Models
+{
+    public class User : IdentityUser
+    {
+        public List&lt;Message&gt; Messages { get; set; }
+        public User()
+        {
+            Messages = new List&lt;Message&gt;();
+        }
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+ And that's all it takes to customize our User class. Note that our User <strong>will</strong> have the Id, UserName, Password, and Email fields that it inherited from IdentityUser. Even though our User class now has a field called <code>Id</code> rather than UserId, Entity Framework is smart enough to know that the <code>Message</code> class' <code>UserId</code> field still matches up to User. You may have noticed that the <code>UserId</code> field on the Message class is a <code>string</code>, rather than an <code>int</code>; this is because the <code>Id</code> field our User inherits from <code>IdentityUser</code> is a GUID (Globally Unique Identifier). A GUID is a 32 digit hexadecimal value that is functionally guaranteed to be unique. You would have to generate billions of GUIDs to get a statistically significant chance of even a single duplicate. Not only does using GUIDs ensure that our users will never have conflicting Ids, but simple integer Ids are easy for external users to exploit with code injection or by guessing URLs; the chances of someone guessing a GUID are negligible.</p>
+<p>
+ We also need to update our Context class to extend the <code>IdentityDbContext</code> class. Remember, our context is what sits between our server and database and connects the two, so to apply Identity to that connection we need some special features. <code>IdentityDbContext</code> expects a datatype which conforms to <code>Identityuser</code> to be associated with it.</p>
+<h4>YourContext.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+//Other usings
+namespace YourNamespace.Models
+{
+    public class YourContext : IdentityDbContext&lt;User&gt;
+    {
+        //Setup Context as normal
+        public DbSet&lt;User&gt; users { get; set; }
+        public DbSet&lt;Message&gt; messages { get; set; }
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+ Now that our models are set up to take advantage of Identity we can configure our app to actually use those features.</p>
+<h4>Startup.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">using YourNamespace.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Logging;
+namespace YourNamespace
+{
+    public class Startup
+    {
+        public void ConfigureServices( IServiceCollection services )
+        {
+            //Other code
+            services.AddIdentity&lt;User, IdentityRole&gt;()
+                .AddEntityFrameworkStores&lt;YourContext&gt;()
+                .AddDefaultTokenProviders();
+            services.AddMvc();
+        }
+        public void Configure(IApplicationBuilder app)
+        {
+            //Other Middleware
+            app.UseIdentity();
+            app.UseMvc();
+        }
+    }
+}</code>

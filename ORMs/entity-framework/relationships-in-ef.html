@@ -1,0 +1,176 @@
+<h2>Relationships in EF Core</h2>
+<p>Of course, Entity Framework Core supports models with relationships to other models. MySQL does not support having fields that contain complex data (like another object) and so we use IDs to represent the relationship. However, our EF models will have a field for the ID&nbsp;<strong>as well as</strong>&nbsp;a field for the full object. This is the one exception to our rule that our models have exactly the same fields as our database tables. Entity Framework Core is able to detect that the Id and object fields represent the same relationship, based on their names. For example, this "post" table:</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4035/handouts/chapter4035_7712_DatabaseForrelatinships.PNG" style="height: auto; max-width: 100%; cursor: pointer;">&nbsp;</p>
+<p>Would match up with the following model:</p>
+<h4>Post.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">using System;
+namespace YourNamespace.Models
+{
+    public class Post : BaseEntity
+    {
+        public int PostId { get; set; }
+        public string PostText { get; set; }
+        public int BlogId { get; set; }
+        public Blog Blog { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>Even though our table does not have a "Blog" field, this model will not throw an error when we try to save an instance of it to the database. However, when we retrieve the entry from the database, the "Blog" field will be null. We can use the&nbsp;<code>Include</code>&nbsp;method to populate the field with its full data.</p>
+<h4>YourController.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">//Inside a controller method
+List&lt;Post&gt; Posts = _context.Posts.Include(post =&gt; post.Blog).ToList();
+</code><div class="toolbar"></div></pre>
+<p>Now each&nbsp;<code>Post</code>&nbsp;in the list will have a "Blog" field containing an entire&nbsp;<code>Blog</code>&nbsp;object.</p>
+<p>We can chain calls to&nbsp;<code>Include</code>&nbsp;to populate multiple fields, like so:</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">List&lt;Post&gt; Posts = _context.Posts
+                             .Include(post =&gt; post.Blog)
+                             .Include(post =&gt; post.User)
+                             .ToList();
+</code><div class="toolbar"></div></pre>
+<p>But what about if our "Blog" also has fields that need populating, like its own user? In cases where we need to populate objects that themselves were just populated, we use&nbsp;<code>ThenInclude</code>:</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">List&lt;Post&gt; Posts = _context.Posts
+                           .Include(post =&gt; post.Blog)
+                               .ThenInclude(blog =&gt; blog.User)
+                           .ToList();
+</code><div class="toolbar"></div></pre>
+<p>Notice that the&nbsp;<code>ThenInclude</code>&nbsp;is operating on "Blog" objects rather than "Post" objects.</p>
+<h4>Naming Fields</h4>
+<p>EF Core uses certain naming conventions to associate ID fields with the objects they represent. For our "Blog" Field, EF Core requires a "BlogId" or "blogid" field by default; it will not recognize "Blog_Id" or "IdForBlog" or any other arbitrary name you may choose. If you want to use a different name for your Id field, you can do so by applying the&nbsp;<code>[Key]</code>&nbsp;attribute to it.</p>
+<h4>One-to-Many Relationships</h4>
+<p>One-to-many relationships are not much different than one-to-one relationships with EF Core. The only difference is that one of our classes will contain a List of references. Still working with our Post class, let's take a look at the User class:</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">using System;
+namespace YourNamespace.Models
+{
+    public class User : BaseEntity
+    {
+        public int UserId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Age { get; set; }
+        public List&lt;Post&gt; Posts { get; set; }
+ 
+        public User()
+        {
+            Posts = new List&lt;Post&gt;();
+        }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>Because our class contains a List as a property, we define a constructor that ensures the field will always contain at least an empty List. If we failed to initialize the List we might run into situations where our code tries to iterate through a null value, resulting in an error.</p>
+<p>We can then use&nbsp;<code>.Include</code>&nbsp;to populate our objects just like before:</p>
+<h4>YourController.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">List&lt;User&gt; Users = _context.Users
+                       .Include(user =&gt; user.Posts)
+                       .ToList();
+</code><div class="toolbar"></div></pre>
+<h4>Many-to-Many Relationships</h4>
+<p>Many-to-many relationships in EF Core are set up in the same way as we've handled them with SQL in the past. We create a joining table that contains a pair of Ids to establish the connections between the two tables we want to join.</p>
+<h4>Magazine.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">namespace YourNamespace
+{
+    public class Magazine : BaseEntity
+    {
+        public int MagazineId { get; set; }
+        public string Title { get; set; } 
+        public List&lt;Subscription&gt; Readers { get; set; }
+        public Magazine()
+        {
+            Readers = new List&lt;Subscription&gt;();
+        }
+}
+</code><div class="toolbar"></div></pre>
+<h4>Person.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">namespace YourNamespace
+{
+    public class Person : BaseEntity
+    {
+        public int PersonId { get; set; }
+        public string Name { get; set; }
+        public List&lt;Subscription&gt; Subscriptions { get; set; }
+ 
+        public Person()
+        {
+            Subscriptions = new List&lt;Subscription&gt;();
+        }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<h4>Subscription.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">namespace YourNamespace
+{
+    public class Subscription : BaseEntity
+    {
+        public int SubscriptionId { get; set; }
+ 
+        public int PersonId { get; set; }
+        public Person Person { get; set; }
+ 
+        public int MagazineId { get; set; }
+        public Magazine Magazine { get; set; }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<h4>YourContext.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">//Other code
+public DbSet&lt;Person&gt; Persons { get; set; }
+public DbSet&lt;Magazine&gt; Magazines { get; set; }
+public DbSet&lt;Subscription&gt; Subscriptions { get; set; }
+</code><div class="toolbar"></div></pre>
+<p>This isn't anything you haven't seen before, just arranged a little bit differently. We can then populate through multiple levels just like before:.</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">List&lt;Person&gt; Persons = _context.Persons
+    .Include( p =&gt; p.Subscriptions )
+        .ThenInclude( s =&gt; s.Magazine )
+    .ToList();
+</code><div class="toolbar"></div></pre>
+<p>However, to access the Magazines on the Person object, we have to iterate through the Person's Subscriptions.</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">foreach( var person in Persons )
+{
+    foreach( var sub in person.Subscriptions )
+    {
+        Console.WriteLine( sub.Magazine );
+    }
+}
+</code><div class="toolbar"></div></pre>
+<h4>Self-Joins</h4>
+<p>Self-joining relationships are created the same way as Many-to-Many relationships: with a joining table containing two keys. The difference, of course, is that both keys reference the same table. We can't use the same name for both of the foreign key fields so we have to alias one or both of them. Entity Framework doesn't know which fields are&nbsp;aliased foreign keys reference, so we'll have to tell it. We do this using the&nbsp;<code>[InverseProperty]</code>&nbsp;attribute:</p>
+<h4>Connection.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">namespace YourNamespace.Models
+{
+    public class Connection : BaseEntity
+    {
+        public int ConnectionId { get; set; }
+ 
+        public int FollowerId { get; set; }
+        public TwitterUser Follower { get; set; }
+ 
+        public int UserFollowedId { get; set; }
+        public TwitterUser UserFollowed { get; set; }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<h4>TwitterUser.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">namespace YourNamespace.Models
+{
+    public class TwitterUser : BaseEntity
+    {
+        public TwitterUser()
+        {
+            Followers = new List&lt;Connection&gt;();
+            UsersFollowed = new List&lt;Connection&gt;();
+        }
+ 
+        public int TwitterUserId { get; set; }
+ 
+        [InverseProperty("UserFollowed")]
+        public List&lt;Connection&gt; Followers { get; set; }
+ 
+        [InverseProperty("Follower")]
+        public List&lt;Connection&gt; UsersFollowed { get; set; }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>The&nbsp;<code>[InverseProperty]</code>&nbsp;attribute is applied to fields that are referenced by foreign keys in&nbsp;<strong>other tables.</strong></p>

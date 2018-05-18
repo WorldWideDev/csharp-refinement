@@ -1,0 +1,74 @@
+<h1>Using Partials</h1>
+<p>
+ Sometimes we want to render the same piece of HTML code over and over&nbsp;or have the same header across all of our pages. In situations like these, we can use partials: view files that represent a piece of a whole page. The syntax for creating a partial isn't any different than our other view files because all of our 
+ <code>.cshtml</code> is already rendered within the frame of a Layout page. What separates Partials from full Views is how they are used, rather than how they are written. In ASP NET Core Partials are called using a special form of HTML Helper. <code>.Partial</code> is itself a method to be called on the <code>Html</code> object.</p>
+<h4>YourView.cshtml</h4>
+<pre data-language="html" class=" code-toolbar  language-html"><code class="  language-html">// No ".cshtml"
+@Html.Partial("YourPartialName")
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+ With that simple line, your entire Partial will be rendered into the surrounding HTML.</p>
+<p>
+ Another use for partials is pages that have multiple different forms on them. Model binding only allows us to bind one kind of model to each view but partials support their own model binding. By passing a different model to each form we can create multiple model bindings on a single page.</p>
+<p>
+ Suppose we have a User class and a Product class:</p>
+<h4>YourController.cs</h4>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">/Other code
+public IActionResult Method()
+{
+    //Other code
+    ViewBag.Product = ProductObject;
+    return View("YourView", UserObject);
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<h4>YourView.cshtml</h4>
+<pre data-language="html" class=" code-toolbar  language-html"><code class="  language-html">@using YourNamespace.Models
+@model YourNamespace.Models.User
+&lt;form asp-controller="Users" asp-action="CreateUser" method="post"&gt;
+    &lt;label asp-for="Name"&gt;&lt;/label&gt;
+    &lt;input asp-for="Name"/&gt;
+    &lt;label asp-for="Age"&gt;&lt;/label&gt;
+    &lt;input asp-for="Age"/&gt;
+    &lt;button type="submit"&gt;Create User&lt;/button&gt;
+&lt;/form&gt;
+@Html.Partial("ProductPartial", (Product)@ViewBag.Product)
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<h4>ProductPartial.cshtml</h4>
+<pre data-language="html" class=" code-toolbar  language-html"><code class="  language-html">@model YourNamespace.Models.Product
+&lt;form asp-controller="Products" asp-action="CreateProduct" method="post"&gt;
+    &lt;label asp-for="ProductName"&gt;&lt;/label&gt;
+    &lt;input asp-for="ProductName"/&gt;
+    &lt;label asp-for="Price"&gt;&lt;/label&gt;
+    &lt;input asp-for="Price"/&gt;
+    &lt;button type="submit"&gt;Create Product&lt;/button&gt;
+&lt;/form&gt;
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+ Another approach we can use is it to&nbsp;take&nbsp;the multiple models we want to be&nbsp;associated with the front end and bundle them together into a wrapper class:</p>
+<h4>ModelBundle.cs</h4>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">namespace YourNamespace.Models
+{
+    public class ModelBundle
+    {
+        public User UserModel { get; set; }
+        public List&lt;Product&gt; ProductModels { get; set; }
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<h4>YourController.cs</h4>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">// Other code
+public IActionResult Method()
+{
+    ModelBundle ViewBundle = new ModelBundle{ UserModel = UserObject, ProductModels = ProductList };
+    return View("YourView", ViewBundle);
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<h4>YourView.cshtml</h4>
+<pre data-language="html" class=" code-toolbar  language-html"><code class="  language-html">@model YourNamespace.Models.ModelBundle
+@Html.Partial("UserPartial", @Model.UserModel)
+@foreach(var product in @Model.ProductModels)
+{
+    @Html.Partial("ProductPartial", @product)
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>One thing to keep in mind when working with multiple models is that error handling can be a little tricky. The <code>asp-validation-summary-"All"</code> TagHelper will pick up any model errors that are returned to the view, even ones stored in ViewBag, which can be useful when we have multiple sets of errors to display. Alternatively, <code>asp-validation-for</code> TagHelpers can be used to split up where each error is shown.</p>

@@ -1,0 +1,134 @@
+<h1>
+    Getting Started with Entity Framework Core
+</h1>
+<p>
+    Configuring our apps to use Entity Framework Core is similar to configuring with Dapper, however we don't have to make Factory classes. In fact, we don't have to write our own query methods at all! Entity Framework Core comes equipped with methods for querying our database that, used in tandem with LINQ, allow us to retrieve and save data easily. To get started we'll need a new dependency, an Entity Framework package for MySQL databases:
+</p>
+<pre data-language="bash" class="active_pre rainbow">dotnet add package Pomelo.EntityFrameworkCore.MySql -v 2.0.1
+</pre>
+<p>
+    Next, we'll need to create a new file in our&nbsp;
+    <code>Models</code>
+    &nbsp;folder. This is our&nbsp;
+    <code>context</code>
+    &nbsp;file. The context class is what actually forms the relationship between our models and the database. Think of it as an object that sits between our app and the database and translates our queries&nbsp;for us.&nbsp;Context classes should always have names the end in "Context". Make sure to give your Context an informative name to help associate it with the project.
+</p>
+<h4>YourContext.cs</h4>
+<pre data-language="csharp" class="rainbow">using Microsoft.EntityFrameworkCore;
+ 
+namespace YourNamespace.Models
+{
+    public class YourContext : DbContext
+    {
+        // base() calls the parent class' constructor passing the "options" parameter along
+        public YourContext(DbContextOptions&lt;YourContext&gt; options) : base(options) { }
+    }
+}
+</pre>
+<p>
+    With our Context class created we need to add it as a service so that we can use dependency injection with our controllers.
+</p>
+<h3>Startup.cs</h3>
+<pre data-language="csharp" class="rainbow">using YourNamespace.Models;
+using Microsoft.EntityFrameworkCore;
+ 
+// Other code
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDbContext&lt;MyContext&gt;(options =&gt; options.UseMySql(Configuration["DBInfo:ConnectionString"]));
+    // Add other services
+}
+</pre>
+<p>
+    Just like with Dapper we don't want our connection string to be contained in our source code, so we'll use&nbsp;
+    <code>appsettings.json</code>
+    &nbsp;once again to keep it separate.&nbsp;
+    <strong>
+        Refer back to the "Securing Connection Strings" tab in ASP.NET Core Two if you need a refresher on how to connect to appsettings.
+    </strong>
+    &nbsp;
+</p>
+<p>
+    For each table we want to work with, we create a&nbsp;
+    <code>DbSet</code>
+    &nbsp;property within our context class. These properties map to our database tables;&nbsp;we cannot interact with a table if it does not match one of our&nbsp;
+    <code>DbSets</code>
+    . Suppose we have a "users" table in our MySQL schema.
+</p>
+<p>
+    <img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/DatabaseForEf.PNG" style="height: auto; max-width: 100%; cursor: pointer;">
+</p>
+<p>
+    Our model for this table doesn't have to have the same name, only our&nbsp;
+    <code>DbSet</code>
+    &nbsp;property's name must match the table.
+</p>
+<h4>Person.cs</h4>
+<pre data-language="csharp" class="rainbow">namespace YourNamespace.Models
+{
+    public class Person
+    {
+        public int PersonId { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public int Age { get; set; }
+    }
+}
+</pre>
+<p>
+    Now that we have a table we want our Context to relate to, we need to add an appropriate
+    <code>DbSet</code>
+    . Our&nbsp;
+    <code>DbSet</code>
+    &nbsp;property must have&nbsp;
+    <strong>exactly the same name</strong>
+    &nbsp;as the&nbsp;table it relates to&nbsp;(although the connection is case-insensitive). If one is plural and the other singular for example, like&nbsp;
+    <code>User</code>
+    &nbsp;and&nbsp;
+    <code>Users</code>
+    &nbsp;the connection will fail. Our model fields must match one-to-one to the database table they connect to, or we will receive an error when we try to save a new entry to the database.&nbsp;
+</p>
+<h4>YourContext.cs</h4>
+<pre data-language="csharp" class="rainbow">//other code
+public class YourContext : DbContext
+{
+    // Other code
+ 
+    // This DbSet contains "Person" objects and is called "Users"
+    public DbSet&lt;Person&gt; Users { get; set; }
+}
+</pre>
+<p>
+    We now have our context relating to our database, and we've added it to our application as a service. Now we can&nbsp;access it through dependency injection and add it as a property of our controller.
+    <br>
+</p>
+<h3>YourController.cs</h3>
+<pre data-language="csharp" class="rainbow">using Microsoft.EntityFrameworkCore;
+using YourNamespace.Models;
+using System.Linq;
+// Other usings
+ 
+public class YourController : Controller
+{
+    private YourContext _context;
+ 
+    public YourController(YourContext context)
+    {
+        _context = context;
+    }
+ 
+    [HttpGet]
+    [Route("")]
+    public IActionResult Index()
+    {
+        List&lt;Person&gt; AllUsers = _context.Users.ToList();
+        // Other code
+    }
+}
+</pre>
+<p>
+    Our Context can contain any number of
+    <code>DbSet</code>
+    properties, with each relating to a separate table in the database.
+</p>

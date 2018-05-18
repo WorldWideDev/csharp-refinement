@@ -1,0 +1,144 @@
+<h1>Keeping Track of Users</h1>
+<p>
+One of the most basics uses of Identity is to register new users and log them in and out. By making use of instances of the Identity 
+<code>UserManager</code> and <code>SignInManager</code> classes we can manage our users asynchronously. These are toolbox classes that are part of the Identity namespace. UserManager handles tasks like fetching users, updating them, and configuring security privileges. SignInManager does what you might expect, it's responsible for logging users in and out. Just like with our Context class, we make use of dependency injection to make our Manager objects available to our controller.</p>
+<h4>YourContoller.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using YourNamespace.Models;
+namespace YourNamespace.Controllers
+{
+    public class YourController : Controller
+    {
+        private YourContext _context;
+        private readonly UserManager&lt;User&gt; _userManager;
+        private readonly SignInManager&lt;User&gt; _signInManager;
+        public YourController(
+            YourContext context,
+            UserManager&lt;User&gt; userManager,
+            SignInManager&lt;User&gt; signInManager)
+        {
+            _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+With our Manager fields set, we can access them from anywhere in our code. Because our User management functions are all asynchronous, we'll have to declare our Controller methods as async to make use of them.</p>
+<h4>YourController.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">using System.Threading.Tasks;
+//Other code
+public async Task&lt;IactionResult&gt; Method(RegisterViewModel model)
+{
+    if(ModelState.IsValid)
+    {
+        //Create a new User object, without adding a Password
+        User NewUser = new User { UserName = model.UserName, Email = model.Email };
+        //CreateAsync will attempt to create the User in the database, simultaneously hashing the
+        //password
+        IdentityResult result = await _userManager.CreateAsync(NewUser, model.Password);
+        //If the User was added to the database successfully
+        if(result.Succeeded)
+        {
+            //Sign In the newly created User
+            //We're using the SignInManager, not the UserManager!
+            await _signInManager.SignInAsync(NewUser, isPersistent: false);
+        }
+        //If the creation failed, add the errors to the View Model
+        foreach( var error in result.Errors )
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+    }
+    return View(model);
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+Our UserManager object has a variety of useful methods we can make use of:</p>
+<h5>UserManager Methods</h5>
+<table border="2">
+    <tbody>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Use
+            </th>
+            <th>
+                Parameters
+            </th>
+        </tr>
+        <tr>
+            <td>
+                FindByEmailAsync()
+            </td>
+            <td>
+                Fetches a user based on their Email
+            </td>
+            <td>
+                A string containing an email
+            </td>
+        </tr>
+        <tr>
+            <td>
+                FindByIdAsync()
+            </td>
+            <td>
+                Fetches a user based on their Id
+            </td>
+            <td>
+                A string containing an Id
+            </td>
+        </tr>
+        <tr>
+            <td>
+                FindByNameAsync()
+            </td>
+            <td>
+                Fetches a user based on their UserName
+            </td>
+            <td>
+                A string containing a username
+            </td>
+        </tr>
+        <tr>
+            <td>
+                UpdateAsync()
+            </td>
+            <td>
+                Update a user in our database
+            </td>
+            <td>
+                A User object containing the changes we wish to save
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p>
+There are also a variety of security-based methods on UserManager that we'll learn about later.</p>
+<p>
+Our SignInManager object is responsible for actually logging in our users. It has two main functions that we'll make use of to achieve this. When we already have access to an entire user object we can use <code>SignInAsync()</code>:</p>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">await _signInManager.SignInAsync(UserObject, isPersistent: false);
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+The second parameter, isPersistent, tells the manager whether to keep the user logged in when the browser is closed. We could add a RememberMe field to our register or login view model to allow the user to choose to be kept logged in. This is the method we usually use after registering a new user.</p>
+<p>
+The other way to log users in only requires a UserName and un-hashed Password:</p>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">IdentityResult result = await _signInManager.PasswordSignInAsync(UserName, Password, isPersistent: false, lockoutOnFailure: false);
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+This sign-in method is usually used for logging in an existing user. Because we have to make sure that the login attempt was valid we return an <code>IdentityResult</code> object. The <code>IdentityResult</code> object has a <code>.Succeeded</code> property which tells us whether a matching user was found. Again, we have the option to sign in persistently but now we can also lock someone trying to log in out if they fail a certain number of times.</p>
+<p>Signing out is also handled by the SignInManager. We don't have to pass the method any parameters because it knows to just log out the current user.</p>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">await _signInManager.SignOutAsync();
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+One operation we often want to perform multiple times in our code is fetching the user that's currently logged in. We have global access to 
+<code>HttpContext.User</code> which will give us the <code>ClaimsPrincipal</code> of the currently logged in user, an object that contains the identity and security privileges of the user. We can pass this to the UserManager's <code>GetUserAsync</code> method to get the entire User object. Because we know we'll be doing this a lot it's a good idea to pull it out into a little helper function.</p>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">private Task&lt;User&gt; GetCurrentUserAsync()
+{
+    return _userManager.GetUserAsync(HttpContext.User);
+}
+</code>

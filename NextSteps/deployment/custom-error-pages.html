@@ -1,0 +1,34 @@
+<h1>Custom Error Pages</h1>
+<p>While developing, we have been able to toggle on a detailed error page to show as our view when things go wrong, but this level of information is not what we want to deliver to our users. Not only will the information typically not be understandable for them, but may also expose more sensitive information regarding our server-side code. What we need to do instead is deliver the correct HTTP status code as a general response when working in production.</p>
+<p>
+</p>
+<p>The first steps we should take toward this are to make sure that we have our environment variables set up as covered in the previous tab and change our Startup code to only display the developer exception page when the current environment variable is set to "Development". From there we should add some lines of code that allow us to render our own error pages instead when&nbsp;working outside of "Development" (Typically being "Production"). To do this we will add 2 other methods from the same Diagnostics package as UseDeveloperExceptionPages. The first method <code>.UseExceptionHandler()</code> defines the new default exception page to use by specifying the route location of your new error page.</p>
+<p><strong><br></strong></p><p><strong>Startup.cs</strong></p><strong>
+</strong><p><strong></strong></p>
+<pre data-language="c#" class=" code-toolbar  language-c"><code class="# # language-c language-c">public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+{
+     if (env.IsDevelopment())
+     {
+          app.UseDeveloperExceptionPage();
+          app.UseDatabaseErrorPage();
+          app.UseBrowserLink();
+     }
+     else
+     {
+          app.UseExceptionHandler("/Error/Default");
+     }
+     app.UseStaticFiles();
+     app.UseMvc();
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>Inside the code above we can see the UseExceptionHandler method is accepting a string of "/Error/Default". This specifies a route for the location of the default error view. When an error throws from here, ASP.NET Core will now attempt to navigate to this route and display any view returned. We have built an Error controller with a Default method, allowing us to make use of the [controller]/[method] routing convention in this case.</p>
+<p><strong><br></strong></p><p><strong>Controllers/ErrorController.cs</strong></p><strong>
+</strong><p><strong></strong></p>
+<pre data-language="c#" class=" code-toolbar  language-c"><code class="# # language-c language-c">public class ErrorController : Controller
+{
+    public IActionResult Default()
+    {
+        return View("~/Views/Shared/Errors/Default.cshtml");
+    }
+}
+</code>

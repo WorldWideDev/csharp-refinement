@@ -1,0 +1,77 @@
+<h1>Encryption</h1>
+<p>
+    Now that we know how to use models, we can take advantage of ASP.NET Core's built-in encryption tool. This will be our introduction to Microsoft's Identity suite, which we'll dive deeper into when we learn about Entity Framework in the next chapter.
+</p>
+<p>
+    The AspNetCore.All suite of packages gives us access to the
+    <code>PasswordHasher</code>
+    method which implements the same encryption technique as the
+    <code>Cryptohelper</code>
+    package we used previously.
+    <code>PasswordHasher</code>
+    's syntax is very similar as well, however, we now use a
+    <code>PasswordHasher</code>
+    object in the hashing process. The PasswordHasher object requires that a user datatype is to be associated with it and the hashing method itself requires an instance of that class be passed to it.
+</p>
+<h3>User.cs</h3>
+<pre data-language="language-csharp" class="active_pre">namespace YourNamespace.Models
+{
+    //Other fields
+    public string Password { get; set; }
+}
+</pre>
+<h3>YourController.cs</h3>
+<pre data-language="csharp" class="code-toolbar language-csharp">using Microsoft.AspNetCore.Identity;
+//Other using statements
+namespace YourNamespace.Controllers
+{
+    public class YourController : Controller
+    {
+        //Route
+        public IActionResult Method(User user)
+        {
+            if(ModelState.IsValid)
+            {
+                PasswordHasher&lt;User&gt; Hasher = new PasswordHasher&lt;User&gt;();
+                user.Password = Hasher.HashPassword(user, user.Password);
+                //Save your user object to the database
+            }
+        }
+    }
+}
+</pre>
+<p>
+    We will also make use of the
+    <code>PasswordHasher</code>
+    to verify our password submissions with the hashed password. We do this with the aptly named
+    <code>VerifyHashedPassword</code>
+    method, which returns an integer value to indicate success or failure. If the method returns a
+    <code>0</code>
+    , it means that verification failed.
+</p>
+<h3>YourController.cs</h3>
+<pre data-language="csharp" class="code-toolbar language-csharp">using Microsoft.AspNetCore.Identity;
+//Other using statements
+namespace YourNamespace.Controllers
+{
+    public class YourController : Controller
+    {
+        //Route
+        public IActionResult LoginMethod(string Email, string PasswordToCheck)
+        {
+            // Attempt to retrieve a user from your database based on the Email submitted
+            var user = userFactory.GetUserByEmail(Email);
+            if(user != null &amp;&amp; PasswordToCheck != null)
+            {
+                var Hasher = new PasswordHasher&lt;User&gt;();
+                // Pass the user object, the hashed password, and the PasswordToCheck
+                if(0 != Hasher.VerifyHashedPassword(user, user.Password, PasswordToCheck))
+                {
+                    //Handle success
+                }
+            }
+            //Handle failure
+        }
+    }
+}
+</pre>

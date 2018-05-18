@@ -1,0 +1,46 @@
+<h1>Getting Started</h1>
+<hr>
+<p><strong>Note, it is important to give your new project a unique name. If not it may cause problems with dependencies!</strong></p>
+<hr>
+<p>Getting started with an ASP.NET Core MVC app is just as simple as it was to get started with your very first console application with .NET Core. This is a result of the scaffolds that are part of the <code>dotnet new</code> command. For our first ASP.NET Core app rather than using the console argument we will instead provide "web" as an argument to the dotnet new command.</p>
+<pre data-language="bash" class="rainbow active_pre">dotnet new web
+</pre>
+<p>With this we will have a working barebones ASP.NET Setup  with the same familiar csproj file and Program.cs however both have experience some slight changes. The csproj file now includes the dependencies for the ASP.NET Framework and the Main function in Program.cs now contains logic for spinning up web server to host our code called Kestrel. The Main method also has a call to one of the new files we will see in our directory <em>Startup.cs</em>. This is simply a file that configures how our server interacts with various Http requests of what code it runs.</p>
+<h3>Startup.cs</h3>
+<pre data-language="csharp" class="rainbow">    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.DependencyInjection;
+    
+    namespace FirstAsp
+    {
+        public class Startup
+        {
+            // This method gets called by the runtime. Use this method to add services to the container.
+            // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+            public void ConfigureServices(IServiceCollection services)
+            {
+            }
+    
+            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+            {
+                if (env.IsDevelopment())
+                {
+                    app.UseDeveloperExceptionPage();
+                }
+    
+                app.Run(async (context) =&gt;
+                {
+                    await context.Response.WriteAsync("Hello World!");
+                });
+            }
+        }
+    }
+</pre>
+<p>At its most basic that's all we need to run our&nbsp;code on the web using ASP.NET. Simply <code>dotnet restore</code> and <code>dotnet run</code> as usual and we will be delivered a hello world message on localhost:5000. From here we still need to learn how to make use of the new tools at our command.</p>
+<p>At its most basic that's all we need to run our&nbsp;code on the web using ASP.NET. Simply <code>dotnet restore</code> and <code>dotnet run</code> as usual and we will be delivered a hello world message on localhost:5000. From here we still need to learn how to make use of the new tools at our command.</p>

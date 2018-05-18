@@ -1,0 +1,25 @@
+<h1>Deploying with a Database</h1>
+<p>For our first deployment with a database, we're going to use Azure's new built-in MySQL tool. Follow the regular deployment instructions and then navigate to the "MySQL In APP (preview)" tab as shown. Turn on the in-app Db and save it. Navigate to your deployed page once and the database tools will be activated, then click "Manage" at the top of the MySQL In App tab. <strong>If you do not visit your page at least once you will be unable to access the database tools!</strong></p>
+<p>
+ <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4024/handouts/chapter4024_7502_InAppMySql.PNG"></p>
+<p>If you see the following screen when you attempt to manage your DB:</p>
+<p>
+ <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4028/handouts/chapter4028_7611_wrongdbmanage.PNG"></p>
+<p><strong>Then</strong> <strong>you have not visited your page yet!</strong> Navigate to your deployed site, even if it has no content yet.</p>
+<p>You can manually create a database within the database admin page, or upload a copy of a local database. To copy one or your existing databases you'll have to first export it into a <code>.sql</code> file. To do so, open up one of your MySQL workbench connections and select "Data Export" under the "Server" tab. Choose the schema/s you want to copy&nbsp;and make sure to check the "Include Create Schema" option. Once the <code>.sql</code> file has been created, return to the Azure database manager.</p>
+<p>
+ <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4024/handouts/chapter4024_7503_DataExport.PNG"></p>
+<ol>
+ <li>Choose the <code>.sql</code> file you created.</li> <li>Upload the schema and copy it to your in-app database.</li> <li>Use the given IP and Port to configure the database connection string in your code.</li></ol>
+<p>
+ <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4024/handouts/chapter4024_7507_phpAdmin.PNG"></p>
+<p>Whether you create a new schema or upload one, you will have to configure your connection string to match your in-app database.</p>
+<pre data-language="javascript" class=" code-toolbar language-javascript"><code class="  language-javascript">{
+    "DBInfo":
+    {
+        "Name": "MySQLconnect",
+        "ConnectionString": "server=127.0.0.1;userid=root;password=password;port=YourDbPort;database=YourDbName;SslMode=None"
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>With your connection string set up, simply commit the new changes to your git repo and push it to Azure!</p>

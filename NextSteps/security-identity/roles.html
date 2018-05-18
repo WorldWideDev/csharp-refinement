@@ -1,0 +1,89 @@
+<h1>User Roles</h1>
+<p>
+ On an average website, not all users are going to have the same permissions. Imagine if every user on the Coding Dojo website had the ability to assign belts, or remove students from cohorts, or delete content? It would be chaos! It's important for a web app to be able to classify its users and differentiate administrators from regular users. One way we can do this with Identity is Roles. We can Authorize certain methods or entire Controllers to only be accessible to users who belong to one or more appropriate Role. When a user tries to access a route that they don't have the appropriate permission for, they will be redirected to the "AccessDeniedPath" mentioned in the previous tab, instead of the "LoginPath" that unregistered users are sent to.</p>
+<p>
+  When we create a Role it gets stored in the database so we don't need to execute the creation code more than once. This makes Startup.cs the ideal place for Role creation since it will only be run once when the server starts.</p>
+<p>
+ We don't need any additional dependencies to take advantage of Roles so we won't modify project.json at all.</p>
+<h4>Startup.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">//Other usings
+using System.Threading.Tasks;
+using System;
+//Other code
+public void Configure(IApplicationBuilder app)
+{
+    //Other middleware
+    InitializeRoles(app.ApplicationServices).Wait();
+    app.UseMvc();
+}
+private async Task InitializeRoles(IServiceProvider serviceProvider)
+{
+    // Array of Roles to create
+    string[] RolesToCreate = new string[] {"Level1", "Level2", "Level3"};
+    RoleManager&lt;IdentityRole&gt; roleManager = serviceProvider.GetRequiredService&lt;RoleManager&lt;IdentityRole&gt;&gt;();
+    foreach( string role in RolesToCreate )
+    {
+        // If a Role doesn't already exist, create it
+        if( !await roleManager.RoleExistsAsync(role) )
+        {
+            await roleManager.CreateAsync( new IdentityRole(role) );
+        }
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+ This code will create any Roles that we list in the "RolesToCreate" Array. A Role doesn't need any additional information beyond a string that identifies it. When our server starts up, this code will be executed as part of the initialization process and the Roles will be saved to the "AspNetRoles" table in our database. With our Roles created we can start adding users to them. We can do this anywhere we have access to the UserManager object. We might add every new user to a low-level Role as soon as they're created, but high-level Roles like administrator might only have users added to them manually. It's important to ensure that Roles with high-level permissions don't accidentally have unwanted users added to them.</p>
+<h4>YourController.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">// Other usings
+using Microsoft.AspNetCore.Identity.EnittyFrameworkCore;
+namespace YourNamespace.Controllers
+{
+    public class YourController : Controller
+    {
+        // Other code
+        public async Task&lt;IActionResult&gt; Register(RegisterViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                User user = new User {...};
+                IdentityResult result = await _userManager.CreateAsync(user, model.Password);
+                if(result.Succeeded)
+                {
+                    // Each new user is added to the "Level1" Role
+                    await _userManager.AddToRoleAsync(user, "Level1");
+                    // Sign in user and continue operations
+                }
+            }
+        }
+        [HttpGet]
+        [Route("level3route")]
+        
+        public IActionresult AdminMethod()
+        {
+        }
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+We can restrict individual methods to only be accessible to specific Roles by modifying the <code>AuthorizeAttribute</code>. Suppose we have a method that allows other users to be deleted or given additional Roles. We would only want to allow high-level users to visit such a route.</p>
+<h4>YourController.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">//Other code
+[HttpGet]
+[Route("level3route")]
+[Authorize(Roles = "Level3")]
+public IActionresult AdminMethod()
+{
+    // Perform sensitive operations
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>We don't have to restrict each method to only one Role. If we want to make a route that can be accessed by "Level2" as well as "Level3" users we simply have to include both Roles in the Roles variable:</p>
+<h4>YourController.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">//Other code
+[HttpGet]
+[Route("highlevelroute")]
+[Authorize(Roles = "Level3, Level2")]
+public IActionresult HighLevelMethod()
+{
+    // Perform less sensitive operations
+}
+</code>

@@ -1,0 +1,36 @@
+<h1>Deploying with Azure</h1>
+<p>Microsoft's Azure deployment platform is a quick and easy way to deploy our .NET based web apps. When we deploy using Amazon AWS we have to manually configure our reverse proxy (Nginx) and install a number of packages to get everything working. With Azure, all of the configuration is handled for us! We simply have to add <code>IISIntegration</code> to our project and then push it to Azure with Git integration. IIS, which stands for Internet Information Services, is Microsoft's web server software. It was designed to work exclusively on windows machines&nbsp;and was previously the go-to server for ASP.NET deployment. Azure uses windows servers and requires us to use IIS to handle HTTP requests in the deployment environment.</p>
+<h3>web.config</h3>
+<pre data-language="xml" class="active_pre rainbow">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;configuration&gt;
+    &lt;system.webServer&gt;
+        &lt;handlers&gt;
+        &lt;add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModule" resourceType="Unspecified"/&gt;
+        &lt;/handlers&gt;
+        &lt;aspNetCore processPath="%LAUNCHER_PATH%" arguments="%LAUNCHER_ARGS%" stdoutLogEnabled="false" stdoutLogFile=".\\logs\\stdout" forwardWindowsAuthToken="false"/&gt;
+    &lt;/system.webServer&gt;
+&lt;/configuration&gt;
+</pre>
+<p>The last step is to tell our app to use its new IISIntegration configuration. We do this in <code>Program.cs</code>:</p>
+<pre data-language="csharp" class="rainbow">using System.IO;
+using Microsoft.AspNetCore.Hosting;
+ 
+namespace YourNamespace
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            BuildWebHost(args).Run();
+        }
+        public static IWebHost BuildWebHost(string[] args) =&gt;
+            WebHost.CreateDefaultBuilder(args)
+                .UseKestrel()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseStartup&lt;startup&gt;()
+                .UseIISIntegration()
+                .Build();
+    }
+}
+</pre>
+<p>Now our app is all ready for Azure deployment!</p>

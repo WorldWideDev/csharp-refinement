@@ -1,0 +1,231 @@
+<h1>Advanced Razor</h1>
+<h2>Model Binding</h2>
+<p>
+We've implemented our Models and validations but we're still handling them in awkward manual ways. To fully take advantage of these features we'll need to use <strong>Model Binding</strong>. Model binding utilizes built-in ASP.NET Core Mvc functionality to handle creating and passing Model objects automatically.
+</p>
+<h3>Backend Model Binding</h3>
+<p>
+Backend Model binding lets us submit forms and directly bundle them into a Model and run validations automatically. We don't need any additional configuration to enable this functionality, we can use it by default:
+</p>
+<h4>Product.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">using System.ComponentModel.DataAnnotations;
+ 
+namespace YourNamespace.Models
+{
+    public class Product : BaseEntity
+    {
+         [Required]
+         [MinLength(2)]
+         public string Name { get; set; }
+ 
+         [Required]
+         public double Price { get; set; }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<h4>Create.cshtml</h4>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">&lt;form action="/create" method="POST"&gt;
+    &lt;input name="Name" type="text"/&gt;
+    &lt;input name="Price" type="number" step=".01"/&gt;
+    &lt;button type="submit"&gt;Create&lt;/button&gt;
+&lt;/form&gt;
+</code><div class="toolbar"></div></pre>
+<h4>YourController.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">// Other code
+ 
+[HttpPost]
+[Route("create")]
+public IActionResult Create(Product model)
+{
+    // As soon as the model is submitted TryValidateModel() is run for us, ModelState is already set
+    if(ModelState.IsValid)
+    {
+        // Handle Success Case
+    }
+    // Handle Failure Case
+}
+</code><div class="toolbar"></div></pre>
+<p>
+That's all it takes to use backend model binding. By having our controller methods accept entire Model objects we don't have to construct or validate them manually.
+</p>
+<h3>Frontend Model Binding</h3>
+<p>
+Frontend Model Binding allows us to bind a Model instance to a View when it is rendered. The Model object becomes available throughout the view as a local variable without the use of ViewBag. It also enables the use of <code>TagHelpers</code>, which we'll learn more about in the next section.
+</p>
+<p>
+To enact frontend model binding on a View we use the <code>@model</code> Razor directive at the top of the file:
+</p>
+<h4>Display.cshtml</h4>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">@model YourNamespace.Models.Product
+ 
+&lt;h2&gt;@Model.Name costs $@Model.Price&lt;h2&gt;
+</code><div class="toolbar"></div></pre>
+<p>
+On&nbsp;the backend we can now pass our Model instance as an argument to the View method to bind it:
+</p>
+<h4>YourController.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">// Other code
+ 
+[HttpGet]
+[Route("display")]
+public IActionResult Display()
+{
+    Product DisplayProduct = new Product(){
+        Name = "Baseball Cap",
+        Price = 19.99
+    };
+    
+    return View(DisplayProduct);
+}
+</code><div class="toolbar"></div></pre>
+<p>
+We can also bind collections of Models to a View:
+</p>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">@model IEnumerable&lt;YourNamespace.Models.Product&gt;
+</code><div class="toolbar"></div></pre>
+<p>
+Bound collections are accessed exactly like single instances, with <code>@Model</code>.
+</p>
+<p>
+<strong>Each View can only have one Model bound to it!</strong>
+</p>
+<h2>Tag Helpers</h2>
+<p>When we have a model bound to the frontend we gain the ability to use <code>TagHelpers</code>. Tag helpers allow us to associate our HTML elements with back-end attributes and do things like generate input fields for our model properties and easily display errors.</p>
+<p>
+ We don't need to include any new dependencies to use tag helpers, in fact, if you've been using Candyman you've had them configured all along! If you don't already have one, create a file called 
+ <code>_ViewImports.cshtml</code> directly inside your Views folder:</p>
+<p>
+ <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4028/handouts/chapter4028_7471_VIewImports.PNG"></p>
+<p>
+ Inside the View Imports file add this code (Candyman already supplies it for you):</p>
+<h4>_Viewimports.cshtml</h4>
+<pre data-language="C#" class=" code-toolbar language-c"><code class="# # # # # # # # # language-C# language-c language-c language-c language-c language-c language-c language-c language-c language-c">@using YourNamespace
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+</code><div class="toolbar"></div></pre>
+<p>
+ And with that, we can get started using Tag Helpers.</p>
+<h3>Forms</h3>
+<p>By utilizing Tag Helpers we can use a Model to generate our form fields and ensure that they match the Model's field names and type.&nbsp;Suppose we have a User class like so:</p>
+<h4>User.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">namespace YourNamespace.Models
+{
+    public class User : BaseEntity
+    {
+        public string FirstName { get; set; }
+ 
+        public string LastName { get; set; }
+ 
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+ 
+        public string Email { get; set; }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>
+ We can then use frontend Model binding to associate it with a form on in the View. With the model bound to our view, we can create input fields just by providing them with the name of the model field they correspond to:</p>
+<h4>Register.cshtml</h4>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">@model YourNamespace.Models.User
+ 
+&lt;form asp-controller="User" asp-action="Register" method="post"&gt;
+    &lt;label asp-for="FirstName"&gt;&lt;/label&gt;
+    &lt;input asp-for="FirstName"/&gt;
+    &lt;label asp-for="LastName"&gt;&lt;/label&gt;
+    &lt;input asp-for="LastName"/&gt;
+    &lt;label asp-for="Email"&gt;&lt;/label&gt;
+    &lt;input asp-for="Email"/&gt;
+    &lt;label asp-for="Password"&gt;&lt;/label&gt;
+    &lt;input asp-for="Password"/&gt;
+    &lt;button type="submit"&gt;Create new User&lt;/button&gt;
+&lt;/form&gt;
+</code><div class="toolbar"></div></pre>
+<p>
+ Thanks to model binding, the input fields can determine what the value of their 
+ <code>type</code> attribute should be based on the model field they match. &nbsp;Because only one Model can be bound to each View, any <code>asp-for</code> properties located anywhere in the file will attempt to use the same Model class. The <code>asp-controller</code> and <code>asp-action</code> tag helpers tell our form which method to submit to. Although our form submission uses the action name rather than a route, our controller methods must still have routes. Tag helpers simply render HTML for us, so they need a route to map to. After the submission, we can use another model binding trick to help us serve errors to the front end. When an invalid model is submitted errors are attached directly to the model, which we can send back to the view to display.</p>
+<h4>UserController.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">//Other code
+namespace YourNamespace.Controllers
+{
+    [Route("RouteName")]
+    public IActionResult Register(User user)
+    {
+        if(ModelState.IsValid)
+        {
+            //Handle success
+        }
+        return View(user);
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>
+ This does mean that we'll often end up serving the same view with multiple controller methods, one serving it initially and another re-rendering it with errors. Although it's generally recommended to only render a specific view from one method for code modularization and organization, this is an exception to the rule. The errors on our model will not persist across a redirect, so we must render from the same method that runs our validations. Once the errored model reaches our view we can use the 
+ <code>validation-summary</code> tag helper to display our errors. We can either loop through all the errors in one place or split them based on the field they correspond to.</p>
+<h4>Register.cshtml</h4>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">@model YourNamespace.Models.User
+&lt;div asp-validation-summary="All"&gt;&lt;/div&gt;
+ 
+&lt;form asp-controller="User" asp-action="Register" method="post"&gt;
+    &lt;label asp-for="FirstName"&gt;&lt;/label&gt;
+    &lt;input asp-for="FirstName"/&gt;
+    &lt;label asp-for="LastName"&gt;&lt;/label&gt;
+    &lt;input asp-for="LastName"/&gt;
+    &lt;label asp-for="Email"&gt;&lt;/label&gt;
+    &lt;input asp-for="Email"/&gt;
+    &lt;label asp-for="Password"&gt;&lt;/label&gt;
+    &lt;input asp-for="Password"/&gt;
+    &lt;button type="submit"&gt;Create new User&lt;/button&gt;
+&lt;/form&gt;
+</code><div class="toolbar"></div></pre>
+<p>
+ Now, when the page is passed an errored model it will iterate through our errors for us and display the most relevant error for each field. In addition, it will also populate our form with the values that were previously submitted, which is a great time saver when re-submitting after correcting errors. Interestingly (and usefully) the 
+ <code>asp-validation-summary</code> tag helper will also see and display any errors on model instances that we pass through <code>ViewBag</code>; this will come in handy later.</p>
+<p>
+ If we want to split our errors based on what field they apply to we use the 
+ <code>asp-validation-for</code> tag helper which is applied to a <code>span</code> tag and passed the name of the field we want to display errors for.</p>
+<h4>Register.cshtml</h4>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">@model YourNamespace.Models.User
+&lt;form asp-controller="User" asp-action="Register" method="post"&gt;
+    &lt;span asp-validation-for="FirstName"&gt;&lt;/span&gt;
+    &lt;label asp-for="FirstName"&gt;&lt;/label&gt;
+    &lt;input asp-for="FirstName"/&gt;
+    &lt;span asp-validation-for="LastName"&gt;&lt;/span&gt;
+    &lt;label asp-for="LastName"&gt;&lt;/label&gt;
+    &lt;input asp-for="LastName"/&gt;
+    &lt;span asp-validation-for="Email"&gt;&lt;/span&gt;
+    &lt;label asp-for="Email"&gt;&lt;/label&gt;
+    &lt;input asp-for="Email"/&gt;
+    &lt;span asp-validation-for="Password"&gt;&lt;/span&gt;
+    &lt;label asp-for="Password"&gt;&lt;/label&gt;
+    &lt;input asp-for="Password"/&gt;
+    &lt;button type="submit"&gt;Create new User&lt;/button&gt;
+&lt;/form&gt;
+</code><div class="toolbar"></div></pre>
+<p>
+ The <code>asp-for</code> tag helper on a label element will use the name of the field by default, but you can override this functionality by using the <code>Display</code> Data Annotation on your model.</p>
+<h4>User.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp"> public class User : BaseEntity
+{
+    [Display(Name = "First Name")]
+    public string FirstName { get; set; }
+}
+</code><div class="toolbar"></div></pre>
+<h3>Anchor Tags</h3>
+<p>
+ We can use the 
+ <code>asp-controller</code> and <code>asp-action</code> tag helpers on anchor tags the same way we use them on forms. In addition, we can also make use of the <code>asp-route-ParameterName</code> to pass along any parameters to a URL.</p>
+<h4>YourController.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">namespace YourNamespace.Controllers
+{
+    [HttpGet]
+    [Route("RouteName/{example}")]
+    public IActionResult Method(string example)
+    {
+        //Code body
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>
+ And we can link to such a route with an anchor tag like so:</p>
+<h4>SomeView.cshtml</h4>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">&lt;a asp-controller="Your" asp-action="Method" asp-route-example="PassMeThroughUrl"&gt;link with parameter&lt;/a&gt;
+</code><div class="toolbar"></div></pre>

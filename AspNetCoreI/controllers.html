@@ -1,0 +1,38 @@
+<h1>Adding MVC</h1>
+<p>We now have a working web server that is able to display text like "Hello World" on the web! The problem ends up being that all of our logic continues to live in the Program.cs and Startup.cs files. As we continue to grow our web applications this system simply is not going to work as these files would quickly become unwieldy. To combat this early, we are going to add the MVC structure to our applications! MVC will allow us to break out different components of our app into nicely sectioned class-based files and lucky for us ASP.NET Core was built very much with MVC in mind!</p>
+<p>To get started with MVC we only need to run <code>dotnet new web</code> and alter a few lines of code in our Startup class</p>
+<p>Replace the following chunk of code...</p>
+<pre data-language="csharp" class="rainbow">public void ConfigureServices(IServiceCollection services)
+{
+}
+// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+    app.Run(async (context) =&gt;
+    {
+        await context.Response.WriteAsync("Hello World!");
+    });
+}
+</pre>
+<p>With the code needed to configure the MVC middleware!</p>
+<p>
+</p>
+<pre data-language="csharp" class="active_pre rainbow">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddMvc();
+}
+// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+    app.UseMvc();
+}
+</pre>
+<p>Now we are all set! In the next tab we will go into begin to make use of this new MVC structure we have configured.</p>

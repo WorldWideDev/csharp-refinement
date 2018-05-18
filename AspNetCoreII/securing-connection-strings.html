@@ -1,0 +1,155 @@
+<h1>Securing Connection Strings</h1>
+<p>Now that we are able to work with a&nbsp;MySQL&nbsp;database, it's good to take a step back and think a little bit about what is going on. Currently, we have the Database access string hard-coded directly into our <code>DbConnector</code> class. This works&nbsp;but ends up being a security flaw since our connection information is located directly in our source code. If we were to push our project to GitHub&nbsp;(which we often will in order to deploy) anyone who views the repo would know our connection username and password, making infiltrating our database much easier.&nbsp;What we need to do is move this info to a separate file that our ASP.NET Core app will pull from, but isn't pushed out with the rest of our code on deployment.</p>
+<h2>appsettings.json</h2>
+<p>appsettings.json is the name of the file that is going to hold our sensitive information for us. Here we can list just about anything we may want as a JSON object and our program will be able to make use of them. As long as we include <code>appsettings.json</code> in our <code>.gitignore</code> it will not be&nbsp;pushed out where others can see it. In this case, we are just going to add the connection string and a name representing the connection to an&nbsp;object we name "DBInfo".</p>
+<pre data-language="json" class="rainbow">{
+    "DBInfo":
+    {
+        "Name": "MySQLconnect",
+        "ConnectionString": "server=localhost;userid=root;password=root;port=8889;database=mydb;SslMode=None"
+    }
+}
+</pre>
+<p>It's a good point to note here that again since the information in this file is sensitive, the file itself is also sensitive. <strong> Do not push your appsettings.json file to GitHub! </strong>
+</p>
+<p>So, we have our variables separated, we now need to tell our app to be looking for the appsetting.json file.</p>
+<p>Also, we need may need to to add two new namespaced to our list of using statements in Startup.cs, depending on how we scaffolded our project (<code>dotnet new mvc</code> for example, does this by default).</p>
+<pre data-language="csharp" class="rainbow">    using Microsoft.Extensions.Configuration;
+    // and
+    using Microsoft.AspNetCore.Hosting;
+</pre>
+<p>From there, we also need to add a constructor function to our Startup that runs code to include the new appsettings.json file when the program builds.</p>
+<h3>Startup.cs</h3>
+<pre data-language="csharp" class="rainbow">using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
+// Other usings
+ 
+// Other code
+public IConfiguration Configuration { get; private set; }
+ 
+public Startup(IHostingEnvironment env)
+{
+    var builder = new ConfigurationBuilder()
+    .SetBasePath(env.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+    Configuration = builder.Build();
+}
+</pre>
+<p>Now that we have the file linked to our code we need to add the "DBInfo" object as a service. This allows us to access the object in other parts of our code outside of the Startup.cs file. Note, that if we only need access to the info in appsettings.json in our Startup class, we do not need this step.</p>
+<h3>Startup.cs</h3>
+<pre data-language="csharp" class="rainbow">public void ConfigureServices(IServiceCollection services)
+{
+    // Add framework services.
+    services.Configure&lt;MySqlOptions&gt;(Configuration.GetSection("DBInfo"));
+}
+</pre>
+<p>Notice we said Configure took on type "MySqlOptions". Here we are making use of the Options pattern for configuration which enables using custom option classes to represent a group of related settings. We need to also make sure to create this option class so we have access to it later. By convention we add a folder called <code>Properties</code> in the root of our project and add the <code>MySqlOptions</code> class definition inside:</p>
+<h3>Properties/MySqlOptions.cs</h3>
+<pre data-language="csharp" class="rainbow">namespace YourNamespace
+{
+    public class MySqlOptions
+    {
+        public string Name { get; set; }
+        public string ConnectionString { get; set; }
+    }
+}
+</pre>
+<p>So with the service added there are only a few more steps left. First off anything added as a service is available to us anywhere through a process called <strong>dependency injection</strong> . What happens with services and dependency injection is some of the magic ASP.NET Core provides. Any method we call from here on out that has access to the service we have added can list the service variable as a parameter then have access to that service. It may seem a little confusing now, but hopefully, after we access our MySqlOption service we've added it will start to make sense.</p>
+<p>We can use&nbsp;dependency injection to pass our connection string from <code>appsettings.json</code> to our <code>DbConnector</code> , removing the hard-coded version we currently use. In order to take advantage of dependency injection in our <code>DbConnector</code> we'll have to make some changes to the class. Static classes cannot perform dependency injection, so we'll need to make the class instantiable:</p>
+<pre data-language="csharp" class="rainbow">using System.Collections.Generic;
+using System.Data;
+using Microsoft.Extensions.Options;
+using MySql.Data.MySqlClient;
+ 
+namespace YourNamespace
+{
+    public class DbConnector
+    {
+        private readonly IOptions&lt;MySqlOptions&gt; MySqlConfig;
+ 
+        public DbConnector(IOptions&lt;MySqlOptions&gt; config)
+        {
+            MySqlConfig = config;
+        }
+        internal IDbConnection Connection {
+            get {
+                return new MySqlConnection(MySqlConfig.Value.ConnectionString);
+            }
+        }
+        
+        //This method runs a query and stores the response in a list of dictionary records
+        public List&lt;Dictionary&lt;string, object&gt;&gt; Query(string queryString)
+        {
+            using(IDbConnection dbConnection = Connection)
+            {
+                using(IDbCommand command = dbConnection.CreateCommand())
+                {
+                   command.CommandText = queryString;
+                   dbConnection.Open();
+                   var result = new List&lt;Dictionary&lt;string, object&gt;&gt;();
+                   using(IDataReader rdr = command.ExecuteReader())
+                   {
+                      while(rdr.Read())
+                      {
+                          var dict = new Dictionary&lt;string, object&gt;();
+                          for( int i = 0; i &lt; rdr.FieldCount; i++ ) {
+                              dict.Add(rdr.GetName(i), rdr.GetValue(i));
+                          }
+                          result.Add(dict);
+                      }
+                   }
+                   return result;
+                }
+            }
+        }
+        //This method run a query and returns no values
+        public void Execute(string queryString)
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                using(IDbCommand command = dbConnection.CreateCommand())
+                {
+                    command.CommandText = queryString;
+                    dbConnection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+    }
+}
+</pre>
+<p>Note how the <code>
+        IOptions&lt;MySqlOptions&gt; config
+    </code> &nbsp;passed to the constructor function doesn't seem to come from anywhere, yet it's still something we can access. This is the dependency injection for our service mentioned earlier! Simply by listing our service as a method parameter ASP.NET knows to fill it in and grant us access to it. You can actually configure as many services as you like to make use of dependency injection. If we don't alter our other existing code from here, our controller will now be throwing an error since it is trying to use the <code>DbConnector</code> class statically, but it is no longer a static class. We have to create an instance of the class but the constructor takes one parameter for construction (which we know is actually just the injected service variable). We can inject the service to the controller as well and pass it along, but a better approach is to make the <code>DbConnector</code> a service itself then inject it into the controller. This idea of added services so as to work with dependency injection better is referred to as chaining!</p>
+<h3>Startup.cs</h3>
+<pre data-language="csharp" class="rainbow">public void ConfigureServices(IServiceCollection services)
+{
+    // Add framework services.
+    //Added DbConnector as a service
+    services.AddScoped&lt;DbConnector&gt;();
+}
+</pre>
+<p>Because <code>DbConnector</code> is no longer static we need an instance of it to perform database operations. In order to use our <code>DbConnector</code> service our controller must have a constructor that accepts it as a parameter. We add a private property that holds the <code>DbConnector</code> and set it on construction:</p>
+<h3>YourController.cs</h3>
+<pre data-language="csharp" class="rainbow">namespace YourNamespace.Controllers
+{
+    public class YourController : Controller
+    {
+        private readonly DbConnector _dbConnector;
+ 
+        public YourController(DbConnector connect)
+        {
+            _dbConnector = connect;
+        }
+ 
+        [HttpGet]
+        [Route("")]
+        public IActionResult Index()
+        {
+            List&lt;Dictionary&lt;string, object&gt;&gt; AllUsers = _dbConnector.Query("SELECT * FROM users");
+            // Other code
+        }
+    }
+}
+</pre>
