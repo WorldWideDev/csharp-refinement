@@ -1,14 +1,87 @@
-<h1>Introduction to Runtimes</h1>
-<p>Time went on, and other languages such as BASIC, Pascal, and C were invented. Note that for all these languages, whether a project was statically or dynamically linked, they were always built by software tools that could output low-level code for a specific machine only. As such, these programs could not execute on other platforms. This was painful not only for software engineers&nbsp;but for their hardware colleagues as well. Every new hardware platform started without a preexisting set of applications; more to the point, the first thing every new platform needed (if it wanted anyone to write apps for it) was a complete set of bug-free, high-performance compiler tools! Along with a growing number of hardware targets, new languages were sprouting up, as well as&nbsp;new features being added to existing languages. If that weren't enough, companies were experimenting with lots of compiler ideas to find even more bugs at build-time&nbsp;or to generate even faster/smaller machine code. The permutations of compiler revisions started to become mind-boggling.&nbsp;</p>
-<p>Eventually, a solution emerged. Compiler functionality was partitioned into front-end and back-end subcomponents. Sometimes this was only a logical distinction, but other times compilers were literally split into two separate tools. Front-end compilers <em>parse the language syntax</em>&nbsp;and <em>construct the code flow tree</em>, while back-end compilers <em>analyze the code tree</em> and handle machine language <em>code generation</em> (codegen). In this way, companies could decouple front-end innovation (new syntax checks, new language features) and back-end innovation (new logic checks, new hardware architectures, new optimizations), allowing them to innovate more independently.</p>
-<p>What is the interface between the front-end compiler and the back-end compiler? This is called <em><strong>intermediate representation</strong></em> (IR) and is in some sense a language-neutral, hardware-neutral, purely logical way of communicating the flow and intention of the high-level source code. Specific syntax checks transform into general parse trees; a compiler's data flow and logic checks transform these trees into call graphs. If you love trees and graphs, you should learn more about compilers!&nbsp;</p>
-<p>With the separation of front-end and back-end compilers, some suggested that back-end work could be done at run time instead of build time. There were some good precedents for this idea. Time for another quick historical diversion.&nbsp;</p>
-<p>A few years after FORTRAN came into use, the BASIC language was created as an easier-to-learn alternative. For this reason, the language became popular among hobbyists, and by 1977 with the&nbsp;explosion of home computing, the leading personal computers shipped with BASIC pre-loaded. &nbsp;There is no particular reason why BASIC could not be implemented as a compiled language, but the makers of these early personal computers expected users to interact with the machine via code, so a BASIC interpreter was included.&nbsp;</p>
-<h3>Interpreters</h3>
-<p>An interpreter allows for an&nbsp;instant execution of any source code entered at the text prompt, by translating immediately to machine code which is then executed. Comparing this to a compiled language like FORTRAN in which most work is handled at build-time, we see that interpreted BASIC is essentially compiled on-the-fly, including codegen of machine instructions which are executed right away when the BASIC instruction is entered.&nbsp;So with an interpreter, we essentially have the front-end and back-end compilation steps happening at execution-time.&nbsp;</p>
-<p>Those BASIC interpreters accepted high-level source code, but there was no reason why interpreters couldn't be written to accept a lower-level input. &nbsp;What if, instead of interpreting BASIC at run-time, this component accepted something more like IR as its input format? Ultimately, in separating compilers into front-end and back-end pieces, it allowed the back-end compiler to evolve into a more general runtime environment.&nbsp;</p>
-<p>Not all run times perform code generation. By the time Microsoft shipped Visual Basic (VB) in 1991, BASIC was mostly compiled, so the VB Runtime (shipped in Windows until 2009!) was more akin to a DLL than an interpreter. Another Windows example: the Visual C runtime -- who among us hasn't seen the 'VCRT' installed -- or updated -- when some other applications are installed?&nbsp;</p>
-<h3>Modern Runtimes and the JRE</h3>
-<p>Let's say our run time <em>is </em>more ambitious, though.&nbsp;A code-generating runtime gives us the possibility of pre-compiling our sources (and getting all those helpful error checks) into some 'mid-level' form on build-time&nbsp;but deferring until run-time the compilation into a low-level HW-specific format. &nbsp;Said another way, what if we designed a language with a compiler that behaved more like a purely front-end compiler, staying hardware-independent; then the language's corresponding runtime could act more like a back-end compiler. &nbsp;If there were such a language, then it would be possible for some new HW platform to have existing applications "just work" for free, by simply building a runtime for that new platform. &nbsp;</p>
-<p>This was one of the design goals for the <strong><em>Java</em></strong> language, compilers and the <em>Java Runtime Environment</em> (<strong><em>JRE</em></strong>) - a philosophy referred to as "Write Once, Run Anywhere." Java source code must be compiled, and instead of emitting platform-specific "native" code, it emits a platform-independent intermediate representation called <i>bytecode</i>. Although it is possible&nbsp;to precompile Java source code all the way down into platform-specific native code, this is rarely done since it isn't "Write Once, Run Anywhere."&nbsp;</p>
-<p>Instead, in the JRE (and in .NET, as we will find), this native codegen is done later, on the target system. Modules are compiled only when they are needed, a concept called "Just-In-Time" (JIT) compilation. A few modules might be 'JIT'ed when the app is installed, but for the remainder, the&nbsp;compilation is deferred until later -- perhaps app startup time, or when the user enables a certain feature, or even not at all if it is never needed. Just like the motivation for that first compiler, with JIT Compilation time is saved by being 'strategically lazy.'&nbsp;</p>
+<h1>Welcome to .NET</h1>
+<p>
+    By the late 1990's, developers of software for Microsoft platforms could choose from a few different languages.&nbsp;To attract a broad developer base, Microsoft had produced tools to support C++, BASIC, Assembly&nbsp;and even an implementation of Java (J++). However, over time the runtimes of these languages had diverged in both feature coverage and behavior, leading to headaches for developers inside and outside Microsoft. An initiative within the company&nbsp;was formed to create a new model for software developers, and this eventually became the
+    <strong>
+        <em>.NET Framework</em>
+    </strong>
+    .&nbsp;
+</p>
+<p>
+    The primary deliverable for this project, which was initially referred to as the Universal Runtime, was a code-generating runtime that could host a number of high-level programming languages, as well as a set of compilers that would reduce those different high-level languages into the same intermediate language (MSIL, often called Common Intermediate Language or CIL). Microsoft believed that with a single runtime they could add emerging languages, and provide features across those languages more
+    <em>consistently</em>
+    , with less effort. They took this consistency further by producing
+    <strong>Visual Studio .NET</strong>
+    , a unified development environment for all .NET languages.&nbsp;Finally, by separating code generation from the previous compile stages, this runtime could minimize the amount of new code needed to support upcoming hardware platforms.&nbsp;
+</p>
+<p>
+    The .NET Framework v1.0 was released in 2002, along with Visual Studio .NET and the programming language
+    <strong>C#</strong>
+    . New versions have been released every 1-2 years since then.&nbsp;
+</p>
+<h3>What's in the .NET?</h3>
+<p>
+    The .NET Framework consists of a number of significant components. The bottom layer is the
+    <strong>
+        <em>Common Language Runtime</em>
+    </strong>
+    (CLR). The CLR manages just-in-time compilation,&nbsp;type safety,&nbsp;memory, threads, security, and other services on behalf of applications. All source code in .NET languages are compiled beforehand into CIL, and at run-time, this code is then further compiled, managed, and run within the CLR. So it is accurate to call that source code
+    <i>
+        <strong>managed code</strong>
+    </i>
+    , and you could think of the&nbsp;CLR as an
+    <i>application virtual machine</i>
+    .&nbsp;
+</p>
+<p>
+    Sitting above the CLR, there is an extensive collection of libraries. The essential service, called the
+    <strong>
+        <em>Base Class Library</em>
+    </strong>
+    (BCL), have been included since v1.0. Since that first release in 2002, more libraries have been added with each new version of the framework. These include the following (that you should eventually learn about) and others&nbsp;(WPF, WF, WinForms, etc.):
+</p>
+<ul>
+    <li>
+        <strong>
+            <em>ASP.NET</em>
+        </strong>
+        - technology for building web apps
+    </li>
+
+    <li>
+        Windows Communication Foundation (
+        <em>
+            <strong>WCF</strong>
+        </em>
+        ) - technology for service-oriented applications
+    </li>
+
+    <li>
+        Windows Identity Foundation (
+        <strong>
+            <em>WIF</em>
+        </strong>
+        ) - authentication and claims-based identity support
+    </li>
+    <li>
+        Language-Integrated Natural Query (
+        <strong>
+            <em>LINQ</em>
+        </strong>
+        ) - adds query syntax directly into C# and VB
+    </li>
+    <li>
+        Entity Framework (
+        <strong>
+            <em>EF</em>
+        </strong>
+        ) - an ORM that uses LINQ
+    </li>
+</ul>
+<p>
+    Along with the CLR, the framework includes the compilers for languages with built-in support, such as C# and Visual Basic, and more recently, a functional language named
+    <em>F#</em>
+    . Additional languages that are or were previously supported by .NET include implementations of Java, Python, Ruby, Ada and Eiffel (J#, IronPython, IronRuby, A#). All of these featured compilers that produce CIL code consumable by the CLR.&nbsp;
+</p>
+<p>
+    We keep talking about our story's main character -- C# -- but we have not yet gotten 'up close and personal.' We'll start on that in the next section.&nbsp;
+</p>
