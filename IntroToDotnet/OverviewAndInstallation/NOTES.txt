@@ -1,0 +1,20 @@
+*break into 2 chapters
+
+CHAPTER: A History of C#
+1. Course Overview
+*remove Chapter Overview module
+2. Compiled Languages
+3. Intro to Runtimes
+4. Compilers/Runtimes Quiz
+5. Welcome to .NET
+6. What is C#? (can we get the space out of the title?)
+7. Microsoft Tools and Ecosystem
+8. Open Source, Cross-Platform
+
+CHAPTER: Installation
+1. .NET Core
+2. Installation - maybe break out into individual modules per installation?
+3. Sample C# App
+*Recap - REMOVE
+
+*VS Code - move to next chapter, so a short demo video (or even a gif?) showing some of these tools in action will have context
