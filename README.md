@@ -1,6 +1,34 @@
 # C# Refinement | Coding Dojo
 ## May, 2018
 
+1) Intro/Overview DONE (Noelle)
+
+2) Language Fundamentals DONE (Noelle)
+    i. OOP (Noelle)
+
+4) ASP.NET I : Controllers and Views (Noelle)
+    i. routing
+    ii. ViewResult/RedirectResult/JsonResult
+        => Assignment: Something with JsonResult
+    iii. Session
+    iv. Controller <=> View Data Flow
+        - ViewBag/ViewDataDictionary
+        - ViewModels
+        - Forms
+        - Forms with Models (validation)
+ 
+5) ASP.NET II Databases and Models (Devon)
+    i. Services (Devon)
+    ii. DBs w/ DbConnector
+        => Assignment: Quoting Dojo
+    iii. Dapper
+    iv. EF
+    <= BELT =>
+    v. Identity
+
+6) Deployment (Devon)
+    i. AWS
+    ii. Azure
 ### Emphesis on Service Injection
 
 Dependency Injection with services is a central aspect of the ASP.NET stack, that is severely underrepesented with course materials.  This concept requires its own lesson module, complete with assignment(s) that cover the essential aspects:
