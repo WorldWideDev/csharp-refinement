@@ -14,7 +14,7 @@ CHAPTER: A History of C#
 CHAPTER: Installation
 1. .NET Core
 2. Installation - maybe break out into individual modules per installation?
-3. Sample C# App
+3. Sample C# App - turn into an assignment?
 *Recap - REMOVE
 
 *VS Code - move to next chapter, so a short demo video (or even a gif?) showing some of these tools in action will have context

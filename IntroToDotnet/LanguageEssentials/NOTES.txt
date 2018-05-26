@@ -1,0 +1,31 @@
+1. What sets C# apart?
+2. Variables and Types
+3. Console Interaction
+4. Q: Console Quiz
+5. Conditionals
+6. Loops
+7. Random Values
+8. A: Fundamentals I
+9. Arrays
+10. Lists
+11. Dictionaries
+12. A: Collections Practice
+13. A: Boxing/Unboxing
+14. Functions
+15. A: Basic 13
+16. VS Code Debugger
+17. Q: VS Code Debugger
+18. A: Puzzles
+19. Classes
+20. A: Human
+21. A: Deck of Cards
+22. Inheritance
+23. A: Wizard, Ninja, Samurai
+24. A: Terminal RPG Encounter (OPTIONAL)
+25. Class Abstraction
+26. LINQ
+27. A: Music LINQ
+28. SQL Database Review
+29. A: Simple CRUD with MySQL
+30. OOP Advanced (OPTIONAL)
+31. Recap
