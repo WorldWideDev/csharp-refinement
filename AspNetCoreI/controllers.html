@@ -1,38 +1,28 @@
-<h1>Adding MVC</h1>
-<p>We now have a working web server that is able to display text like "Hello World" on the web! The problem ends up being that all of our logic continues to live in the Program.cs and Startup.cs files. As we continue to grow our web applications this system simply is not going to work as these files would quickly become unwieldy. To combat this early, we are going to add the MVC structure to our applications! MVC will allow us to break out different components of our app into nicely sectioned class-based files and lucky for us ASP.NET Core was built very much with MVC in mind!</p>
-<p>To get started with MVC we only need to run <code>dotnet new web</code> and alter a few lines of code in our Startup class</p>
-<p>Replace the following chunk of code...</p>
-<pre data-language="csharp" class="rainbow">public void ConfigureServices(IServiceCollection services)
-{
-}
-// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-{
-    if (env.IsDevelopment())
+<h1>Controllers</h1>
+<p>The controllers will be where we manage routing. All controllers must be found in a folder called <code>Controllers</code>. A good rule of thumb is to have a separate controller for each major kind of model our application will handle. For example, a "UsersController" should handle creating users, logging in/out, etc, while a "ProductsController" would be responsible for creating and modifying products. For our first example, we'll just have a controller called "HelloController":</p>
+<img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3759/handouts/chapter3759_7232_HellowWorldStructure.PNG">
+<p>The basic structure of each controller file will look like this:</p>
+<h3>HelloController.cs</h3>
+<pre data-language="csharp" class="rainbow">
+    using Microsoft.AspNetCore.Mvc;
+
+    namespace YourNamespace.Controllers     //be sure to use your own project's namespace!
     {
-        app.UseDeveloperExceptionPage();
+        public class HelloController : Controller   //remember inheritance??
+        {
+            //for each route this controller is to handle:
+
+            [HttpGet]       //type of request
+            [Route("")]     //associated route string (exclude the leading /)
+            public string Index()
+            {
+                return "Hello World from HelloController!";
+            }
+        }
     }
-    app.Run(async (context) =&gt;
-    {
-        await context.Response.WriteAsync("Hello World!");
-    });
-}
 </pre>
-<p>With the code needed to configure the MVC middleware!</p>
-<p>
-</p>
-<pre data-language="csharp" class="active_pre rainbow">public void ConfigureServices(IServiceCollection services)
-{
-    services.AddMvc();
-}
-// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-{
-    if (env.IsDevelopment())
-    {
-        app.UseDeveloperExceptionPage();
-    }
-    app.UseMvc();
-}
-</pre>
-<p>Now we are all set! In the next tab we will go into begin to make use of this new MVC structure we have configured.</p>
+<p>While this may seem like a lot, you've seen most of this code before! HelloController is simply a class inheriting from the MVC Controller class -- there's a lot going on that we don't have to worry about because our parent Controller class knows generally what a controller should do! Index is simply a method that returns a string.</p>
+<p>The only new pieces here are the two lines in square brackets above the Index method. These are known as <em>decorators</em>, which are placed directly above the method or attribute with which they are to be associated. There are lots of different types of decorators, but these two particularly are a simple, elegant way to associate a particular request method type and route to a specific method.</p>
+<p>The [Route] decorator accepts a string argument that represents the route string associated with a given method. For example, <code>[Route("index")]</code> matches the URL <code>localhost:5000/index</code>. They do <strong>NOT</strong>&nbsp;have leading slashes.</p>
+
+<!-- I think it's confusing to switch between different types of routing this early on; I think we should just stick with the Route decorator for now -->

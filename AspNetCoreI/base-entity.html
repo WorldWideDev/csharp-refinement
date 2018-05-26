@@ -1,0 +1,11 @@
+<h3>BaseEntity</h3>
+<p>
+A common convention when working with ASP.NET Core Models is to define a BaseEntity class that all of our Model classes inherit from. BaseEntity serves as a generic reference that we can use to distinguish our Models from all other classes. We can also add fields or&nbsp;methods to BaseEntity as long as they are used by all of our defined Models.</p>
+<p>
+BaseEntity is commonly implemented simply as an empty abstract class.
+</p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">namespace YourNamespace.Models
+{
+    public abstract class BaseEntity {}
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>

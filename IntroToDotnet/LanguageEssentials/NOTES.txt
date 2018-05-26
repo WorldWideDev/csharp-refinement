@@ -1,3 +1,5 @@
+*numbering reflects current platform order; the actual order presented here is my recommendation
+
 1. What sets C# apart? <-- MOVE TO INTRO SECTION?
 3. Console Interaction <-- MOVE TO BE FIRST
 4. Q: Console Quiz

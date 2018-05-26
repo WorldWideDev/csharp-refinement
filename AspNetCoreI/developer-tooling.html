@@ -1,40 +1,38 @@
 <h1>Error Feedback</h1>
-<p>
-As we start developing more and more complex web apps, we also start to encounter more and more errors and exceptions. Trying to resolve these issues without any feedback on what caused them can range from frustrating to near-impossible. We already have the VS Code debugger, which is a powerful tool for solving these issues, but it is sometimes hard to recognize where to begin debugging with larger projects. When a view file can't be located or a front-end resource request fails the debugger has no way to inform us&nbsp;about it. What we need instead is&nbsp;some messages about the state of our app&nbsp;to inspect for a&nbsp;potential course of action.&nbsp;We can cover this and&nbsp;other cases with some new debugging tools.
+<p>As we start developing more and more complex web apps, we will also start to encounter more errors and exceptions. Trying to resolve these issues without being provided any meaningful explanation would certainly be frustrating. The debugger can become even more useful as we try to follow the request-response cycle of a web app.</p>
+<p>We also have another tool available to us, particularly for when we don't know where exactly our app is failing. To receive more explicit error messages about the state of our app, we just need to make sure our work environment is set to <strong>Development mode</strong>. Notice in the Configure method of our Startup file the following condition:
+    <pre>
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+    </pre>
 </p>
-<h3>Startup.cs</h3>
-<pre data-language="csharp" class="rainbow">// Other using statements
-using Microsoft.Extensions.Logging;
+<p>The default environment is Production mode, which is the version of our project we want our end users to see. We wouldn't want our users to see in plain text our erroneous lines of code (i.e. a Developer Exception Page), but we certainly want to see them!</p>
+</p>
+<p>To put our current work environment into Development mode, we need to change an environment variable for .NET.</p>
+<h4>Windows</h4>
+<p><strong>Command Line</strong></p>
+<pre data-language="bash" class="rainbow">
+    setx ASPNETCORE_ENVIRONMENT Development
+</pre>
+<p><strong>PowerShell</strong></p>
+<pre data-language="bash" class="rainbow">
+    [Environment]::SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT","Development","User")
+</pre>
+<h4>macOS/Linux</h4>
+<pre data-language="bash" class="rainbow">
+    export ASPNETCORE_ENVIRONMENT=Development
+</pre>
+<p>After changing any environment variables, you should always restart any terminals you have open (including VS Code). Now on our local machine, we'll always see the Developer Exception Pages. When we are ready to deploy our application, we'll want to make sure the hosting server is set to Production mode.</p>
 
-// Other code
-public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-{
-    loggerFactory.AddConsole();
-        if (env.IsDevelopment())
-        {
-         app.UseDeveloperExceptionPage();
-        }
-    // Other middleware
-}
-</pre>
-<p>With these lines that have been added, we now have a much stronger arsenal of debugging tools! Keep in mind that these tools are meant for use only during development. The developer exception pages reveal information that we certainly wouldn't want an end user to see by accident, such as file names and entire lines of our code. However for the moment that is ok, we just need to remember to put things in production before hosting our code.</p>
-<p>To put our current work environment into Development mode we need to change a variable set by .NET on our system that is currently defaulted to Production. To do so follow the following steps for your corresponding system below!</p>
-<p><strong>Windows</strong></p>
-<p>If working from Windows Command Line run the following command to change your environment variable</p>
-<pre data-language="bash" class="rainbow">set ASPNETCORE_ENVIRONMENT=Development
-</pre><p>If&nbsp;you prefer powershell the command to do so is instead...</p><pre data-language="bash" class="rainbow">$Env:ASPNETCORE_ENVIRONMENT = "Development"
-</pre>
-<p><strong>macOS/Linux</strong></p>
-<p>In your bash terminal run the following command</p><pre data-language="bash" class="rainbow">export ASPNETCORE_ENVIRONMENT=Development
-</pre>
-<h1>Dotnet Watch
-</h1>
-<p>Before we start our first ASP.NET Core Mvc project, let's take a little detour and talk about the&nbsp; <code>Dotnet Watcher</code>&nbsp;tool. This tool allows us to tell our project to automatically rebuild and run after we make changes to our&nbsp;<code>.cs</code>&nbsp;files. Though not crucial, this tool can save us some time during our learning experience where we are bound to hit quite a few errors while developing.&nbsp;To begin using Dotnet Watcher, we need to alter our .csproj file to have the following additional lines of xml</p>
+<h1>Dotnet Watch</h1>
+<p>One more helpful tool is the <code>Dotnet Watcher</code>. Running our application with this tool tells our project to automatically rebuild and run after we make changes to our <code>.cs</code> files. Though not crucial, this tool can save us some time during our learning experience. To begin using Dotnet Watcher, we need to alter our csproj file to include the following lines of xml:</p>
 <pre data-language="xml" class="rainbow">&lt;ItemGroup&gt;
-  &lt;DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="1.0.0" /&gt;
+  &lt;DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.2" /&gt;
 &lt;/ItemGroup&gt;
 </pre>
-<p>After you restore, you will have access to the new command line keyword "watch" which can be used like so:</p>
+<p>Remember, any time you make changes to your csproj file, you should always run <code>dotnet restore</code>. After restoring, you can run your application with the Watcher tool with the following command (instead of <code>dotnet run</code>):</p>
 <pre data-language="bash" class="rainbow">dotnet watch run
 </pre>
-<p>We can follow&nbsp;<code>watch</code>&nbsp;with any command we want, like "build" or "restore".</p>
+<p>Note: Even though the Watcher is running, it may still take a few seconds for your project to rebuild after a change.</p>
