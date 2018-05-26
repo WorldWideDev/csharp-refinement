@@ -1,9 +1,27 @@
 <h1>Models</h1>
-<!-- transition from form assignment, how it can be a nuisance to pull in several separate attributes from a form, especially if they are all related -->
-<p>The last part of MVC to introduce is the M -- models. While we often think of models in relation to the database specifically, but in C#, an OOP language, these models can also play other roles. By convention, our models live in the Models folder:</p>
+<p>The last part of MVC to introduce is the M -- models. While we often think of models in relation to the database specifically, in ASP they play an even larger role.  Let's examine a few central ways models factor into this framework:</p>
+<ol>
+    <li>A type-safe means of providing data from the Controller to the View (ViewModels)</li>
+    <li>Submitting forms that map to a defined Model type.  With this, we will get slick form validation for free!</li>
+    <li>A type that will map to tables in your database. Models that bear this responsibility are conventially referred to as Entities</li>
+</ol>
+<h2>What are Models?</h2>
+<p>Models are just classes!  You will define a class type that will be used as a Model for your desired purpose.  A typical model might look like so:</p>
+<pre data-language="csharp">
+    public class Friend
+    {
+        public string FirstName {get;set;}
+        public string LastName {get;set;}
+        public string Location {get;set;}
+    }
+</pre>
+<p>Now, let's think about how a Model such as this could be utilized in the ways that were enumerated.  Well, first, we can imagine a View that wants to describe a single Friend.  Maybe we have a website that's all about connecting friends, and has a page that provides details regarding one Friend; namely, his or her first name, last name, and location.  We can say this view requires a Friend object be passed to it - so that it is guaranteed to have the data the view requires.</p>
+<p>Next, we can imagine a form that might be for creating new Friends in this FriendSite.com!  We can use special html attrubutes in our forms that will help us validate each field on our Friend model.</p>
+<p>And lastly, it's safe to assume this site would need a database to back it - and with the help of an ORM - we can map our SQL tables, and the columns they possess, to our defined Friend model class.</p>
+<h2>Models/</h2>
+By convention, our models live in the Models folder:</p>
 <p> <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3759/handouts/chapter3759_7251_ModelStructure.PNG"></p>
-<p>In contrast to the Controllers and Views folders, the Models folder is convention and not required by the framework, so you have more flexibility with how you organize the contents of your Models folder.</p>
-<p>By convention, similar to our controllers, we modify our models' namespaces to ProjNamespace<em>.Models</em>.</p>
+<p>Like the Controllers directory, and in contrast to the Views directory, the Models directory is typically named as such, so therefore you have more flexibility with how you organize its contents.</p>
 <pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">namespace YourNamespace.Models
 {
     public class User
