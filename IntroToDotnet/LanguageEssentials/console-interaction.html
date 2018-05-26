@@ -12,9 +12,11 @@ namespace ConsoleApplication
     }
 }
 </pre>
-<p>Inside our Main function, we see the function of&nbsp;<strong>Console.WriteLine().</strong>&nbsp;This is a function provided to us from the System library that will be our main means of console string output. This function accepts a value and will&nbsp;display the value passed to it&nbsp;to the terminal window as a single line.</p>
+<p>First, the Main method inside the Program class is the method that is called when we run the command <code>dotnet run</code> (whether in a console app or any other type of C# application).</p>
+<p>Inside our Main method, we see the function of&nbsp;<strong>Console.WriteLine().</strong>&nbsp;This is a function provided to us from the System library (note the <code>using System;</code> statement at the top of the file) that will be our main means of console string output. This function accepts a value and will&nbsp;display the value passed to it&nbsp;to the terminal window as a single line.</p>
 <pre data-language="csharp" class="rainbow">Console.WriteLine("Using Console.WriteLine, you can output any string to the terminal/console");
 </pre>
+<!-- simplify this section to show different ways to do string concatenation -->
 <p>Even more so, for variables that are not inherently strings, so long as the type has a valid ToString method (such as an integer), Console.WriteLine will&nbsp;display it as a string with no explicit type conversion needed!</p>
 <pre data-language="csharp" class="rainbow">int favoriteNum = 42;
 Console.WriteLine("You can even directly print numbers such as the one below...");

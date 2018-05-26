@@ -1,0 +1,15 @@
+<h1>Models</h1>
+<!-- transition from form assignment, how it can be a nuisance to pull in several separate attributes from a form, especially if they are all related -->
+<p>The last part of MVC to introduce is the M -- models. While we often think of models in relation to the database specifically, but in C#, an OOP language, these models can also play other roles. By convention, our models live in the Models folder:</p>
+<p> <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3759/handouts/chapter3759_7251_ModelStructure.PNG"></p>
+<p>In contrast to the Controllers and Views folders, the Models folder is convention and not required by the framework, so you have more flexibility with how you organize the contents of your Models folder.</p>
+<p>By convention, similar to our controllers, we modify our models' namespaces to ProjNamespace<em>.Models</em>.</p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">namespace YourNamespace.Models
+{
+    public class User
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+}</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>

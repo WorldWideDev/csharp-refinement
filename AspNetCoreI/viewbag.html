@@ -1,0 +1,32 @@
+<h1>Sending Data to the Front End</h1>
+<p>
+In order to send data to the front end we use a tool called <code>ViewBag</code>. ViewBag is a dictionary that only persists over one view return. ViewBag does not persist across redirects, so it must be set in the method that the view we want to send data to. To use ViewBag we can define properties and assign values to them:
+</p>
+<h3>YourController.cs</h3>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">//Other code
+ 
+[HttpGet]
+[Route("")]
+public IActionResult Index()
+{
+    // Here we assign the value "Hello World!" to the property .Example
+    // Property names are arbitrary and can be whatever you like
+    ViewBag.Example = "Hello World!";
+    return View();
+}
+</code><div class="toolbar"></div></pre>
+<p>
+When the resulting view is rendered, it will have access to the ViewBag property that we set.
+</p>
+<h3>Index.cshtml</h3>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">&lt;h1&gt;@ViewBag.Example&lt;/h1&gt;
+</code><div class="toolbar"></div></pre>
+<p>
+We can also use ViewBag in our front-end C# code blocks, although in general it is preferable to perform as much logic in the back-end as we can in order to keep it centralized.
+</p>
+<h3>Index.cshtml</h3>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">@{
+    string LocalString = ViewBag.Example + " Good to see you!";
+}
+&lt;h1&gt;@LocalString&lt;/h1&gt;
+</code><div class="toolbar"></div></pre>

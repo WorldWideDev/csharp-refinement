@@ -1,0 +1,42 @@
+*numbering reflects current platform order; the actual order presented here is my recommendation
+
+1. What sets C# apart? <-- MOVE TO INTRO SECTION?
+3. Console Interaction <-- MOVE TO BE FIRST
+4. Q: Console Quiz
+2. Variables and Types <-- MOVE CONVERSION TYPE SECTION TO LATER
+5. Conditionals
+6. Loops
+7. Random Values
+8. A: Fundamentals I
+9. Arrays
+10. Lists
+11. Dictionaries
+12. A: Collections Practice
+16. VS Code Debugger <-- MOVED UP
+17. Q: VS Code Debugger <-- MOVED UP
+--> NEW: Type Casting (from what is currently in the Variables and Types module)
+13. A: Boxing/Unboxing
+14. Functions
+15. A: Basic 13
+18. A: Puzzles
+
+--> NEW CHAPTER
+OOP
+19. Classes
+--> have a debugger video to demo "this", to understand how different instances interact with each other
+20. A: Human
+21. A: Deck of Cards
+22. Inheritance
+23. A: Wizard, Ninja, Samurai
+24. A: Terminal RPG Encounter (OPTIONAL)
+25. Class Abstraction
+--> add an assignment to help demo abstract classes/interfaces
+30. OOP Advanced (OPTIONAL)
+--> add advanced assignment(s)
+26. LINQ <-- MOVE ELSEWHERE
+27. A: Music LINQ <-- MOVE ELSEWHERE
+28. SQL Database Review <-- DELETE
+29. A: Simple CRUD with MySQL <-- MOVE ELSEWHERE
+    (if integrated with ASP.NET Core instead of as a console assignment, even
+    just showing how an insert statement of an object with some 10+ fields is tedious; wouldn't it be nice if you could just say "INSERT wizard INTO wizardsTable? That's what an ORM does!)
+31. Recap <-- DELETE
