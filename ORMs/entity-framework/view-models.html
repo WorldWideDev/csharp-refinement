@@ -1,0 +1,64 @@
+<h1>ViewModels</h1>
+<p>When we started working with models we learned how to use&nbsp;<code>ModelState.IsValid</code>&nbsp;to validate our form submissions. We were able to have a password confirmation field in our User class that we simply didn't use when we saved users to the database. However, with Entity Framework Core we will receive an error if the objects we try to save have fields that the database doesn't reflect. So how can we still use&nbsp;<code>ModelState</code>&nbsp;to check our validations? The solution is to use ViewModels, special models that exist solely for validations and returning errors. ViewModel is just a name for this kind of model, they don't have any different capabilities than our other models. Let's take a look at an example:</p>
+<h4>User.cs</h4>
+<pre data-language="csharp">using System;
+namespace YourNamespace.Models
+{
+    public class User : BaseEntity
+    {
+        public int UserId { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+    }
+}
+</pre>
+<p>Notice that our User class doesn't have any&nbsp;<code>DataAnnotations</code>&nbsp;on its fields anymore. This is because all of our validations now happen using the&nbsp;<code>RegisterViewModel</code>.</p>
+<h4>RegisterViewModel.cs</h4>
+<pre data-language="csharp">using System.ComponentModel.DataAnnotations;
+namespace YourNamespace.Models
+{
+    public class RegisterViewModel : BaseEntity
+    {
+        [Required]
+        [MinLength(2)]
+        [RegularExpression(@"^[a-zA-Z]+$")]
+        public string Name { get; set; }
+ 
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+ 
+        [Required]
+        [MinLength(8)]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+ 
+        [Compare("Password", ErrorMessage = "Password and confirmation must match.")]
+        public string PasswordConfirmation { get; set; }
+    }
+}
+</pre>
+<h4>YourController.cs</h4>
+<pre data-language="csharp">// Other Code
+[HttpPost]
+[Route("register")]
+public IActionResult Register(RegisterViewModel model)
+{
+    if(ModelState.IsValid)
+    {
+        User NewUser = new user
+        {
+            Name = model.Name,
+            Email = model.Email,
+            Password = model.Password
+        };
+ 
+        // Handle success
+    }
+    return View(model);
+}
+</pre>
+<p>Since all of our form-submitted data has already been validated through the&nbsp;<code>RegisterViewModel</code>&nbsp;object we don't have to re-validate it before constructing a User.<span></span></p>

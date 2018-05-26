@@ -1,0 +1,97 @@
+<h1>Dapper Relationships</h1>
+<p>We've worked a bit&nbsp;with Dapper now, but we are still missing one key component of working with any database...Relationships! Relationships are a fundamental aspect of SQL databases and as such, we should definitely be able to work with them using dapper. The thing is ... the way data is returned from a relational SQL query is somewhat odd since we will get information that corresponds to multiple models. On the model side of things, this is actual quite easy to configure. In something like a One-to-Many relationship what we need to do is just tell the model for the Many side of things that it has a link to the one by giving it a field with that Model type and on the One side we need to include a field which is a list of the Many model objects. A good example to showcase this is if we have a Model for Teams and Players where a team has many players.</p>
+<p><strong>Models/Player.cs</strong></p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">using System;
+using System.ComponentModel.DataAnnotations;
+ 
+namespace dapperRelations.Models
+{
+    public class Player : BaseEntity
+    {
+        [Key]
+        public long id { get; set; }
+ 
+        [Required]
+        public string name { get; set; }
+ 
+        [Required]
+        public string skill { get; set; }
+ 
+        public DateTime created_at { get; set; }
+ 
+        public DateTime updated_at { get; set; }
+ 
+        public Team team { get; set; }
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>Note all we had to add was the field that holds a relation to a Team object</p>
+<p><strong>Models/Team.cs</strong></p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">using System;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+ 
+namespace dapperRelations.Models
+{
+    public class Team: BaseEntity
+    {
+        public Team() {
+            players = new List&lt;Player&gt;();
+        }
+ 
+        [Key]
+        public long id { get; set; }
+ 
+        [Required]
+        public string name { get; set; }
+ 
+        [Required]
+        public string location { get; set; }
+ 
+        public DateTime created_at { get; set; }
+ 
+        public DateTime updated_at { get; set; }
+ 
+        public ICollection&lt;Player&gt; players { get; set; }
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>The team side of things is a little different, but not too crazy. We had to create a list of player objects, but why make the type an ICollection instead of List? ICollection is simply the interface that most all collections like Dictionaries and Lists implement. We are here being type safe to avoid a crash when running our query&nbsp;since the results could vary depending on the query we specify or the database we are using. We also initialize this list on model construction so that a razor view page, that may attempt to iterate through the field before it is set, does not get a null reference error!</p>
+<p>We are ready to move on to actually querying the database for a resulting relationship using dapper. For a starting example, we may want to get all the players that belong to a team when accessing any team by Id. We now have a field that can hold all these players inside a single team object, but we need to be sure we populate this field with accurate information. One approach to this could be to use a join statement, but it is hard to pull the results apart in this case and place them in their corresponding models. So what we need to do is actually run two queries at the same time by using dapper to process a multiple result grid. By specifying multiple queries in a single string to execute we can use Dapper to map back the result where we want.</p>
+<p><strong>Factories/TeamFactory.cs</strong></p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">// Other code
+public Team FindById(long id)
+{
+    using (IDbConnection dbConnection = Connection)
+    {
+        dbConnection.Open();
+        var query =
+        @"
+        SELECT * FROM teams WHERE id = @Id;
+        SELECT * FROM players WHERE team_id = @Id;
+        ";
+ 
+        using (var multi = dbConnection.QueryMultiple(query, new {Id = id}))
+        {
+            var team = multi.Read&lt;Team&gt;().Single();
+            team.players = multi.Read&lt;Player&gt;().ToList();
+            return team;
+        }
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>We can also do something similar for getting a Team associated with each player object if we query for all the player; however in this situation using a&nbsp;<strong>JOIN</strong>&nbsp;is actually favorable. That is because the resulting number of rows for this particular statement is exactly how many models we want to make. For this, we can use Dapper "Multi-mapping" to make a model for each row returned with the association set up as well!</p>
+<p><strong>Factories/PlayerFactory.cs</strong></p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">public IEnumerable&lt;Player&gt; PlayersForTeamById(int id)
+{
+    using (IDbConnection dbConnection = Connection)
+    {
+        var query = $"SELECT * FROM players JOIN teams ON players.team_id WHERE teams.id = players.team_id AND teams.id = {id}";
+        dbConnection.Open();
+ 
+        var myPlayers = dbConnection.Query&lt;Player, Team, Player&gt;(query, (player, team) =&gt; { player.team = team; return player; });
+        return myPlayers;
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>This process of Multi-Mapping looks slightly different, but can be explained. The Query takes three model generic with the first two specifying the model we are going to map to and the final one being the expected return type. We then pass a lambda function as a parameter, that specifies how we map the results to each of these models.</p>

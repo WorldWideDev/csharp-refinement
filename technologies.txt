@@ -1,0 +1,16 @@
+current tech:
+    c# language fundamentals
+    .Net core runtime/standard library
+    asp.net core mvc
+    dapper
+    entity framework
+    ajax
+
+future tech:
+    unit testing
+    identity framework
+    deeper SQL emphesis
+    async
+    MS SQL
+    docker
+    *check job postings for more!

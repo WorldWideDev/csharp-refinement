@@ -1,0 +1,10 @@
+<h1>Connecting (For Mac)</h1>
+<p>Let's access this computer. We can access our files on our local machine in two main ways. We can either use a GUI like Finder to see our files or we can use the terminal to access the file structure of our computer. To access our EC2 instance, we are going to use our terminal. This is really cool. It's as if we are right next to the EC2 instance that we bought, and we are running the terminal application on that computer. This also means that we won't have access to a GUI like Finder to access the file structure so it is crucial that we know general terminal commands to navigate the files. Fortunately, Ubuntu is very similar to Macs and most of the commands that we are familiar with will be the same.</p>
+<ol>
+<li>Run this command to connect to your EC2. You connect using ssh command, specifying where your key file is, then specifying your user name followed by an @ sign and its public DNS name.<br>
+<img src="http://i61.tinypic.com/dqkeix.png" style="background-color: initial;"></li><li>Your computer will ask you if you really want to access this computer. Type in <em>yes</em> and click enter.<br>
+<img src="http://i60.tinypic.com/10qx4wo.png" style="background-color: initial;"></li><li>The command will not work because our key file must be publicly viewable for SSH to work.<br>
+<img src="http://i61.tinypic.com/auz7nk.png" style="background-color: initial;"></li><li>We must first modify our<em>&nbsp;'myfirstinstance.pem'</em>&nbsp;file so that it can be publicly viewable by running this command. Then let's run the ssh command again.<br>
+<img src="http://i59.tinypic.com/16c0tjq.png" style="background-color: initial;"></li><li>Congratulations! We have successfully connected with our remote EC2 instance. Notice how the terminal prompt now displays Ubuntu. Make sure you celebrate!</li></ol>
+<p>
+<img src="http://i60.tinypic.com/b7gbrn.png"></p>

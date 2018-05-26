@@ -1,0 +1,86 @@
+<h1>Connecting to the Database</h1>
+<iframe src="https://player.vimeo.com/video/210988708?title=0&amp;byline=0&amp;portrait=0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" class="vimeo_responsive" style="width: 938px; height: 527.625px;" width="640" height="360" frameborder="0">&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;lt;span id="selection-marker-1" class="redactor-selection-marker"&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;gt;&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;lt;/span&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;gt;</iframe>
+<p>
+The last piece we need to start creating full-stack ASP.NET Core Mvc applications is a database. ASP.NET Core has methods that allow us to query databases, but rather than writing them over and over again in our controllers we can modularize them into a class that will execute our queries for us. In fact we've already used this DbConnector before, when we wrote our console CRUD app. We just need to include the MySql packages that allows us to configure our connection for MySql databases.
+</p>
+<pre data-language="bash" class="rainbow">#In terminal after navigating to your project directory, run the following commands
+dotnet add package MySql.Data -v 8.0.9-*
+</pre>
+<p>
+We can now create the "DbConnection.cs" file in the root of our project, just like before:
+</p>
+<h3>DbConnection.cs</h3>
+<pre data-language="csharp" class="rainbow">using System.Collections.Generic;
+using System.Data;
+using MySql.Data.MySqlClient;
+ 
+namespace DbConnection
+{
+    public class DbConnector
+    {
+        static string server = "localhost";
+        static string db = "myDatabase"; //Change to your schema name
+        static string port = "3306"; //Potentially 8889
+        static string user = "root";
+        static string pass = "root";
+        internal static IDbConnection Connection {
+            get {
+                return new MySqlConnection($"Server={server};Port={port};Database={db};UserID={user};Password={pass};SslMode=None");
+            }
+        }
+        
+        //This method runs a query and stores the response in a list of dictionary records
+        public static List&lt;Dictionary&lt;string, object&gt;&gt; Query(string queryString)
+        {
+            using(IDbConnection dbConnection = Connection)
+            {
+                using(IDbCommand command = dbConnection.CreateCommand())
+                {
+                   command.CommandText = queryString;
+                   dbConnection.Open();
+                   var result = new List&lt;Dictionary&lt;string, object&gt;&gt;();
+                   using(IDataReader rdr = command.ExecuteReader())
+                   {
+                      while(rdr.Read())
+                      {
+                          var dict = new Dictionary&lt;string, object&gt;();
+                          for( int i = 0; i &lt; rdr.FieldCount; i++ ) {
+                              dict.Add(rdr.GetName(i), rdr.GetValue(i));
+                          }
+                          result.Add(dict);
+                      }
+                      return result;
+                                      }
+                }
+            }
+        }
+        //This method run a query and returns no values
+        public static void Execute(string queryString)
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                using(IDbCommand command = dbConnection.CreateCommand())
+                {
+                    command.CommandText = queryString;
+                    dbConnection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+    }
+}
+</pre>
+<p>
+With this file in our project we can use it from our controllers to communicate with our database:
+</p>
+<h3>YourController.cs</h3>
+<pre data-language="csharp" class="rainbow">using DbConnection;
+// Other code
+[HttpGet]
+[Route("")]
+public IActionResult Index()
+{
+    List&lt;Dictionary&lt;string, object&gt;&gt; AllUsers = DbConnector.Query("SELECT * FROM users");
+    // Other code
+}
+</pre>

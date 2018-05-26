@@ -1,0 +1,256 @@
+<h1>Launch</h1>
+
+<iframe
+    src="https://www.youtube.com/embed/tfYx5ec_tTg"
+    allowfullscreen=""
+    kwframeid="1"
+    class="vimeo_responsive"
+    style="width: 938px; height: 527.625px;"
+    width="560"
+    height="315"
+    frameborder="0"
+></iframe>
+
+<p>
+    (Video courtesy of&nbsp;
+
+    <a
+        href="https://www.youtube.com/watch?v=tfYx5ec_tTg&amp;feature=youtu.be"
+        target="_blank"
+    >MicroNugget</a>
+
+    )
+</p>
+
+<p>
+    Our first step is to choose what kind of computer we want to buy (we will be choosing the free versions for every option) and turn it on. Once we have this computer up and running, then we can&nbsp;connect to it in our next tab.&nbsp;
+</p>
+
+<ol>
+    <li>
+        Sign up should only take 3-5 minutes. Once done, go to AWS console and log in:&nbsp;
+
+        <a
+            href="http://aws.amazon.com/console/"
+            target="_blank"
+        >aws.amazon.com/console/</a>
+
+        . Choose EC2 under&nbsp;
+
+        <strong>Compute</strong>
+
+        category:
+
+        <br>
+        <br>
+
+        <p>
+            <img src="http://i62.tinypic.com/2jeqkpk.png">
+            &nbsp;
+        </p>
+    </li>
+
+    <li>
+        Once inside the EC2 dashboard, we can launch our instance. Go ahead and click the large blue button that says "Launch Instance'
+
+        <br>
+
+        <img
+            src="http://i.imgur.com/zJEoKJj.png"
+            style="background-color: initial;"
+        >
+    </li>
+
+    <li>
+        Choose an Amazon Machine Image (AMI). The machine that we will be using is
+
+        <strong>
+            Ubuntu Server 16.04 LTS (PV), SSD Volume Type.&nbsp;
+        </strong>
+
+        Again, Amazon offers this for free. Click the
+
+        <strong>Select</strong>
+
+        button.
+
+        <br>
+    </li>
+
+    <img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/AmazonServerSelection.png">
+    <br>
+
+    <li>
+        Now we get to choose how powerful we want this computer to be. Let's go with the&nbsp;
+
+        <em>t2.micro</em>
+
+        &nbsp;or
+
+        <em>&nbsp;t1.micro&nbsp;</em>
+
+        or whatever free instance available. Click on&nbsp;
+
+        <strong>
+            'Next: Configure Instance Details'&nbsp;
+        </strong>
+
+        so that we can make more configurations. We will be using mostly default configurations, but it is good to know what you are able to customize.
+
+        <br>
+
+        <img
+            src="http://i60.tinypic.com/2rms09s.png"
+            style="background-color: initial;"
+        >
+    </li>
+
+    <li>
+        We won't be changing any of the default configurations for our instance details. Click
+
+        <strong>
+            &nbsp;'Next: Add Storage'
+
+            <br>
+        </strong>
+
+        <img
+            src="http://i62.tinypic.com/9vgxol.png"
+            style="background-color: initial;"
+        >
+    </li>
+
+    <li>
+        This is where we want to specify how much storage we want. We get&nbsp;
+
+        <strong>30 GB for free&nbsp;</strong>
+
+        and amazon has set up an initial storage of&nbsp;
+
+        <strong>8 GB.&nbsp;</strong>
+
+        We will leave this alone for now. Click on '
+
+        <strong>
+            Next: Tag Instance'
+
+            <br>
+        </strong>
+    </li>
+
+    <li>
+        We can give our name an instance by 'tagging' it. This is useful to do if you have a lot of instances running, but since this is our first one, we won't tag our instance. Go ahead and click '
+
+        <strong>
+            Next: Configure Security Group'
+
+            <br>
+        </strong>
+
+        <img
+            src="http://i58.tinypic.com/vpe2l2.png"
+            style="background-color: initial;"
+        >
+    </li>
+
+    <li>
+        Now in the Configure Security Group page, you have the option to create a new security group or just use an existing one. Let's create a new Security Group and let's name it as "Test Launch" with the description of "Amazon EC2 Test Launch".&nbsp;
+
+        <br>
+        <br>
+        Under this Security Group, The default allowed traffic is SSH with a protocol of TCP, this means that we can only access this instance via SSH (Putty if you're using Windows) or the Terminal if you're using Mac. We don't want that, we want it to allow MYSQL and HTTP as well. Let's add some rules:&nbsp;
+
+        <br>
+
+        <p>
+            <img src="http://i62.tinypic.com/2aeq8n6.png">
+            &nbsp;
+        </p>
+
+        <p>
+            We did this on our local machine as well. For example, we opened up port 5000 to host our web server on our localhost. Another example is most websites open up port 80 to handle HTTP requests. If you are going to cnn.com, you are going to cnn.com:80 but the browser assumes we are going to that port since we are making an HTTP request. We will allow our computer to listen to three different protocols, HTTP, MySQL, and SSH. HTTP to properly respond when a client requests something, MySQL to host our database (we have MySQL Workbench on our local computer that did this), and SSH which will be used for us to sign in securely.&nbsp;
+
+            <strong>
+                Set the Source for the MySQL&nbsp;rule to 'Anywhere' just like the SSH and HTTP&nbsp;rules and port 3306.&nbsp;
+            </strong>
+        </p>
+    </li>
+
+    <li>
+        Amazon will warn us that our EC2 instance might not be very secure. Amazon does a great job helping you secure your server. However, for our first instance, our EC2 is secure enough. Go ahead and click '
+
+        <strong>Launch'</strong>
+    </li>
+
+    <li>
+        One last step, we need to create and download a new key pair. Just imagine that you are downloading a virtual KEY in order for you to access your own server. The key will be saved with a&nbsp;
+
+        <em>.pem&nbsp;</em>
+
+        extension. Let's name this key pair as&nbsp;
+
+        <em>"myfirstinstance</em>
+
+        " then hit&nbsp;
+
+        <strong>
+            Download Key Pair
+
+        </strong>
+
+        <p>
+            <img src="http://i62.tinypic.com/razpu9.png">
+            &nbsp;
+        </p>
+
+       
+    </li>
+
+    <li>
+        Make sure you know where you downloaded your key, our
+
+        <em>&nbsp;'myfirstinstance.pem'</em>
+
+        &nbsp;file. Then, click on '
+
+        <strong>Launch Instances'</strong>
+    </li>
+
+    <li>
+        We are so close! It will take only a few seconds for our instance to be set up properly. Click on '
+
+        <strong>View Instances'&nbsp;</strong>
+
+        to check on the progress of your instance.
+
+        <br>
+
+        <img
+            src="http://i61.tinypic.com/2mhykw8.png"
+            style="background-color: initial;"
+        >
+    </li>
+
+    <li>
+        Once the&nbsp;
+
+        <strong>Instance State&nbsp;</strong>
+
+        is 'running', find the Public DNS (a URL where others can access the files of this instance, we will change this long URL with our own domain later), copy it, and paste it in your browser. This URL will not work yet. We have to connect our instance first using our key '
+
+        <strong>myfirstinstance.pem'&nbsp;</strong>
+
+        file and install programs to it so that it can be used to host a website. But....&nbsp;
+
+        <strong>CONGRATULATIONS!!!! :)&nbsp;</strong>
+
+        Make sure you celebrate. You just launched your first EC2 instance. We will connect with this instance on the next tab.
+
+        <br>
+
+        <img
+            src="http://i58.tinypic.com/w3614.png"
+            style="background-color: initial;"
+        >
+    </li>
+</ol>

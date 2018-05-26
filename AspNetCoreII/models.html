@@ -1,0 +1,25 @@
+<h1>Models</h1>
+<p> One of the powerful tools that ASP.NET Core puts in our hands is the concept of models. Models are special classes that we can use to validate user input and to facilitate making entries in a database. However, we don't need a database in order to use models. In most cases, our models will correspond to our controllers, i.e. <code>UsersController.cs</code>&nbsp;should contain methods that relate&nbsp;to <code>User</code>&nbsp;objects, though there are some exceptions. Our models live in the Models folder:</p>
+<p> <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3759/handouts/chapter3759_7251_ModelStructure.PNG"></p>
+<p> By convention, we modify the namespace that our models live in to our project namespace followed by .Models.</p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">namespace YourNamespace.Models
+{
+    public class User
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+}</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p> This basic user model doesn't have any functionality beyond a normal class yet, but just being able to define classes and use them from our controllers is useful. Classes allow us to add significance to groups of values and attach functionality to them. In the following tabs we'll learn more about the special functionality of Models.</p>
+<h3>BaseEntity</h3>
+<p>
+A common convention when working with ASP.NET Core Models is to define a BaseEntity class that all of our Model classes inherit from. BaseEntity serves as a generic reference that we can use to distinguish our Models from all other classes. We can also add fields or&nbsp;methods to BaseEntity as long as they are used by all of our defined Models.</p>
+<p>
+BaseEntity is commonly implemented simply as an empty abstract class.
+</p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">namespace YourNamespace.Models
+{
+    public abstract class BaseEntity {}
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>

@@ -1,0 +1,30 @@
+<h1>Supervisor</h1>
+<p>By default, ASP.NET Core apps always run in the foreground. This means that the terminal can't do anything else while the app is running, and it also means the terminal can't be closed without stopping our project. We can't leave our Ubuntu connection terminal open forever, and we wouldn't want to anyway. The solution is to run our app as a Daemon. A Daemon is a process that runs in the background without us needing to maintain constant control over it. In order to Daemonize our app, we're going to use a process manager called Supervisor.</p>
+<p>First, we need to install Supervisor:</p>
+<pre>sudo apt-get install supervisor
+</pre>
+<p>Next, we need to publish our app. Navigate to your project on the server and run </p>
+<pre class="active_pre">dotnet publish</pre>
+<p>. The publish command creates all the files needed for our app to run in a deployment environment (when we deployed to Azure, it ran publish for us).<br></p>
+<p>Next, we need to tell Supervisor how to run our published app. Navigate to Supervisor's configuration folder:</p>
+<pre>cd /etc/supervisor/conf.d
+</pre>
+<p>Now we can create the configuration for our specific project. Use sudo Vim or Nano to create and start editing the file in one command:</p>
+<pre>sudo vim yourprojectname.conf
+</pre>
+<p>Add the following code to the new file, substituting the name of your app:</p>
+<pre>[program:yourappname]
+command=/usr/bin/dotnet  /var/www/yourappname/bin/Debug/netcoreapp2.0/publish/yourappname.dll
+directory=/var/www/yourappname/bin/Debug/netcoreapp2.0/publish
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/yourappname.err.log
+stdout_logfile=/var/log/yourappname.out.log
+environment=ASPNETCORE_ENVIRONMENT=Production
+user=www-data
+stopsignal=INT
+</pre>
+<p>Now when we restart Supervisor, this conf file provides instructions for how to start our app as a background process.</p>
+<pre>sudo service supervisor restart
+</pre>
+<p>And that's it! If we visit our public IP&nbsp;address we should see our app running, even if we close our ubuntu terminal.</p>

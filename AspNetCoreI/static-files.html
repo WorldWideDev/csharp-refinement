@@ -1,0 +1,46 @@
+<h1>Static Files</h1>
+<p>
+    Static files (css, javascript, images) aren't compiled the way that our
+    <code>.cs</code>
+    files are and by default they aren't accessible to our app while it's running. In order to add styling and javascript to our apps we need to provide some additional configuration to our Startup class.
+</p>
+<pre data-language="csharp" class="rainbow">public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    // other configurations
+    // We will now add the UseStaticFiles() middleware, which allows our app to access our static files.
+    app.UseStaticFiles();
+    app.UseMvc();
+}
+</pre>
+<p>
+    ASP.NET Core Mvc apps will look for static files in a folder called
+    <code>wwwroot</code>
+    which we'll need to create ourselves within our main project folder. By convention
+    <code>wwwroot</code>
+    should contain subfolders for different types of static content. For example all of our css files should be in a subfolder called "css":
+</p>
+<p>
+    <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3759/handouts/chapter3759_7239_AddingWwwroot.PNG" alt="wwwroot file structure">
+</p>
+<p>
+    With the configuration out of the way we can start using static files in our views. Because our app knows by default where to look for our static files we only need to specify their location in relation to
+    <code>wwwroot</code>
+    :
+</p>
+<h3>Index.cshtml</h3>
+<pre data-language="html" class="active_pre rainbow">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset='utf-8'&gt;
+        &lt;title&gt;Index&lt;/title&gt;
+        // In this context '~' refers to the wwwroot folder
+        &lt;link rel="stylesheet" href="~/css/style.css"/&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;Hello ASP.NET Mvc!&lt;/h1&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>
+    <br>
+</p>

@@ -1,0 +1,71 @@
+<h1>ViewModels</h1>
+<p>
+When using <code>DataAnnotations</code> and <code>TagHelpers</code> with our Models we sometimes find ourselves with fields used for validation that are not reflected in our database. A common example is a "User" class definition that contains a password confirmation field. We need the confirmation field in our Model to make sure users input the password they meant to, but we don't want to save it to the database and have duplicate data. Currently this isn't a huge issue, because we can simply pull the values we care about from our Models into MySql queries. However it can be useful to set up our models such that their fields match our database's one-to-one. The solution is to use what are referred to as <code>ViewModels</code>, special models that exist solely for running validations and returning errors. ViewModel is just a name for this kind of Model, they don't have any different capabilities than our other Models. Let's take a look at an example:</p>
+<h4>User.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">using System;
+namespace YourNamespace.Models
+{
+    public class User : BaseEntity
+    {
+        public int UserId { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>Notice that our User class doesn't have any&nbsp;<code>DataAnnotations</code>&nbsp;on its fields anymore. This is because all of our validations will be run using the <code>RegisterViewModel</code>.</p>
+<h4>RegisterViewModel.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">using System.ComponentModel.DataAnnotations;
+ 
+namespace YourNamespace.Models
+{
+    public class RegisterViewModel : BaseEntity
+    {
+        [Required]
+        [MinLength(2)]
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name can only contain letters")]
+        public string Name { get; set; }
+ 
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+ 
+        [Required]
+        [MinLength(8)]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+ 
+        [Compare("Password", ErrorMessage = "Password and confirmation must match.")]
+        public string PasswordConfirmation { get; set; }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>
+Notice that the <code>ViewModel</code> doesn't contain an Id field or CreatedAt and UpdatedAt. This is because these fields are only needed when retrieving information from the database.
+</p>
+<p>
+The ViewModel will be bound to our View and used to generate the form. When the form submits our backend receives a <code>RegisterViewModel</code> and runs all the associated validations. If all of the validations pass we know its data is safe and valid to use to&nbsp;construct a User object that matches our database table.
+</p>
+<h4>YourController.cs</h4>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">// Other Code
+[HttpPost]
+[Route("register")]
+public IActionResult Register(RegisterViewModel model)
+{
+    if(ModelState.IsValid)
+    {
+        User NewUser = new User
+        {
+            Name = model.Name,
+            Email = model.Email,
+            Password = model.Password
+        };
+ 
+        // Handle success
+    }
+    return View(model);
+}
+</code>

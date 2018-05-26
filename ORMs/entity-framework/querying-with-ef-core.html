@@ -1,0 +1,59 @@
+<h1>Querying with EF Core</h1>
+<p>The only retrieval&nbsp;query&nbsp;that is&nbsp;directly part of&nbsp;Entity Framework Core is grabbing entire tables. <code>_context.Users</code> returns every entry in the table without the ability to filter or perform any other operations. EF Core relies on LINQ to perform these more complicated queries. Once we have retrieved the table we're interested in, we can chain LINQ queries as much as we like to obtain our desired result.</p>
+<h3>Retrieving</h3>
+<p>We can filter our results with the&nbsp;<code>Where</code>&nbsp;method.&nbsp;<code>Where</code>&nbsp;accepts an anonymous function as its parameter, which will check each value in an expression that evaluates to a boolean. Any values that result in "true" will be added to the return collection.</p>
+<pre data-language="csharp" class="active_pre rainbow">using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using YourNamespace.Models;
+// Other code
+public IActionResult AllAdults()
+{
+    List&lt;Person&gt; ReturnedValues = _context.Users.Where(user =&gt; user.Age &gt; 17).ToList();
+    // Other code
+}
+</pre>
+<p>If we only want one result, we can instead use the&nbsp;<code>SingleOrDefault</code>&nbsp;method. It accepts the same parameter as&nbsp;<code>Where</code>, but it can only ever return a single value (or null, if no values are found).</p>
+<pre data-language="csharp" class="rainbow">using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using YourNamespace.Models;
+// Other code
+public IActionResult GetOneUser(string Email)
+{
+    Person ReturnedValue = _context.Users.SingleOrDefault(user =&gt; user.Email == Email);
+    // Other code
+}
+</pre>
+<h3>Adding</h3>
+<p>Our Context contains a method called <code>Add</code>&nbsp;that we can pass an object which will be staged for saving&nbsp;to the database. We can then&nbsp;call the Context's&nbsp;<code>SaveChanges</code>&nbsp;method to commit any staged operations.&nbsp;Even if we don't specify which table the Person should be saved to,&nbsp;Entity Framework is smart enough to look for a DbSet that contains the appropriate&nbsp;object type&nbsp;and save the new entry there. If our database does contain multiple tables that store the same object type it does become necessary to target a specific DbSet in our&nbsp;<code>Add</code>&nbsp;call.</p>
+<h3>YourController.cs</h3>
+<pre data-language="csharp" class="rainbow">//Other code
+public IActionResult Create()
+{
+    Person NewPerson = new Person
+    {
+        Name = "Name",
+        Email = "email@example.com",
+        Password = "HashThisFirst",
+        Age = 24
+    };
+ 
+    _context.Add(NewPerson);
+    // OR _context.Users.Add(NewPerson);
+    _context.SaveChanges();
+}
+</pre>
+<h3>Updating</h3>
+<p>When we retrieve an entry from the database, it is passed by reference, not value. If we modify any of its properties we will be editing the value stored in the context and&nbsp;all we need do is call&nbsp;<code>SaveChanges</code>&nbsp;for the changes to be saved to the database.</p>
+<pre data-language="csharp" class="rainbow">Person RetrievedUser = _context.Users.SingleOrDefault(user =&gt; user.ID == SomeNumber);
+RetrievedUser.Name = "New name";
+_context.SaveChanges();
+</pre>
+<h3>Removing</h3>
+<p>To remove an entry from the database, simply pass the object to the&nbsp;<code>Remove</code>&nbsp;method.&nbsp;The&nbsp;;<code>SaveChanges</code>&nbsp;method will then execute the removal.</p>
+<pre data-language="csharp" class="rainbow">Person RetrievedUser = _context.Users.SingleOrDefault(user =&gt; user.ID == SomeNumber);
+_context.Users.Remove(RetrievedUser);
+_context.SaveChanges();
+</pre>
+<p>
+As you can see, adding, updating, and removing all require that the <code>SaveChanges</code> method be called to actually complete the operation. This is because all of these methods simply modify the local copy of the database held in our Context. We can stage as many changes as we like, adding multiple entries or editing fields across the entire database, then execute them all at once with a single call to <code>SaveChanges</code>. The ability to queue up database operations can help reduce the number of times we have to travel to the database. Performing trips to and from the database is a common bottleneck found in web apps and minimizing the number of individual transactions can improve performance.
+</p>

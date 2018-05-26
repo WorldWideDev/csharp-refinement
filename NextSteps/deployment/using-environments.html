@@ -1,0 +1,28 @@
+<h1>Environments</h1>
+<p>
+We use many tools to help write our apps that would be inappropriate for end-users to see. We wouldn't want people seeing our developer error pages and reading our error logs. When a project is released we need to ensure that all of these tools and loggers are disabled&nbsp;and that user-friendly errors are served. We could manually edit all of our code to remove these tools, but it's better practice to set them up in the first place so that we can simply toggle them off. The way we do this is by specifying the ASP.NET environment we want to use. There are three default environments: "Development", "Staging", and "Production". 
+</p>
+<p>The Development environment is the one we should be using while we write our apps. Developer exception pages and loggers should only be enabled when running in this environment.</p>
+<p>The Staging environment exists for final testing. All of our development-only tools should be disabled, and any Production options should be turned on. In fact, Staging settings should be identical to Production settings. Staging's only purpose is to catch any errors that might occur in Production before they can impact users.</p>
+<p>The Production environment is what our app will use when it's deployed. The Production environment should be as user-friendly as possible, with all of our developer tools disabled.</p>
+<p>We set our current environment using the command line:</p>
+<h5>Mac</h5>
+<pre>export ASPNETCORE_ENVIRONMENT="Development"
+</pre>
+<h5>PC</h5>
+<pre>setx ASPNETCORE_ENVIRONMENT "Development"
+</pre>
+<p>We can also make up our own environments by passing any string we want to the the ASPNETCORE_ENVIRONMENT.</p>
+<p>Setting our project to use a certain environment doesn't inherently change its configuration. We use the environment as a flag that we can check against. By convention, we try to keep all of our environment checks in Startup.cs</p>
+<h4>Startup.cs</h4>
+<pre data-language="Csharp" class=" code-toolbar language-csharp"><code class=" language-csharp language-csharp language-csharp">using Microsoft.AspNetCore.Hosting;
+// Other code
+public void Configure(IApplicationBuilder app, ILoggerFactory, IHostingEnvironment env)
+{
+    if( env.IsDevelopment() )
+    {
+        loggerFactory.AddConsole();
+        app.UseDeveloperExceptionPage();
+    }
+}
+</code>

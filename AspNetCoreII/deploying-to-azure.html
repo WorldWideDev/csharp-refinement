@@ -1,0 +1,33 @@
+<h1>Azure</h1>
+<p>Azure is Microsoft's Cloud hosting platform&nbsp;for building, deploying, and managing applications and services through a global network of Microsoft-managed data centers. It provides a wide variety of services and software to make all things relating to web server management simple and easy. For this reason deploying one of our ASP.NET Core apps to an Azure web server is quite a simple process.</p>
+<h1></h1>
+<h1>Azure Deployment Guide</h1>
+<p>In order to use Azure, you must have or create a Microsoft account. Visit&nbsp;<a href="http://azure.microsoft.com/">azure.microsoft.com</a>&nbsp;and navigate to the Azure portal if you already have an account, or create a free account otherwise.</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3893/handouts/chapter3893_7269_AzureHomePage.PNG" style="width: auto; max-width: 100%; height: auto;"></p>
+<p>Once you sign in you'll be taken to the Azure portal. From the sidebar on the left, select New resource.</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3893/handouts/chapter3893_7270_AzureNew.PNG" style="width: auto; max-width: 100%; height: auto;"></p>
+<p>You will be prompted with a list of resource options. We're going to create a new Web app, so choose&nbsp;<code>Web + mobile</code>&nbsp;and then&nbsp;<code>Web App</code>&nbsp;from the next menu.</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3893/handouts/chapter3893_7271_WebApp.PNG" style="width: auto; max-width: 100%; height: auto;"></p>
+<p>The name you choose for your app will be part of its URL upon deployment. If you signed up for the free 1-month Azure trial, select the "free trial" option from the Subscription drop-down. Create a new Resource Group by simply entering a name for it. Azure will generate a service plan for you, though their default uses the standard tier, which is more than we need. You can make a new service plan at the basic tier instead. After you've chosen all your settings, go ahead and select "create" at the bottom of the page to complete the configuration process.</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3893/handouts/chapter3893_7272_WebAppConfig.PNG" style="width: auto; max-width: 100%; height: auto;"></p>
+<p>Now that you have a shiny new Web App, navigate to the sidebar and view all resources.</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4024/handouts/chapter4024_7494_Resources.PNG" style="width: auto; max-width: 100%; height: auto;"></p>
+<p>Choose the Web App you just created and a new pane will open showing you a long list of options related to your deployment. We don't have to worry about most of these, for now, we only need the one titled "Deployment Options".</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4024/handouts/chapter4024_7467_Deployment-options.PNG" style="width: auto; max-width: 100%; height: auto;"></p>
+<p>For your deployment choice choose "Local Git Deployment" and don't worry about configuring a performance test, just select "ok".</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4024/handouts/chapter4024_7464_localgitrepo.PNG" style="width: auto; max-width: 100%; height: auto;"></p>
+<p>In order to connect a local repo to our Azure deployment, we'll need to set up some access credentials. Choose a username and password and then select "save".</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4024/handouts/chapter4024_7469_deploymentcredentials.PNG" style="width: auto; max-width: 100%; height: auto;"></p>
+<p>Now navigate back to the overview pane and you should see a new entry in the "Essentials" pane called Git Clone Url". We're going to use this URL to establish a remote connection to Azure.</p>
+<p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4024/handouts/chapter4024_7468_giturl.PNG" style="width: auto; max-width: 100%; height: auto;"></p>
+<p>
+We can create the connection from our terminal. Initialize a repo for your project and make your first commit. A remote connection to Azure is very similar to our Github connections:
+</p>
+<pre>git remote add azure {your git clone url}
+</pre>
+<p>Then push your project to Azure:</p>
+<pre>git push azure master
+</pre>
+<p>
+You will be prompted for the password you set up previously; after you input it, your project will be pushed to Azure and run a restore. After the push has completed, navigate back to the deployment options tab on Azure and you should see a record of the commit you just submitted. If the push succeeded as expected, your deployment is complete! Visit your&nbsp;<code>.azurewebsites.net</code>&nbsp;web page and enjoy your newly deployed project.
+</p>

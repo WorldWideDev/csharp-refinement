@@ -1,0 +1,18 @@
+<h1>Ajax Refresher</h1>
+<p>
+Performing AJAX with ASP.NET Core isn't any different than with any other back-end. When we make our HTTP requests with JavaScript all that matters is that the response is formatted as JSON, which we already know how to do. We could make HTTP requests with Vanilla JavaScript if we really wanted to, but the syntax to do so is ugly and clunky. Instead we can use JQuery to make our lives much easier.
+</p>
+<p>
+Querying our own routes that return JSON is no different from querying external apis. Using the JQuery <code>.get</code> and <code>.post</code> methods is always the same, no matter what url we target.
+</p>
+<pre data-language="javascript" class=" code-toolbar language-javascript"><code class="  language-javascript">$(document).ready(function(){
+    // external request
+    $.get("http://pokeapi.co/api/v2/pokemon/1", function(response){
+        // Handle the response data
+    })
+    // back-end request
+    $.get("/getusers", function(response){
+        // Handle the response data
+    })
+})
+</code><div class="toolbar"></div></pre>

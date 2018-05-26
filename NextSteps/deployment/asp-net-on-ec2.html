@@ -1,0 +1,200 @@
+<h1>Install&nbsp;</h1>
+<p>
+    Remember when we had to install a bunch of stuff to set up our development environment on our computer? We have to do the same for this EC2 instance. It only has some basic programs installed. We already have Ubuntu installed, the operating system we chose when we launched our instance, which is a flavor of Linux. We will have to download
+    <strong>dotnet</strong>
+    just like before and also
+    <strong>nginx</strong>
+    which is a web server that will serve responses to our users' requests. We also have to download and configure MySQL for database storage manually (No MAMP to help us out here!).
+</p>
+<p>
+    Note: Make sure you are logged in to your ubuntu computer (terminal for Mac, PuTTy for Windows)
+</p>
+<h2>Nginx</h2>
+<p>
+    First, let's make sure all of our packages are up to date by running this command:
+</p>
+<pre data-language="bash" class="rainbow">sudo apt-get update &amp;&amp; sudo apt-get upgrade
+</pre>
+<p>
+    Now run this command to get going and install nginx:
+</p>
+<pre data-language="bash" class="rainbow">sudo apt-get install nginx</pre>
+<p>
+    We mentioned that nginx is a web server that will handle our users' requests and responses, but doesn't Kestrel already do that for us? Kestrel is indeed a web server in its own right and does also perform this functionality, but it only runs on localhost, it does not know how to handle requests outside the 127.0.0.* band. That is where nginx comes in. We use nginx,&nbsp;in a&nbsp;sense, to sit on top of our dotnet app running Kestrel as a reverse proxy to direct
+    <em>external</em>
+    &nbsp;requests to our Kestrel instance and to take
+    <em>any response</em>
+    &nbsp;Kestrel might give and bounce them from Kestrel back out. So with nginx now installed, we need to configure it to have this connection to our Kestrel server.
+</p>
+<p>
+    Go ahead and open the nginx configuration file found at
+    <code>
+        /etc/nginx/sites-available/default
+    </code>
+    in either Vim or Nano.
+</p>
+<pre data-language="bash" class="rainbow">sudo vim /etc/nginx/sites-available/default
+or
+sudo nano /etc/nginx/sites-available/default
+</pre>
+<p>
+    and edit the following code lines...
+</p>
+<pre data-language="bash" class="rainbow">server {
+    listen 80;
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection keep-alive;
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+</pre>
+<p>
+    Now, whenever traffic comes over the default HTTP&nbsp;port of 80 it will be directed to localhost port 5000 where kestrel is running and vice versa. All we need to do from here is run
+    <code>sudo service nginx restart</code>
+    to get it working with this new configuration and we are done.
+</p>
+<h2>Choose&nbsp;a Database:</h2>
+<h3>MySql</h3>
+<h4>Install MySQL on server</h4>
+<p>
+    Next, let's move on to getting our MySql database server installed and setup.
+</p>
+<p>
+    Install MySql Server to your EC2 instance using the following command.
+</p>
+<pre data-language="bash" class="rainbow">sudo apt-get install mysql-server
+</pre>
+<p>
+    Follow the instructions and set up a root user as well as a password (we will be using 'root' as the username and password for this walkthrough)
+</p>
+<h4>Export DB and Tables from local machine</h4>
+<p>
+    From here, we want to get the database tables from our local MySQL database into our remote server's MySQL database.  A very easy way to do this is to literally copy and paste some code.&nbsp; <strong>What we will do is export our database and tables for the project we are looking to deploy as raw SQL, which we will then execute from the MySQL command shell on our server.</strong>  For the purposes of this demonstration, I will be using my 'got' schema in all the screenshots.
+</p>
+<p>Open MySqlWorkbench and open a connection, then go to the Server menu up top and choose Data Export.
+    
+On this prompt, select the Schema you wish to work with.&nbsp; Select the option to Export to Self-Contained File and name/save the sql file to wherever is easiest.&nbsp; Make sure the two checkboxes Create&nbsp;Dump... and Include Create Schema are checked.&nbsp; Then click Start Export.</p>
+<p><img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/DataExport.png"></p>
+<p>If all goes well, your SQL file will be waiting for you wherever you chose to save it.</p>
+<p><strong>You could also do this with a command-line utility!</strong></p>
+<pre data-language="bash" class="rainbow"># from your LOCAL terminal (not your server)
+mysqldump -B got -u root -p &gt; my-output-file.sql
+</pre>
+<p>Now, navigate to this file and open it in VS&nbsp;Code or a text editor. Our goal is to copy all of the SQL&nbsp;commands in this file.</p>
+<p><img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/SQLFile.png"> </p>
+<h4>Import DB and Tables to server</h4>
+<p>With your SQL code copied, go back to your terminal and get into the mysql&gt; prompt by executing the command...</p>
+<pre data-language="bash" class="rainbow">mysql -u root -p</pre>
+<p>You will be able to paste the SQL code you just copied directly into this prompt.&nbsp;&nbsp;Doing so while logged in as 'root' will create the schema and all the tables as well!</p>
+<p>To confirm the changes took place, type SHOW&nbsp;DATABASES; into the mysql prompt.&nbsp; If your database shows up, great! If not, revisit the previous MySQL&nbsp;steps.&nbsp;&nbsp;</p>
+<p> <img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/ShowDBs.png" style="display: block; margin: auto;"></p>
+<h3>Postgres</h3>
+<ol>
+    <li>
+        <p>
+            First, we need to install Postgres
+        </p>
+        <pre class="active_pre">sudo apt-get install postgresql</pre>
+    </li>
+    <li>
+        <p>
+            Next, we need to configure the default user for Postgres. To open the psql terminal we use the following command:
+        </p>
+        <pre class="active_pre">sudo -u postgres psql</pre>
+        <p>
+            You should see the terminal prompt change to
+            <code>postgres=#</code>
+        </p>
+    </li>
+    <li>
+        <p>
+            We can now modify the default user "postgres". If your connection string references a different userid you will need to change it to "postgres". We need to set the default user's password to match our connection string using the
+            <code>ALTER USER</code>
+            command:
+        </p>
+        <pre class="active_pre"> ALTER USER 'postgres' PASSWORD 'YourPostgresPassword';  </pre>
+        <p>
+            You should then see an
+            <code>ALTER ROLE</code>
+            message signaling success.
+        </p>
+    </li>
+    <li>
+        <p>
+            We now have postgres set up with our access credentials. Since we can use code first creation tools with Postgresql we don't need to transfer our local schema. After you clone your project onto the server in the next step, create a new migration from your project folder and then a database update.
+        </p>
+    </li>
+</ol>
+<h2>Dotnet</h2>
+<p>
+    At this point, we've set up our EC2 instance, installed and configured nginx, and setup a database server. We are ready to move on to the final and most crucial component of having our app deployed to the web:&nbsp;getting dotnet on our server instance.
+</p>
+<p>
+    From here, our project is good to go and can be sent to our deployment server. In this case, we will be using git to transfer the code base over. Make sure your server has git installed by running
+    <code>sudo apt-get install git</code>
+    .
+</p>
+<ul>
+    <li>
+        Push your local app to Github or an appropriate remote repository.
+        <ul>
+            <li>
+                Initialize an empty git repo at the root of your project directory.
+            </li>
+            <li>Add and Commit your changes</li>
+            <li>
+                Have a repo at GitHub ready to go.
+            </li>
+            <li>
+                Push your local changes to your remote GitHub repo.
+            </li>
+        </ul>
+    </li>
+    <li>
+        Navigate to
+        <code>/var/www</code>
+        on your remote server
+    </li>
+    <li>
+        Using the link to you remote repository copy the files to the remote using
+        <pre class="active_pre">sudo git clone &lt;remote_repo_url&gt;
+</pre>
+    </li>
+</ul>
+<p>
+    Now that we have our code on our server, we need to grant permissions to this new directory to our EC2 instance users.
+</p>
+<pre>sudo chown -R ubuntu &lt;new_dir_name&gt;
+</pre>
+<p>
+    All that is left to do now is run it! To do so, the final step is to&nbsp;install the dotnet SDK to provide us the needed terminal commands. Run the following two&nbsp;commands at the
+    <strong>root</strong>
+    of your project directory. For this walkthrough the root&nbsp;would be at /var/www/DotnetGOT
+</p>
+<pre class="active_pre">    # download a key for apt-get to include microsoft packages
+    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor &gt; microsoft.gpg
+</pre>
+<pre>    # move this key file to a directory where apt-get can see it
+    sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/
+</pre>
+<p>
+    Now, run the command to get the Microsoft product feed for Ubuntu 16.04
+</p>
+<pre>    sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" &gt; /etc/apt/sources.list.d/dotnetdev.list'
+</pre>
+<p>
+    It's now time to run an update before we move on and then get the Dotnet version 2.1.3&nbsp;SDK&nbsp;installed!
+</p>
+<pre>sudo apt-get update
+sudo apt-get install dotnet-sdk-2.1.3
+</pre>
+<p>
+    Then we can run&nbsp;
+    <code>dotnet restore</code> and
+    <code>dotnet run</code>
+    to get our app up and running. We can make sure that it all worked out as intended by navigating to the public IP of the server and we should see our running application. However, if you were to close your Ubuntu terminal now, your app would stop running on the EC2 instance. In the next section, we'll learn how to keep our&nbsp;project running even after we end our connection.
+</p>

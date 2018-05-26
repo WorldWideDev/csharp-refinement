@@ -1,0 +1,10 @@
+<h1>Initializing an Identity Database</h1>
+<p>Now that we have all of our Identity models created, it's time to initialize our database. Use your terminal to create your first migration:</p>
+<pre data-language="terminal" class=" code-toolbar  language-terminal"><code class="  language-terminal">dotnet ef migrations add FirstMigration
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+ Then run a <code>database update</code> to apply it to the database. If you use pgAdmin to view your newly created tables, it should look something like this:</p>
+<p>
+ <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4043/handouts/chapter4043_7588_IdentityDb.PNG"></p>
+<p>
+ All of these are Identity tables except for our messages table.</p>

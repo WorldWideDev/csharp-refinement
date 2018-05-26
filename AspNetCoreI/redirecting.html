@@ -1,0 +1,69 @@
+<h1>Redirecting</h1>
+<p>
+Sometimes we want to redirect to other controller methods rather than rendering a view. In ASP.NET Core MVC we use the <code>RedirectToAction()</code> response. Redirecting can also be done based on routes&nbsp;but <code>RedirectToAction</code> is preferable because our routes are more arbitrary and more&nbsp;likely to change as our code develops rather&nbsp;than our controller method names.
+</p>
+<p>
+The <code>RedirectToAction</code> method accepts a string that corresponds to the name of another method in your controller.
+</p>
+<pre data-language="csharp" class="code-toolbar language-csharp active_pre"><code class="  language-csharp">// Other code
+public class FirstController : Controller
+{
+    //  Other code
+    public IActionResult Method()
+    {
+        // Will redirect to the "OtherMethod" method
+        return RedirectToAction("OtherMethod");
+    }
+    // Other code
+    public IActionResult OtherMethod()
+    {
+        return View();
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>
+If the method you want to redirect to expects parameters you can include them too. We pass an anonymous object as an additional argument:
+</p>
+<pre data-language="csharp" class="code-toolbar language-csharp"><code class="  language-csharp">// Other code
+public IActionResult Method()
+{
+    // The anonymous object consists of keys and values
+    // The keys should match the parameter names of the method being redirected to
+    return RedirectToAction("OtherMethod", new { Food = "sandwiches", Quantity= 5 });
+}
+ 
+[HttpGet]
+[Route("other/{Food}")]
+public IActionResult OtherMethod(string Food, int Quantity)
+{
+    Console.WriteLine($"I ate {Quantity} {Food}.");
+    // Writes "I ate 5 sandwiches."
+}
+</code><div class="toolbar"></div></pre>
+<p>
+As you can see, we can use this method to pass regular parameters, route parameters, or both.
+</p>
+<p>
+If you want to redirect to another controller's method, we have to specify the controller name as well as the method name. Just like how our View folders have names like "Home" instead of "HomeController", when we refer to a controller we leave out the word "controller" from the name.
+</p>
+<pre data-language="csharp" class="code-toolbar language-csharp"><code class="  language-csharp">// Other code
+public class FirstController : Controller
+{
+    public IActionResult Method()
+    {
+        return RedirectToAction("OtherMethod", "Second");
+    }
+}
+ 
+// In another file
+public class SecondController : Controller
+{
+    public IActionResult OtherMethod()
+    {
+        return View();
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>
+We can also pass arguments when redirecting to a different controller, simply add an anonymous object as a third argument to the <code>RedirectToAction</code> method.
+</p>

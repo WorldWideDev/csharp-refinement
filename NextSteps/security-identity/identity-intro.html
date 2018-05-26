@@ -1,0 +1,7 @@
+<h1>Introduction to Identity</h1>
+<p>
+ Up until now, we've been writing our own login and registration without much concern for differentiating admins from other users, verifying emails or other user management issues. Without these kinds of features, we leave our apps open to fake logins and we have no way to control which users can see what content. Sure, we <em>could</em> implement these features manually, but Microsoft has an entire library of these kinds of features that we can make use of. ASP.NET Core Identity is a middleware that gives us access to a suite of user management tools. With Identity we gain fine control over such things as whether certain users can access our methods, utilizing third party logins (i.e. Facebook, Twitter and others), or limiting users' login attempts.
+</p>
+<p>
+ In order to make use of Identity, we need a database with a specific set of tables that each need specific columns. Thankfully we can use migrations, since creating these tables manually would be very time consuming and error-prone.
+</p>

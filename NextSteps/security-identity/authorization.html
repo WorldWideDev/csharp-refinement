@@ -1,0 +1,98 @@
+<h2>Authorizing HTTP&nbsp;Requests</h2>
+<p>Up until now, we haven't worried too much about securing our Controller methods. If one of our routes is hit that assumes a user is logged in, our app might break because we can't fetch expected data or a ViewBag might end up containing a NULL value. It's important to make sure our apps know how to respond in situations where a user should be safely redirected when they try to access a route while not logged in. The solution is to use the <code>AuthorizeAttribute</code>, an attribute we can attach to our methods to redirect unauthorized users.</p>
+<p>Since we already have Identity's user management tools enabled our app already knows now to tell whether a user is logged in or not, we just have to take advantage of it. Conveniently we can do so with just a single line:</p>
+<h4>YourController.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">using Microsoft.AspNetCore.Authorization;
+//Other code
+[Authorize]
+[HttpGet]
+[Route("SomeRoute")]
+public IActionResult Method()
+{
+    //Do stuff
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>Suppose we have a controller that contains many methods, most of which shouldn't be visited by an&nbsp;unauthenticated users. Rather than adding <code>[Authorize]</code> to each individual method, we can just append it once at the controller level and it will apply to every route defined within. </p>
+<h4>YourController.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">//Using statements
+namespace YourNamespace
+{
+    [Authorize]
+    public class YourController : Controller
+    {
+        [HttpGet]
+        [Route("SomeRoute")]
+        public IActionResult Method()
+        {
+            //Do stuff
+        } 
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>In both of these examples, the <code>/SomeRoute</code> route will be protected from users who haven't logged in. We can also allow individual methods within a controller marked with <code>[Authorize]</code> to be accessed by an&nbsp;unauthorized users using the <code>AllowAnonymous</code> attribute.</p>
+<h4>YourController.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">//Using statements
+namespace YourNamespace
+{
+    [Authorize]
+    public class YourController : Controller
+    {
+        [HttpGet]
+        [Route("SomeRoute")]
+        public IActionResult Method()
+        {
+            //Do stuff
+        } 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("OtherRoute")]
+        public IActionResult OtherMethod()
+        {
+            //Do stuff
+        } 
+    }
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>Now users who haven't logged in can access the <code>/OtherRoute</code> route but not <code>/SomeRoute</code>.</p>
+<p>By adding <code>[Authorize]</code> to the method or controller ASP.NET Core will redirect an unauthorized user to the route <code>/Account/Login</code> by default. This assumes that we're using the "/Controller/Method" route-name paradigm and that we have an "AccountController". That's all well and good but it relies on a very specific naming system. What if want to redirect users to a different route? We can do so using cookie authentication.</p>
+<h4>project.json</h4>
+<pre data-language="json" class=" code-toolbar  language-json"><code class="  language-json">//Other code
+"dependencies": {
+    //Other dependencies
+    "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0"
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>We can then configure our redirect routes with the cookie authentication middleware:</p>
+<h4>Startup.cs</h4>
+<pre data-language="C#" class=" code-toolbar  language-c"><code class="# # language-c language-c">using Microsoft.AspNetCore.Http;
+//Other code
+public void Configure(IApplicationBuilder app)
+{
+    //Other middleware
+    app.UseCookieAuthentication( new CookieAuthenticationOptions()
+    {
+        AuthenticationScheme = "Cookie",
+        LoginPath = new PathString("/loginRoute"),
+        AccessDeniedPath = new PathString("/notAllowedRoute"),
+        AutomaticAuthenticate = true,
+        AutomaticChallenge = true
+    });
+    app.useMvc();
+}
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>We're configuring a lot of options here so let's break down what each one does.</p>
+<pre>AuthenticationScheme = "Cookie"
+</pre>
+<p>This line simply tells our app that we're using cookie authentication.</p>
+<pre>LoginPath = new PathString("/loginRoute")
+</pre>
+<p>When a user tries to access a route while not logged in, they will be redirected to the route defined here.</p>
+<pre>AccessDeniedPath = new PathString("/notAllowedRoute")
+</pre>
+<p>If a user who <strong>is</strong> logged in tries to navigate to a route that they don't have sufficient permissions for, they will be redirected to this route.</p>
+<pre>AutomaticAuthenticate = true
+</pre>
+<p>By setting AutomaticAuthenticate to true our cookie will be checked to confirm the user's identity on every HTTP&nbsp;request. Otherwise, authentications have to be called manually.</p>
+<pre>AutomaticChallenge = true
+</pre>
+<p>AutomaticChallenge tells our app to automatically redirect when authorization is violated.</p>

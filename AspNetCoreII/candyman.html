@@ -1,0 +1,43 @@
+<h1>The Candyman Can!</h1>
+<p>
+Up to this point, we've been writing all of our projects from scratch and after awhile we start to notice there always seems to be a lot of base code we have to have. This is what we call boilerplate and it would be nice if we could just automate this boilerplate code generation. Well, there's a way to do this! Programmers are lazy and don't want&nbsp;to do the&nbsp;task if they can increase overall productivity skipping them. As such,&nbsp;this generator&nbsp;called scaffolding exist for us to use. In this case, the one we will be using is called Yeoman and with Yeoman, we will use the CANDYMAN package to build out a solid foundation of an ASP.NET Core project for us from here on out.
+</p>
+<p>
+ <strong>Before installing Yeoman, we will need to make sure we already have the following:</strong>
+ </p>
+<ul>
+ <li>Node.js v4 or higher</li> 
+ <li>npm</li> 
+ <li>git</li>
+ </ul>
+<p>
+ If you do not have these, you can get the latest version of Node <a href="https://nodejs.org/en/download/" target="_blank">here</a> (Note that&nbsp;npm comes packaged with Node). You should have git installed on your machine at this point, but just in case it can be found <a href="https://git-scm.com/downloads" target="_blank">here</a>.
+ </p>
+<h2>Installing Yeoman and CANDYMAN</h2>
+<p>
+ With Node and npm installing Yeoman is simple and straight forward! Just open a terminal and follow the steps below.
+</p>
+<pre data-language="bash" class=" code-toolbar  language-bash"><code class="  language-bash">sudo npm -g update
+npm install -g bower
+npm install -g yo
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p><strong>Note if you are using the older .NET Core version (Pre-1.1 Release) use the following commmand</strong></p>
+<pre data-language=" bash" =""="" class=" code-toolbar  language-undefined"><code class="language- bash  language-undefined">npm install -g generator-candyman@0.1.95
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>Otherwise simply use:</p>
+<pre data-language="bash" class=" code-toolbar  language-bash"><code class="  language-bash">npm install -g generator-candyman
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>If you have no errors during installation you are good to go and can check your install by typing
+</p>
+<pre data-language="bash" class=" code-toolbar  language-bash"><code class="  language-bash">yo --version
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<h3>Using Candyman</h3>
+<p>The generator can be used in a couple of ways. Typing the <code>yo candyman</code> command will give you a prompt to fill in all information needed or you can skip some steps by filling in the third optional parameter of the app name.
+</p>
+<pre data-language="bash" class=" code-toolbar  language-bash"><code class="  language-bash">yo candyman &lt;your app name&gt;
+</code><div class="toolbar"><div class="toolbar-item">Copy</div></div></pre>
+<p>
+After the generator has finished running all you must do is navigate to the new directory that was created (the project name) and run <code>dotnet restore</code>
+</p>
+<p><a href="https://github.com/Serghar/CANDYMAN">Link to CANDYman Github</a></p>
+<p> <br> </p>

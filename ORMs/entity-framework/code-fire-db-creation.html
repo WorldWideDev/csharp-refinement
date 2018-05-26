@@ -1,0 +1,103 @@
+<h1>Code First Database Creation</h1>
+<p>
+    Up until now, we've had to manually create our databases to match our models. But Entity Framework provides us with a tool that allows us to create database tables directly from our models! EF can read our model files to create "migrations", files that contain instructions for the database to create or modify tables.
+</p>
+<p>
+    Unfortunately, migrations are not supported with MySql databases. In order to take advantage of this feature, we're going to switch to a PostgreSQL&nbsp;database.
+</p>
+<h3>Connecting to Postgres</h3>
+<p>
+    Before we can use Postgres we'll have to install it. Follow this link to the Postgresql website's download page and choose the Binary Package appropriate to your operating system:
+</p>
+<p>
+    <a href="https://www.postgresql.org/download/">Postgres Download Page</a>
+</p>
+<p>
+    You will be asked to choose a username and password,&nbsp;
+    <strong>make sure you remember them!</strong>
+    &nbsp;You will also have the option of customizing what port Postgres uses. If you leave it as the default 5432 you won't have to specify a port in your connection string.
+</p>
+<p>
+    Postgres will function just fine without any sort of management software, but we recommend PGAdmin if you want to examine your DB contents:
+</p>
+<p>
+    <a href="https://www.pgadmin.org/download/">pgAdmin Download</a>
+</p>
+<p>
+    We'll also have to pull in a dependency to use Postgres as our database:
+</p>
+<pre data-language="bash" class="rainbow">dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL -v=2.0.1
+dotnet add package Microsoft.EntityFrameworkCore.Tools -v=2.0.1
+</pre>
+<p>
+    After we run a&nbsp;
+    <code>dotnet restore</code>
+    &nbsp;we can now configure our context to use Postgres instead of MySql.
+</p>
+<h4>Startup.cs</h4>
+<pre data-language="csharp" class="active_pre rainbow">using Microsoft.EntityFrameworkCore;
+// Other code
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDbContext&lt;YourContext&gt;(options =&gt; options.UseNpgsql(Configuration["DBInfo:ConnectionString"]));
+    // Configure other services
+}
+</pre>
+<p>
+    You'll also need to update your connection string with the username and password you chose when installing PostGres:
+</p>
+<h3>appsettings.json</h3>
+<pre data-language="javascript" class="rainbow">{
+    "DBInfo":
+    {
+        "Name": "PostGresConnect",
+        // PostGres doesn't use the "SslMode" property, make sure to remove it or the connection will be refused
+        "ConnectionString": "server=localhost;userId=postgres;password=postgres;port=5432;database=example;"
+    }
+}
+</pre>
+<h3>yourproject.csproj&nbsp;</h3>
+<p>
+    Add in another item group to free up access to the Command Line Interface tools we're about to use!
+</p>
+<pre data-language="csharp" class="rainbow">// Other packages
+&lt;ItemGroup&gt;
+    &lt;DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.1" /&gt;
+&lt;/ItemGroup&gt;
+</pre>
+<p>
+    Now that we have Postgres installed and running, we just need to enable Entity Framework Core Migrations.
+</p>
+<h3>Migrations</h3>
+<p>
+    Migrations are an extremely powerful tool for interacting with your database. &nbsp;Any time we change our models we can create new migrations to update the database accordingly but be warned, you may have to delete your existing table data if it doesn't conform to the new model structure.
+</p>
+<p>
+    Migrations are created using the Entity Framework command line tools.  After we restore our app we can create our first migration (Make sure you've created some model files first!). From the console we can create migrations like so:
+</p>
+<pre>    dotnet ef migrations add YourMigrationName
+</pre>
+<p>
+    Let's create an initial migration:
+</p>
+<pre>    dotnet ef migrations add FirstMigration
+</pre>
+<p>
+    After this code finishes executing you should see a new folder called "Migrations"
+</p>
+<p>
+    <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4043/handouts/chapter4043_7586_MigrationFiles.PNG" style="height: auto; max-width: 100%; cursor: pointer;">
+</p>
+<p>
+    With the migration file created, all that's left is to apply it to the database. We do this with another console command:
+</p>
+<pre>dotnet ef database update</pre>
+<p>
+    <code>database update</code>
+    &nbsp;takes our migration file and applies it to the database, performing the actual creation of the tables.The name of the tables we create is determined by the name we give to their corresponding&nbsp;
+    <code>DbSet</code>
+    &nbsp;field in our Context, not the name of the model they correspond to.
+</p>
+<p>
+    If you change your database significantly, it's possible that you'll receive errors when you try to run your updates. If you're having trouble, a guaranteed solution is to drop your tables, delete all of your migrations, and generate a new migration. You will lose all of your data, but this will solve any migration conflicts you may have.
+</p>

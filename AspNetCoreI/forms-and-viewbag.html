@@ -1,0 +1,54 @@
+<h1>Submitting Forms</h1>
+<p>
+Conveniently, when submitting forms we don't have to do anything special on the front end. Simply write HTML forms as you would normally, making sure that each input field has a name. On the backend, we can catch those submissions by accepting them as parameters in their targeted method.
+</p>
+<h3>Method.cshtml</h3>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">&lt;form action="method" method="post"&gt;
+    &lt;input type="text" name="TextField"/&gt;
+    &lt;input type="number" step="1" name="NumberField"/&gt;
+    &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+</code><div class="toolbar"></div></pre>
+<h3>YourController.cs</h3>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">[HttpPost]
+[Route("method")]
+public IActionResult Method(string TextField, int NumberField)
+{
+    // Do something with form input
+}
+</code><div class="toolbar"></div></pre>
+<p>
+With that, we can use those parameters in our method. It is key that the variable names we use here match the names on the input fields on the front end.
+</p>
+<h1>Sending Data to the Front End</h1>
+<p>
+In order to send data to the front end we use a tool called <code>ViewBag</code>. ViewBag is a dictionary that only persists over one view return. ViewBag does not persist across redirects, so it must be set in the method that the view we want to send data to. To use ViewBag we can define properties and assign values to them:
+</p>
+<h3>YourController.cs</h3>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">//Other code
+ 
+[HttpGet]
+[Route("")]
+public IActionResult Index()
+{
+    // Here we assign the value "Hello World!" to the property .Example
+    // Property names are arbitrary and can be whatever you like
+    ViewBag.Example = "Hello World!";
+    return View();
+}
+</code><div class="toolbar"></div></pre>
+<p>
+When the resulting view is rendered, it will have access to the ViewBag property that we set.
+</p>
+<h3>Index.cshtml</h3>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">&lt;h1&gt;@ViewBag.Example&lt;/h1&gt;
+</code><div class="toolbar"></div></pre>
+<p>
+We can also use ViewBag in our front-end C# code blocks, although in general it is preferable to perform as much logic in the back-end as we can in order to keep it centralized.
+</p>
+<h3>Index.cshtml</h3>
+<pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">@{
+    string LocalString = ViewBag.Example + " Good to see you!";
+}
+&lt;h1&gt;@LocalString&lt;/h1&gt;
+</code><div class="toolbar"></div></pre>
