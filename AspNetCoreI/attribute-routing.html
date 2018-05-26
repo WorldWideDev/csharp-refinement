@@ -1,54 +1,19 @@
 <h1>Routing</h1>
-<p>Previously we used a pretty ugly looking route syntax to display our "Hello World!" string. Luckily, ASP.NET Core MVC has an alternate syntax that is one of the simplest and most elegant of any full MVC framework. We add route attributes directly to our controller methods!</p>
-<h3>YourController.cs</h3>
-<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">// Inside your Controller class
-// Other code
- 
-// A GET method
-[HttpGet]
-[Route("index")]
-public string Index()
-{
-    return "Hello World!";
-}
- 
-// A POST method
-[HttpPost]
-[Route("")]
-public IActionResult Other()
-{
-    // Return a view (We'll learn how soon!)
-}
-</code><div class="toolbar"></div></pre>
-<p>
- <code>[HttpGet]</code> is optional on GET routes, but all POST routes <strong>must</strong> have an&nbsp;<code>[HttpPost]</code> before them. A route of <code>Route("index")</code> matches the URL&nbsp;<code>localhost:5000/index</code>. They do <strong>NOT</strong>&nbsp;have leading slashes.
- </p>
-<p>
-We can also accept parameters in our routes:
-</p>
+<p>What if our url follows a certain pattern, but also contains potentially varying pieces of information? We can also accept parameters in our routes with the {} notation included in our route string argument:</p>
 <h3>YourController.cs</h3>
 <pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">// Other code
 [HttpGet]
-[Route("template/{Name}")]
-public IActionResult Method(string Name)
+[Route("template/{name}")]
+public JsonResult Method(string name)
+{
+    // Method body
+}
+
+[HttpGet]
+[Route("template/{id}/{action}")]
+public JsonResult Method(int id, string action)
 {
     // Method body
 }
 </code><div class="toolbar"></div></pre>
-<p>
-Be aware that if your method expects to receive a parameter through the URL, it will break if it doesn't receive one.
-</p>
-<h3>Startup.cs</h3>
-<p>
-Now that we've learned this cleaner routing syntax, we don't need the clunky version we used before. Open up your <code>Startup.cs</code> file and remove everything from your <code>app.UseMvc()</code> function call:
-</p>
-<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">// Other code
-public void Configure(IApplicationBuilder app)
-{
-    // Other Use statements
-    app.UseMvc(); // That's it!
-}
-</code><div class="toolbar"></div></pre>
-<p>
-Now add a route to the <code>Index()</code> method in your <code>HelloController</code> from the previous tab and run your code. you"ll see the message "Hello World!" displayed in the browser.
-</p>
+<p>Whatever variable name you choose in the curly braces of your route string should match the variable name you use as input to the associated method. Be aware that if your method expects to receive a parameter through the URL, it will break if it doesn't receive one.</p>

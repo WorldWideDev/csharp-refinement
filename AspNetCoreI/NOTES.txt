@@ -1,0 +1,35 @@
+*numbering reflects current platform order; the actual order presented here is my recommendation
+
+1. Intro to ASP.NET Core (video only) -- okay; consider a redo at some point
+2. Setting up ASP.NET Core
+3. Developer Tooling
+4. MVC!
+5. Controllers
+7. Returning JSON <-- MOVED UP   ******need updated html
+    //assignment: start building a basic API; get all method
+6. Attribute Routing
+    //assignment: add to previous API to get a specific entry
+8. A: Calling Card <-- I think this is a weird assignment...
+9. A: RApi (optional)
+10. Rendering Views     *****need updated html
+    //intro of "IActionResult"
+13. Static Files    <-- MOVED UP
+14. A: Portfolio    <-- MOVED UP
+11. Razor View Engine
+12. A: Time Display
+15. Forms & ViewBag <-- SPLIT UP; Forms only
+16. A: Dojo Survey
+    //simplify the assignment to have the form submission return a JSON version of the data submitted (i.e. no ViewBag); note that it is okay to render on a redirect for now
+Models <-- ADDED/REVISED FROM ASP CORE II
+    //essentially ViewModels; this will show forms with models instead of just separate values
+Model Validations <-- ADDED/TO REVISE FROM ASP CORE II
+18. Redirecting
+    //assignment: add validations to Dojo Survey; redirect if success, render with errors if not valid
+19. Session & TempData
+20. A: Random Passcode
+21. A: Dojodachi
+22. Wrap-up
+
+17. AJAX Refresher <-- MOVE ELSEWHERE (& develop more)
+
+base-entity <-- snippet to add to some other content later, when we have more models and can use it for db models and not view models or something to explain it better
