@@ -1,0 +1,12 @@
+<h1>Services and Dependency Injection</h1>
+<p>It is now time to better understand all that is going on inside of our Startup class's ConfigureServices method, which is - in fact - a central aspect of how this framework is wired.  Everytime we add a new line to this method, with something like: </p>
+<pre data-language="csharp">
+    public static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddMvc();
+    }
+</pre>
+<p>we are adding a so-called "service" into our application's Service Container, seen here as IServiceCollection.  This makes the specified service available to the rest of your application in a number of ways.  In this example here, we are simply saying that our app wants to make use of the framework-provided MVC services, which - by and large - are handled interally by the framework itself to make the whole thing go.  There are times, however, when you will want to make use of services directly - which can be acheived through something known as <strong>Constructor Injection</strong>.</p>
+
+<h2>Constructor Injection</h2>
+<p>Think of your application's Service Container as a bucket of cool things your application can make use of if it wishes.</p>
