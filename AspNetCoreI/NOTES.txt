@@ -5,13 +5,13 @@
 3. Developer Tooling
 4. MVC!
 5. Controllers
-7. Returning JSON <-- MOVED UP   ******need updated html
+7. Returning JSON <-- MOVED UP  *N to review
     //assignment: start building a basic API; get all method
 6. Attribute Routing
     //assignment: add to previous API to get a specific entry
 8. A: Calling Card <-- I think this is a weird assignment...
 9. A: RApi (optional)
-10. Rendering Views              ******need updated html
+10. Rendering Views           *N to review
     //intro of "IActionResult"
 13. Static Files    <-- MOVED UP
 14. A: Portfolio    <-- MOVED UP
