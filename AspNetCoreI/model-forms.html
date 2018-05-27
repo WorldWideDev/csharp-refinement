@@ -1,0 +1,37 @@
+<h1>Models with Forms</h1>
+<h2>Overview</h2>
+<p>One of the main uses for models is to map a model type to a form for user submitted data.  You can imagine a user registration form, with fields for FirstName, LastName, etc. and how that would map nicely to a C# class - where text inputs will be <code>string</code> types, number fields <code>int</code> types and so on.  When we define a model class that maps directly to the <code>name</code> attributes in a form, we are able to accept an object of that type in the Controller method responsible for handling the request.  This would be opposed to accepting a series of <code>string</code> arguments, as we have seen thus far.  Consider the following implementation of the DojoSurvey assignment.</p>
+
+<pre data-language="csharp">
+    // User.cs (model file)
+    public class User
+    {
+        public string Name {get;set;}
+        public string Location {get;set;}
+        public string Language {get;set;}
+        public string Comment {get;set;}
+    }
+</pre>
+<pre data-language="html">
+    // Index.cshtml
+        // Note that the input's name attributes match that of the User class's member properties.
+    &lt;form action="survey" method="post"&gt;
+        &lt;label for="Name"&gt;Your Name:&lt;/label&gt;
+        &lt;input type="text" name="Name"&gt;
+
+        &lt;label for="Location"&gt;Dojo Location:&lt;/label&gt;
+        &lt;input type="text" name="Location"&gt;
+
+        &lt;label for="Language"&gt;Favorite Language:&lt;/label&gt;
+        &lt;textarea name="Language"&gt;&lt;/textarea&gt;
+        &lt;button&gt;Submit&lt;/button&gt;
+        &lt;/form&gt;
+</pre>
+<pre data-language="csharp">
+    // UserController.cs
+    [HttpPost("survey")]
+    public IActionResult Survey(User submittedUser)
+    {
+        // use the debugger to inspect this User object!
+    } 
+</pre>
