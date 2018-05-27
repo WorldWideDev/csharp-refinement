@@ -1,54 +1,63 @@
-<h1>Routing</h1>
-<p>Previously we used a pretty ugly looking route syntax to display our "Hello World!" string. Luckily, ASP.NET Core MVC has an alternate syntax that is one of the simplest and most elegant of any full MVC framework. We add route attributes directly to our controller methods!</p>
-<h3>YourController.cs</h3>
-<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">// Inside your Controller class
-// Other code
- 
-// A GET method
-[HttpGet]
-[Route("index")]
-public string Index()
-{
-    return "Hello World!";
-}
- 
-// A POST method
-[HttpPost]
-[Route("")]
-public IActionResult Other()
-{
-    // Return a view (We'll learn how soon!)
-}
-</code><div class="toolbar"></div></pre>
+<h1>Returning JSON</h1>
 <p>
- <code>[HttpGet]</code> is optional on GET routes, but all POST routes <strong>must</strong> have an&nbsp;<code>[HttpPost]</code> before them. A route of <code>Route("index")</code> matches the URL&nbsp;<code>localhost:5000/index</code>. They do <strong>NOT</strong>&nbsp;have leading slashes.
- </p>
-<p>
-We can also accept parameters in our routes:
+We know that our controller methods can return strings, but generally we'll want them to return something a little more useful. The simplest, most useful option is JSON. JSON is used for performing AJAX operations with our front end, and it is the most common return format for APIs. ASP.NET Core Mvc controllers contain a method for serializing C# objects into JSON so creating an API backend is a snap.
 </p>
 <h3>YourController.cs</h3>
-<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">// Other code
+<pre data-language="csharp" class="rainbow">using Microsoft.AspNetCore.Mvc;
+ 
+namespace YourNamespace.controllers
+{
+    public class YourController : controller
+    {
+        [HttpGet]
+        [Route("")]
+        public JsonResult Example()
+        {
+            // The Json method convert the object passed to it into JSON
+            return Json(SomeC#Object);
+        }
+    }
+}
+</pre>
+<p>
+The <code>Json()</code> method will accept any type of object for serialization, from simple values like ints to complex objects:
+</p>
+<pre data-language="csharp" class="active_pre rainbow">// Other code
 [HttpGet]
-[Route("template/{Name}")]
-public IActionResult Method(string Name)
+[Route("displayint")]
+public JsonResult DisplayInt()
 {
-    // Method body
+    return Json(34);
 }
-</code><div class="toolbar"></div></pre>
-<p>
-Be aware that if your method expects to receive a parameter through the URL, it will break if it doesn't receive one.
-</p>
-<h3>Startup.cs</h3>
-<p>
-Now that we've learned this cleaner routing syntax, we don't need the clunky version we used before. Open up your <code>Startup.cs</code> file and remove everything from your <code>app.UseMvc()</code> function call:
-</p>
-<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">// Other code
-public void Configure(IApplicationBuilder app)
+ 
+// Suppose we're working with the Human class we wrote in the previous chapter
+[HttpGet]
+[Route("displayhuman")]
+public JsonResult DisplayHuman()
 {
-    // Other Use statements
-    app.UseMvc(); // That's it!
+    return Json(new Human());
 }
-</code><div class="toolbar"></div></pre>
+</pre>
+<h3>Anonymous Objects</h3>
 <p>
-Now add a route to the <code>Index()</code> method in your <code>HelloController</code> from the previous tab and run your code. you"ll see the message "Hello World!" displayed in the browser.
+If we want to return a group of values as JSON we have to write a class definition with appropriate fields to contain the data. But what if a different route is needed to return a slightly different number of values, or values of different types? We'd need to write an additional class for each configuration of values. Instead, we can use what are known as <strong>anonymous objects</strong>. Anonymous objects can be instantiated as a grouping of property names and values, without conforming to any class.
+</p>
+<p>
+Here we construct an anonymous object with FirstName, LastName, and Age properties:
+</p>
+<pre data-language="csharp" class="rainbow">// Other code
+[HttpGet]
+[Route("displayint")]
+public JsonResult DisplayInt()
+{
+    var AnonObject = new {
+                         FirstName = "Raz",
+                         LastName = "Aquato",
+                         Age = 10
+                     };
+    return Json(AnonObject);
+}
+</pre>
+<p>
+Anonymous objects aren't just used to format information for JSON responses, they can be used anywhere you need them. They are best used in moderation however, defining classes provides much better code readability in most situations. If you ever find yourself constructing multiple anonymous objects with the same set of properties you definitely need a class!
 </p>

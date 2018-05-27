@@ -1,8 +1,44 @@
-<h1>RApi, The Rapper Api</h1>
-<p>Now that we are able to serve back JSON responses to web requests, we can do something interesting. In the previous section we worked with some records for artists and groups when practicing our LINQ knowledge. We are going to use those same collections again, but now we will provide endpoints for various requests for information from these data sets. What we are essentially doing is building our own external API from these collections. For this assignment we will be actively reinforcing our knowledge on LINQ, ASP.NET Core Method routing, and serving back JSON responses. Once again we will also provide a starter project from which to build from which can be downloaded by clicking the button below</p>
-<p><a href="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/Starter_Ver2.zip"></a></p>
-<p><a href="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/Starter_Ver2.zip"></a></p><a href="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/Starter_Ver2.zip">
-<button>Download Assignment Skeleton Ver. 1.1</button>
-</a><p><a href="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/Starter_Ver2.zip"></a><br></p><p><a href="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/Starter_Ver2.zip"></a></p>
-<p><br></p>
-<p>For this assignment the following things are required:</p>
+<h1>Serving View Files</h1>
+<p>
+The most common return type for our controllers is a view, and ASP.NET Core makes serving them a breeze. Any time one of our Controllers returns a View, the framework attempts to use the name of your controller to find the appropriate view file. ASP.NET looks for a folder called "Views", then looks for a folder that matches the name of your controller, and if it fails to find the view there it will always look for a folder called <code>Shared</code> as a last resort.</p>
+<p><strong><em>Make sure your Views subfolders have names that match your controller names</em></strong>(Without "Controller")</p>
+<p>For example <code>UsersController</code> would look for its views in the <code>Users</code> subfolder. If a view needs to be rendered from multiple Controllers it must be in the <code>Shared</code> folder.&nbsp;Even though we're only working with static HTML, we'll&nbsp;have an easier time&nbsp;using&nbsp;<code>.cshtml</code> files. ASP.NET Core Mvc will not read standard <code>.html</code> files without some extra configuration.&nbsp;</p>
+<p>Let's make some content to display. Create a new folder called <code>Views</code> in your project directory, then make a subfolder that matches your controller name. Inside the subfolder add a new file called "index.cshtml"</p>
+<p><img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/ViewStructure2.PNG" alt="Folder Structure"></p>
+<h3>Index.cshtml</h3>
+<pre data-language="html" class="active_pre rainbow">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset='utf-8'&gt;
+        &lt;title&gt;Hello!&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;Hello ASP.NET Mvc!&lt;/h1&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>
+Now we need to tell our controller to actually serve the view.
+</p>
+<h3>HelloController.cs</h3>
+<pre data-language="csharp" class="rainbow">using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+namespace YourNamespace.Controllers
+{
+    public class HelloController : Controller
+    {
+        [HttpGet]
+        [Route("")]
+        public IActionResult Index()
+        {
+            return View();
+            //OR
+            return View("Index");
+            //Both of these returns will render the same view (You only need one!)
+        }
+    }
+}
+</pre>
+<p>
+ASP.NET Core MVC is very flexible when it comes to designating our targeted view. If we have an empty <code>View()</code> then it will look for a view with the same name as the method serving the view. We can also specify the name of the file (without <code>.cshtml</code>) to render.
+</p>
