@@ -1,0 +1,48 @@
+<h1>View Models</h1>
+<p>In a typical MVC, such as the one we are using, the term Model refers to application data - usually coming from a database - but they don't necessarily have to.  A model can be any piece of data that can be dyamicaly passed from your Controller to your View, just like ViewBag, however we can be more specific as to the exact type we are expecting our Views to receive.  If a view is always going to need to render the data existing on a User object, such as FirstName and LastName fields, we can make it manditory that Controllers provide the exact data it wants.  Please note:  Models can be ANY type, they don't need be your own class types.  It is perfectly ok to define a <code>sting[]</code> as a model type, for example!<p>
+<p>Let's examine an example where we want a User Detail view, one where the data may change, but we can always count on there being the exact fields and types that a User possesses.  To set things up, we first must define what model type we want our view to utilize.  Let's say we are working with the following model class</p>
+<pre data-language="csharp">
+    // User.cs
+    public class User
+    {
+        public string FirstName {get;set;}
+        public string LastName {get;set;}
+    }
+</pre>
+<p>Now, let's see how we define our model type in our View</p>
+<p>We will typically define our model at the top of the View file, but this isn't required.  Note, however, that we will still need to have a namespace path to this class, same as our C# files, and just like those files we can provide _using_ statements in our Views.  So if we assume our User class exists in MyCoolProj.Models we can do the following:</p>
+<h3>UserDetail.cshtml</h3>
+<pre data-language="html">
+    @using MyCoolProj.Models
+    @model User
+</pre>
+<p>Alternatively, we can provide an explicit namespace path to the User class:</p>   
+<pre data-language="html">
+    @model MyCoolProj.Models.User
+</pre>
+<p>Now that we have a model defined, we can pass an object of that type to our View from our Controller.  If we pass an object of the wrong type, we will get a runtime exeption when the View attempts to load, so make sure of this!  Let's check out our UserController</p>
+<pre data-language="csharp">
+    // Somewhere in UserController.cs
+    public IActionResult UserDetail()
+    {
+
+        // Manually creating a User object here, but you can imagine this will at some point come from a DB.  Note how things change if you modify values on your model object here.
+        User user = new User()
+        {
+            FirstName = "Devon",
+            LastName = "Newsom"
+        };
+
+        // Now we may pass this object to our View from returning a ViewResponse with this object included
+        return View(user);
+
+        // If we wish to return to a speficied View, we may pass our model object as a second param, after the View name.
+        return View("OtherView", user);
+    }
+</pre>
+<p>Finally, we can put everything together by rendering our model data in the View.  Similar to how ViewBag can be accessed with <code>@ViewBag</code>, we can refer to our model object with <code>@Model</code>.  <strong>Note the capital M!</strong>  This will be a direct reference to the object that was passed, so if we wanted to render the FirstName of a User, we can do so with <code>@Model.FirstName</code>  Let's see the final View!</p>
+<pre data-language="html">
+    @model MyCoolProj.User
+
+    &lt;h1&gt;Super sweet page for @Model.FirstName @Model.LastName&lt;/h1&gt;
+</pre>

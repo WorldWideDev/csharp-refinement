@@ -1,0 +1,161 @@
+<h1>Model Validation</h1>
+<h2>Project Setup</h2>
+<p>For us to use model validations, we will need to utilize some additional Razor features, which are included in a library called Tag Helpers.  These are not loaded by default, and will require you to have a file named _ViewImports.cshtml inside your Views/ directory with the following contents:</p>
+<pre data-language="csharp">
+    // In /Views/_ViewImports.cshtml
+    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+</pre>
+<p>You may use the dotnet CLI to generate this file as well:</p>
+<pre data-language="bash">
+    // run this command from your project root
+    dotnet new viewimports -o Views/
+</pre>
+<p>Additionally, you may use this file to provide namespace references to your Views, so that instead of needing to reference your the full namespace path, to say, CoolProj.Models.User, you may simply provide the type contained in the provided path.</p>
+<pre data-language="csharp">
+    // In /Views/_ViewImports.cshtml
+    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+    @using MyCoolProj.Models
+    // With this line, you may refer to just the User type when defining the model in your view
+    // ex: @model User _vs_ @MyCoolProj.Models.User
+</pre>
+<h2>Model Setup</h2>
+<p>One of the most common uses for models is to confirm that an instance is valid before it is saved to the database. Rather than writing manual validations we can apply <code>Attributes</code> from a namespace called <code>DataAnnotations</code> to our model fields that define validation checks for us. To gain access to <code>DataAnnotations</code> we need to include it in a using statement on our models:</p>
+<h3>User.cs</h3>
+<pre data-language="csharp" class="rainbow">
+using System.ComponentModel.DataAnnotations;
+namespace YourNamespace.Models
+{
+    public class User
+    {
+        // Class definition
+    }
+}
+</pre>
+<p> We now have access to a variety of useful validations. Some of the most commonly use ones are:</p>
+<table border="1">
+<tbody>
+<tr>
+ <th>  Name of DataAnnotation  </th>
+ <th>  Use  </th>
+ <th>  Parameters  </th>
+</tr>
+<tr>
+ <td>  Required  </td>
+ <td>  Validates whether the field has a value.  </td>
+ <td>  NA  </td>
+</tr>
+<tr>
+ <td>Regular Expression</td>
+ <td>  Validates whether the submitted value conforms to a regex string.  </td>
+ <td>  A regex string.  </td>
+</tr>
+<tr>
+ <td>  MinLength()  </td>
+ <td>  Validates that a string or array field has the specified minimum length.  </td>
+ <td>  An integer.  </td>
+</tr>
+<tr>
+ <td>  MaxLength()  </td>
+ <td>  Validates that a string or array field has the specified maximum length.  </td>
+ <td>  An integer.  </td>
+</tr>
+<tr>
+ <td>  Range()  </td>
+ <td>  Checks whether the value is within the range specified.  </td>
+ <td>  Two integers or two doubles. Must be the same type as the field.  </td>
+</tr>
+<tr>
+ <td>  EmailAddress  </td>
+ <td>  Validates that the field is in the form of a valid email address.  </td>
+ <td>  NA  </td>
+</tr>
+<tr>
+ <td>  Compare()  </td>
+ <td>  Validates that two fields contain the same value. Only needs to be applied to one of the two fields  </td>
+ <td>  A string corresponding to the name of the other field. A second parameter consisting of <code>ErrorMessage = </code> and a string to be displayed as an error may also be included.  </td>
+</tr>
+<tr>
+ <td>  DataType()  </td>
+ <td>  Ensures that the field conforms to a specific DataType  </td>
+ <td>  A DataType object  </td>
+</tr>
+</tbody>
+</table>
+<p> You can find a list of every available <code>DataAnnotation</code>&nbsp;in the&nbsp; <a href="https://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations(v=vs.110).aspx" target="_blank">DataAnnotations</a> namespace documentation.</p>
+<p> The syntax for applying data annotations is very similar to our HTTP verb and route syntax (which are another form of Attribute):</p>
+<pre data-language="csharp" class="rainbow">using System.ComponentModel.DataAnnotations;
+ 
+namespace YourNamespace.Models
+{
+    public class User
+    {
+        [Required]
+        [MinLength(3)]
+        public string Name { get; set; }
+ 
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+ 
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+    }
+}
+</pre>
+<h2>View Setup</h2>
+<p>Now that we are able to make use of Razor's Tag Helpers, we have access to special framework HTML attributes to map our form directly to our model classes.  First, we will want to define the model type for the view - same as before - however, now we can directly reference our model's properites from within a form input.  Consider the following view, let's call it our NewUser view:</p>
+<pre data-language="html">
+    // NewUser.cshtml
+    @model User
+    &lt;form asp-action="Create" asp-controller="Home" method="post"&gt;
+        &lt;input asp-for="Name"&gt;
+        &lt;input asp-for="Email"&gt;
+        &lt;input asp-for="Password"&gt;
+        &lt;input type="submit" value="Add User"&gt;
+    &lt;/form&gt;
+</pre>
+<p>The <code>asp-action</code> attribute here will match a method name in a specified controller, which is denoted with the <code>asp-controller</code> attribute.  So here, this post request will get sent to a Create(User newUser) method in a HomeController class.</p>
+<p>The <code>asp-for</code> attributes are a direct reference to memebers of the specified model class.  If your User class does not possess a <code>Password</code> property, for example, you will get a runtime exception when the View attempts to load!</p>
+<p>Finally, we are ready to wire this form for rendering validation errors.  Using a <code>span</code> tag, you can use <code>asp-validation-for</code> to provide a place to render error messages if a submission is invalid.  Additionally, you may use a <code>label</code> with an <code>asp-for</code> generate text for the name of the input!  (You can customize this with a <code>[Display(Name="Custom Name")]</code> attribute for the desired field on your model.  Let's see it all together!</p>
+<pre data-language="html">
+    @model User
+    &lt;form asp-action="Create" asp-controller="Home" method="post"&gt;
+
+        &lt;span asp-validation-for="Name"&gt;&lt;/span&gt;
+        &lt;label asp-for="Name"&gt;
+        &lt;input asp-for="Name"&gt;
+        
+        &lt;span asp-validation-for="Emai"&gt;&lt;/span&gt;
+        &lt;label asp-for="Email"&gt;
+        &lt;input asp-for="Email"&gt;
+
+        &lt;span asp-validation-for="Password"&gt;&lt;/span&gt;
+        &lt;label asp-for="Password"&gt;
+        &lt;input asp-for="Password"&gt;
+
+        &lt;input type="submit" value="Add User"&gt;
+    &lt;/form&gt;
+</pre>
+<h2>Controller Setup</h2>
+<p> Now when we create an instance of our model, as the result of a form submission, we can ask it to validate itself and it will check against the data annotations defined in its class. Once we validate it, we can access the results from the <code>ModelState</code> property of our controller.&nbsp; <code>ModelState</code> is a dictionary that contains information about the most recent model we've run validations on, including any errors found.</p>
+<pre data-language="csharp" class="rainbow">using YourNamespace.Models;
+ 
+// In HomeController
+[HttpPost("user/create")]
+public IActionResult Create(User user)
+{
+    if(ModelState.IsValid)
+    {
+        // do somethng!  maybe insert into db?  then we will redirect
+        return RedrectToAction("SomeAction");
+    }
+    else
+    {
+        // Oh no!  We need to return a ViewResponse to preserve the ModelState, and the errors it now contains!
+        return View("NewUser");
+    }
+
+}
+</pre>
