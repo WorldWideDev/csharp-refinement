@@ -11,19 +11,25 @@
     //assignment: add to previous API to get a specific entry
 8. A: Calling Card <-- I think this is a weird assignment...
 9. A: RApi (optional)
-10. Rendering Views     *****need updated html
+10. Rendering Views              ******need updated html
     //intro of "IActionResult"
 13. Static Files    <-- MOVED UP
 14. A: Portfolio    <-- MOVED UP
 11. Razor View Engine
 12. A: Time Display
+Model Directive <-- NEW! (maybe there's a better name? My first title was "passing data from controller to view" but that felt kind of long; I like throwing little bits of terminology in there, but keeping everything else pretty simple.)
+A: About Me <-- NEW ASSIGNMENT! (uploaded simple wireframe - about-me.png)
+View Models <-- NEW! (first intro)
+A: <-- FIGURE OUT A NEW ASSIGNMENT (still something relatively simple)
 15. Forms & ViewBag <-- SPLIT UP; Forms only
-16. A: Dojo Survey
-    //simplify the assignment to have the form submission return a JSON version of the data submitted (i.e. no ViewBag); note that it is okay to render on a redirect for now
+16. A: Dojo Survey I
 Models <-- ADDED/REVISED FROM ASP CORE II
     //essentially ViewModels; this will show forms with models instead of just separate values
+    A: Dojo Survey II <-- NEW ASSIGNMENT    *MODEL BINDING WITH A DROPDOWN CAN BE TRICKY...
 Model Validations <-- ADDED/TO REVISE FROM ASP CORE II
-18. Redirecting
+Rendering Errors <-- NEW! BROKE OUT FROM MODEL VALIDATIONS MODULE
+    //add a video to show ModelState with debugger
+18. Redirecting (maybe break out redirecting with attributes)
     //assignment: add validations to Dojo Survey; redirect if success, render with errors if not valid
 19. Session & TempData
 20. A: Random Passcode

@@ -1,5 +1,5 @@
 <h1>Submitting Forms</h1>
-<p>We've done a few get requests. Now let's talk about POST requests! On the front end, we can write traditional HTML forms, making sure that each input field has a name. On the backend, we can catch those submissions by accepting them as parameters in their targeted method.</p>
+<p>Now that we've done a few get requests and displayed some data on a page, let's talk about POST requests! On the front end, we can write traditional HTML forms, making sure that each input field has a name. On the backend, we can catch those submissions by accepting them as parameters in their targeted method.</p>
 <h3>Method.cshtml</h3>
 <pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">&lt;form action="method" method="post"&gt;
     &lt;input type="text" name="TextField"/&gt;
@@ -16,5 +16,5 @@ public IActionResult Method(string TextField, int NumberField)
 }
 </code><div class="toolbar"></div></pre>
 <p>
-With that, we can use those parameters in our method. It is key that the variable names we use here match the names on the input fields on the front end.
+With that, we can use those parameters in our method. It is key that the variable names we use in our parameters match the names of the input fields on the front end.
 </p>

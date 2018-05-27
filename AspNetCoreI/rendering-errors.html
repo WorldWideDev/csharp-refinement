@@ -1,0 +1,43 @@
+<h1>Rendering Errors</h1>
+<p>If the data being submitted does not pass validations, we can look inside the ModelState's <code>Values</code> property to see which field(s) are in violation. <code>Values</code> contains an enumeration of each of the model's properties. Each property, in turn, has a list of errors. If the error count is 0, we know that property met the validation requirements. If the error count is higher than 0, we can see what validation(s) it did not pass.</p>
+<p>Parsing through this complex, but well-defined structure <code>ModelState.Values</code>looks something like this:</p>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+    foreach(ModelStateEntry input in ModelState.Values)
+    {
+        //Check if there are any errors for a field
+        if(input.Errors.Count &gt; 0)
+        {
+            foreach(ModelError error in input.Errors)
+            {
+                //error.ErrorMessage
+            }
+        }
+    </code><div class="toolbar"></div>
+</pre>
+<p>It is important to note that the duration or lifecycle of the ModelState is a single request-response cycle. This means that if we want to display these errors on our HTML, we must render rather than redirect. Once we redirect, a new request is made and the information contained in the ModelState is lost. This does mean that we'll often end up serving the same view with multiple controller methods, one serving it initially and another re-rendering it with errors. Although it's generally recommended to only render a specific view from one method for code modularization and organization, this is an exception to the rule. The errors on our model will not persist across a redirect, so we must render from the same method that runs our validations.</p>
+
+<p>So far the way we have been sending data from the controller to the view has been with models. However, when we need to display just small pieces of information that may not be directly related to the model already on the page, the MVC framework provides a tool called ViewBag. ViewBag is a dynamic dictionary that only persists over one view return. ViewBag does not persist across redirects, so it must be set in the method to the view file we want to send data to. To use ViewBag,we can define properties and assign values to them. As long as the property names are unique, you can add as many things to ViewBag as you would like.</p>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+        //public IActionResult SubmitUserForm(UserViewModel user)
+        {
+            if (ModelState.IsValid)
+            {
+                //what to do if the model is valid
+            }
+            //this adds the key "errors" to the ViewBag
+            //with the value of the enumeration contained in ModelState.Values
+            ViewBag.errors = ModelState.Values;
+        }
+    </code>
+</pre>
+<p>Then in our cshtml file, we can refer to ViewBag like so:</p>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+        @foreach(var input in ViewBag.errors)
+        {
+            //what to do as you loop through
+        }
+    </code>
+</pre>

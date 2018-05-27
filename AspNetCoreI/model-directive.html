@@ -1,0 +1,48 @@
+<h1>@model Directive</h1>
+<p>While we are able to write C# code directly into our views, we may sometimes want to pass information from the controller to the view. One way we can do this is to add an additional argument into our ViewResult on the controller side like so:</p>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+        //in our controller
+        public IActionResult Index()
+        {
+            int x = 8;
+            return View(x);
+            //or, if we are also specifying the view:
+            //return View("Index", x);
+        }
+    </code>
+</pre>
+<p>And then on the view side, we use the @model directive to let the Razor template engine know what type of data is being received from the controller, and the @Model notation when referencing the actual instance that was passed over.</p>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+        //in our Index.cshtml
+        @model int
+        
+        <p>The number passed up was: @Model</p>
+        //This will display the following text to the browser:
+        //The number passed up was 8
+    </code>
+</pre>
+<p>While we are only able to send a single model from our controller to a view, that model may be a collection, like a list or an array. Here's another example:</p>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+        //in our controller
+        public IActionResult Index()
+        {
+            string[] names = new string[] {"Devon", "Noelle", "Tony"};
+            return View(names);
+        }
+    </code>
+</pre>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+        //in our Index.cshtml
+        @model string[]
+
+        <ul>
+            @foreach (string name in Model) {
+                <li>@name</li>
+            }
+        </ul>
+    </code>
+</pre>

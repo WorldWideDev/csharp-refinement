@@ -1,6 +1,6 @@
 <h1>Razor View Engine</h1>
-<p>Now that we're using ASP.NET Core MVC, we have access to the Razor View Engine. The <code>.cshtml</code> file extension we've been using for views actually designates Razor files. Razor allows us to write HTML just as before, but with the added ability to write C# code directly in our views. In addition, we can embed HTML in our embedded C#, and switch between the two as much as we like.</p>
-<p>We can put a block of code in our HTML by denoting it with an <code>@</code> followed by curly braces. Inside these blocks we can perform any C# operations we want.</p>
+<p>Now that we're using ASP.NET Core MVC, we have access to the Razor View Engine. The <code>.cshtml</code> file extension we've been using for views actually designates Razor files. Razor allows us to write HTML just as before, but with the added ability to write C# code directly in our views.</p>
+<p>To distinguish between regular HTML and C# blocks of code, we use the <code>@</code> symbol. If we are writing a block of code that involves declaring variables, we use the <code>@</code> followed by curly braces. Within those curly braces, we can write any C# code we'd like. If we want the value of a variable to print to HTML, we use the <code>@</code> followed by the variable name (no spaces). <b>If you want to display something to HTML, be sure to wrap this syntax in an HTML tag of some kind.</b></p>
 <pre data-language="html" class=" code-toolbar language-html"><code class="  language-html">&lt;body&gt;
     @{
         var StringList = new List&lt;string&gt;{
@@ -18,7 +18,7 @@
     }
 &lt;/body&gt;
 </code><div class="toolbar"></div></pre>
-<p>We can write HTML in our C# block and it will be rendered as the C# evaluates when the page is loaded. Note that in order to use the "word" variable inside our HTML we have to preface it with the <code>@</code> symbol again. We can nest C# inside HTML inside C# and so on as much as we like:</p>
+<p>We can write HTML in our C# block and it will be rendered as the C# evaluates when the page is loaded. Any C# operation or method call can be made outside of a C# code block (<code>@{ }</code>) by leading the operation/method call with the <code>@</code>&nbsp;symbol. We can nest C# inside HTML inside C# and so on as much as we like:</p>
 <pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">&lt;body&gt;
     @foreach(var word in StringList)
     {
@@ -32,4 +32,3 @@
     }
 &lt;/body&gt;
 </code><div class="toolbar"></div></pre>
-<p>Any C# operation or method call can be made outside of a C# code block (<code>@{ }</code>) by leading the operation/method call with the <code>@</code>&nbsp;symbol.</p>

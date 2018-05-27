@@ -1,0 +1,88 @@
+<h1>Model Validation</h1>
+<p>Before proceeding with saving or working with data submitted by a user, we may first want to ensure that the data they are submitting is what we are expecting. Because model validation is such a common practice, there is a built-in library we can utilize so that we don't have to write each validation manually. We can find these pre-built <code>Attributes</code> in a namespace called <code>DataAnnotations</code>. To gain access to these annotations, we simply need to add the appropriate using statement to our model class: <code>using System.ComponentModel.DataAnnotations</code>. (If you don't add the statement manually, the lightbulb will also prompt you to add this using statement after you type the first annotation.)</p>
+<p>We now have access to a variety of useful validations. Some of the most commonly use ones are:</p>
+<table border="1">
+<tbody>
+<tr>
+ <th>  Name of DataAnnotation  </th>
+ <th>  Use  </th>
+ <th>  Parameters  </th>
+</tr>
+<tr>
+ <td>  Required  </td>
+ <td>  Validates whether the field has a value.  </td>
+ <td>  NA  </td>
+</tr>
+<tr>
+ <td>Regular Expression</td>
+ <td>  Validates whether the submitted value conforms to a regex string.  </td>
+ <td>  A regex string.  </td>
+</tr>
+<tr>
+ <td>  MinLength()  </td>
+ <td>  Validates that a string or array field has the specified minimum length.  </td>
+ <td>  An integer.  </td>
+</tr>
+<tr>
+ <td>  MaxLength()  </td>
+ <td>  Validates that a string or array field has the specified maximum length.  </td>
+ <td>  An integer.  </td>
+</tr>
+<tr>
+ <td>  Range()  </td>
+ <td>  Checks whether the value is within the range specified.  </td>
+ <td>  Two integers or two doubles. Must be the same type as the field.  </td>
+</tr>
+<tr>
+ <td>  EmailAddress  </td>
+ <td>  Validates that the field is in the form of a valid email address.  </td>
+ <td>  NA  </td>
+</tr>
+<tr>
+ <td>  Compare()  </td>
+ <td>  Validates that two fields contain the same value. Only needs to be applied to one of the two fields  </td>
+ <td>  A string corresponding to the name of the other field. A second parameter consisting of <code>ErrorMessage = </code> and a string to be displayed as an error may also be included.  </td>
+</tr>
+<tr>
+ <td>  DataType()  </td>
+ <td>  Ensures that the field conforms to a specific DataType  </td>
+ <td>  A DataType object  </td>
+</tr>
+</tbody>
+</table>
+<p> You can find a list of every available <code>DataAnnotation</code>&nbsp;in the&nbsp; <a href="https://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations(v=vs.110).aspx" target="_blank">DataAnnotations</a> namespace documentation, as well as the appropriate arguments to pass in for each.</p>
+<p> The syntax for applying data annotations is very similar to our HTTP verb and route syntax:</p>
+<pre data-language="csharp" class=" code-toolbar language-csharp"><code class="  language-csharp">using System.ComponentModel.DataAnnotations;
+ 
+namespace YourNamespace.Models
+{
+    public class UserViewModel
+    {
+        [Required]
+        [MinLength(3)]
+        public string Name { get; set; }
+ 
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+ 
+        [Required]
+        public string Password { get; set; }
+    }
+}
+</code><div class="toolbar"></div></pre>
+<p>Now, whenever an instance of our model gets created (i.e. upon form submission), the model will automatically be tested for validity. The results of this validity check are stored in the <code>ModelState</code> property of our controller. <code>ModelState</code> is a dictionary that contains information about the most recent model we've run validations on, including any errors found. Let's peek inside ModelState with the debugger.</p>
+<p>There is actually a lot going on in ModelState, so for now, let's focus on finding out whether our instance passed the validation checks. One of the properties we see inside of ModelState is a boolean called IsValid. If this is true, our instance passed all validations. If it is false, it did not.</p>
+<p>We can reference ModelState and its properties in our controller directly. Again, because a request can be bound to only one model, the ModelState will refer to the instance of the model being passed in to a given method. For example:</p>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+        //public IActionResult SubmitUserForm(UserViewModel user)
+        {
+            if (ModelState.IsValid)
+            {
+                //what to do if the model is valid
+            }
+            //what to do if it is not valid
+        }
+    </code>
+</pre>
