@@ -1,12 +1,28 @@
 <h1>Services and Dependency Injection</h1>
-<p>It is now time to better understand all that is going on inside of our Startup class's ConfigureServices method, which is - in fact - a central aspect of how this framework is wired.  Everytime we add a new line to this method, with something like: </p>
+<h2>Overview</h2>
+<p>It is now time to better understand all that is going on inside of our Startup class's ConfigureServices method, which is - in fact - a central aspect of how this framework is wired.  Every time we add a new line to this method, with something like: </p>
 <pre data-language="csharp">
     public static void ConfigureServices(IServiceCollection services)
     {
         services.AddMvc();
     }
 </pre>
-<p>we are adding a so-called "service" into our application's Service Container, seen here as IServiceCollection.  This makes the specified service available to the rest of your application in a number of ways.  In this example here, we are simply saying that our app wants to make use of the framework-provided MVC services, which - by and large - are handled interally by the framework itself to make the whole thing go.  There are times, however, when you will want to make use of services directly - which can be acheived through something known as <strong>Constructor Injection</strong>.</p>
-
-<h2>Constructor Injection</h2>
-<p>Think of your application's Service Container as a bucket of cool things your application can make use of if it wishes.</p>
+<p>we are adding a so-called "service" into our application's Service Container, seen here as IServiceCollection.  This makes the specified service available to the rest of your application in a number of ways.  In this example here, we are simply saying that our app wants to make use of the framework-provided MVC services, which - by and large - are handled internally by the framework itself to make the whole thing go.  This entire system, in fact, utilizes a programming design-pattern known as <strong>dependency injection</strong>, which can be used alongside another design-pattern you are already familiar with (OOP).</p>
+<h2>Dependency Injection</h2>
+<p>The basic premise of dependency injection, is that rather than make tightly-coupled associations between classes using inheritance, you can provide objects, known here as <strong>services</strong> that any class might need to a shared <strong>container</strong>, and anytime a class requires one of these services, you can <strong>inject</strong> that object into the class.  Now what does this all actually look like in your code?  You can use a type of DI, called <strong>Constructor Injection</strong> to bring in any service into your class, by accepting an object of the desired service type into the Constructor method of that class.</p>
+<p>To see an example of this, let's bring a service into our Startup class's constructor.  One you will be working with soon, is a framework-service called <code>IHostingEnvironment</code>, which is an object that will tell you more about the machine that is hosting the application.  While in development, this will be your local PC, and when you deploy, this will be a remote web server.</p>
+<pre data-language="csharp">
+    public class Startup
+    {
+        // other code in Startup
+        public Startup(IHostingEnvironment env)
+        {
+            // run this in the debugger, and inspect the "env" object! You can use this object to tell you // the root path of your application, for the purposes of reading from local files, and for
+            // checking environment variables - such as if you are running in Development or Production
+            
+            Console.WriteLine(env.ContentRootPath);
+            Console.WriteLine(env.IsDevelopment());
+        }
+    }
+</pre>
+<h2>Read more about Dependancy Injection is ASP.NET Core from the <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-2.0">official Microsoft docs!</a></h2>

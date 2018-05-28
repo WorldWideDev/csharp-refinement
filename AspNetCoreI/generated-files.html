@@ -75,7 +75,7 @@ to include any elements that we want to appear on every page of our app, like a 
 <p>
 In the Views folder of our generated project there is a file called
 <code>_ViewStart.cshtml</code>
-. This ViewStart file is run before any view is rendered. When <code>dotnet new mvc</code> generates this file all it does is ensure that the default Layout is used by all views.
+. This ViewStart file is run before any view is rendered. When <code>dotnet new mvc</code> generates this file all it does is ensure that the default Layout is used by all views.  You may have as many layout files as you wish, for example maybe you views in your DashboardController to share a navbar.  You can add a ViewStart file to Views/Dashboard, and set <code>Layout</code> to a Layout file that has a navbar.  ASP's view-finding system will prioritize views in a controller's view directory over Shared/, so you won't have to worry about conflicting with the master Layout in Views/Shared.
 </p>
 <h4>ViewImports</h4>
 <p>
@@ -83,5 +83,17 @@ Alongside the ViewStart file you should also find a file called
 <code>_ViewImports.cshtml</code>
 . ViewImports is used to import any additional packages or namespaces that are needed by multiple views. The default
 <code>_ViewImports.cshtml</code>
-created by <code>dotnet new mvc</code> brings in our project namespace with a using statement and activates some additional Razor functionality.
+created by <code>dotnet new mvc</code> brings in our project namespace with a using statement and activates some additional Razor functionality.  You can bring in additional namespace references to this file as well, making the classes they contain available to your views without an explicit path.  To do this, simply add another line:
 </p>
+<pre data-language="csharp">
+    // _ViewImports.cshtml
+    @using MyCoolProj.AnotherNamespace
+</pre>
+<h4>Tip!</h4>
+<p>Both _ViewStart and _ViewImports can be generated with the <code>dotnet new</code> command, with <code>dotnet new viewimports</code> and <code>dotnet new viewstart</code>.  This is useful if you wish to start new projects with the more lightweight <code>dotnet new web</code> tempalate.  These will be placed wherever you run the command from in your terminal - which more than likely, will be in your project's working directory.  Since these files will want to go in your Views/ directory, you can use the <code>-o</code> flag to speficy a location.  So you can run:</p>
+<pre data-language="bash">
+    dotnet new viewimports -o Views
+    // and
+    dotnet new viewstart -o Views
+</pre>
+<p>To place them in the appropritate directory.</p>
