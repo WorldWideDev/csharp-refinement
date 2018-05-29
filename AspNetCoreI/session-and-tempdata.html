@@ -53,57 +53,16 @@ int? IntVariable = HttpContext.Session.GetInt32("UserAge");
     <code>int?</code>
     .
 </p>
+<!-- is it too much here to show them how to update a value, like an int? I've had a lot of students get hung up on the counter, not understanding that they must get the value out, cast/update, then re-set; maybe we elaborate more in previous chapters where we explain what getters and setters are actually doing, and that we're constantly calling them? It's just here, session makes us do it explicitly -->
 <p>
     We can clear our session with the
     <code>Clear</code>
     method:
 </p>
 <pre data-language="csharp" class="rainbow">HttpContext.Session.Clear();</pre>
-<p>
-    Just because the session is only designed to hold simple data types, doesn't mean we can't configure it to store other things. We can write a class that lets us serialize our objects and store them as a JSON&nbsp;string.
-</p>
-<pre data-language="csharp" class="rainbow">using Newtonsoft.Json;
-// Somewhere in your namespace, outside other classes
-public static class SessionExtensions
-{
-    // We can call ".SetObjectAsJson" just like our other session set methods, by passing a key and a value
-    public static void SetObjectAsJson(this ISession session, string key, object value)
-    {
-        // This helper function simply serializes theobject to JSON and stores it as a string in session
-        session.SetString(key, JsonConvert.SerializeObject(value));
-    }
-       
-    // generic type T is a stand-in indicating that we need to specify the type on retrieval
-    public static T GetObjectFromJson&lt;T&gt;(this ISession session, string key)
-    {
-        string value = session.GetString(key);
-        // Upon retrieval the object is deserialized based on the type we specified
-        return value == null ? default(T) : JsonConvert.DeserializeObject&lt;T&gt;(value);
-    }
-}
-</pre>
-<p>
-    If we copy this code into our project's namespace we can use it from anywhere we want.
-</p>
-<pre data-language="csharp" class="rainbow">    // *Inside a controller method*
- 
-List&lt;object&gt; NewList = new List&lt;object&gt;();
- 
-HttpContext.Session.SetObjectAsJson("TheList", NewList);
-  
-// Notice that we specify the type ( List ) on retrieval
-List&lt;object&gt; Retrieve = HttpContext.Session.GetObjectFromJson&lt;List&lt;object&gt;&gt;("TheList");
-</pre>
+
 <h4>TempData</h4>
-<p>
-    Sometimes we need to pass complex data along from one method to another when we redirect.
-    <code>TempData</code>
-    is like a temporary session that only persists across one redirect. We can store complex data in
-    <code>TempData</code>
-    by default and we don't have to worry about that data sticking around and taking up space.
-    <code>TempData</code>
-    is built on top of session,&nbsp;therefore we cannot use it without enabling the session.
-</p>
+<p>While ViewBag and ModelState can hold complex data, we found one of their limitations to be that they do not persist across a redirect. <code>TempData</code> is a tool built on session and is available to the Razor engine once application is configured to use session. It is like a temporary session dictionary that only persists across one redirect, but, like session, only holds string and int values by default.</p>
 <pre data-language="csharp" class="rainbow">using Microsoft.AspNetCore.Http;
  
 // Other code
@@ -116,5 +75,11 @@ public IActionResult OtherMethod()
 {
     Console.WriteLine(TempData["Variable"]);
     // writes "Hello World" if redirected to from Method()
+    return View();
 }
+</pre>
+<h4>OtherMethod.cshtml</h4>
+<pre data-language="csharp" class="rainbow">
+    // display TempData in html
+    <p>@TempData["Variable"]</p>
 </pre>

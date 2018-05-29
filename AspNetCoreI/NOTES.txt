@@ -5,14 +5,13 @@
 3. Developer Tooling
 4. MVC!
 5. Controllers
-7. Returning JSON <-- MOVED UP  *N to review
+7. Returning JSON <-- MOVED UP
     //assignment: start building a basic API; get all method
 6. Attribute Routing
     //assignment: add to previous API to get a specific entry
 8. A: Calling Card <-- I think this is a weird assignment...
 9. A: RApi (optional)
-10. Rendering Views           *N to review
-    //intro of "IActionResult"
+10. Rendering Views    
 13. Static Files    <-- MOVED UP
 14. A: Portfolio    <-- MOVED UP
 11. Razor View Engine
@@ -32,6 +31,7 @@ Rendering Errors <-- NEW! BROKE OUT FROM MODEL VALIDATIONS MODULE
 18. Redirecting (maybe break out redirecting with attributes)
     //assignment: add validations to Dojo Survey; redirect if success, render with errors if not valid
 19. Session & TempData
+19. Session Extensions <-- BROKE OUT FROM PREVIOUS CHAPTER
 20. A: Random Passcode
 21. A: Dojodachi
 22. Wrap-up

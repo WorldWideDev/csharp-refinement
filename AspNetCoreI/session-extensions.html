@@ -1,0 +1,34 @@
+<h1>Session Extensions</h1>
+<p>Just because the session is only designed to hold simple data types, doesn't mean we can't configure it to store other things. We briefly discussed extension methods in the OOP chapter, and now we have a great practical example. Instead of having to write our own Session class from scratch, we can write a class that adds a couple of methods to the existing ISession interface. The following code demonstrates how we can add 2 methods to Session so that we can store more than just strings and ints by serializing a more complex object and then storing it as a JSON string.</p>
+    <pre data-language="csharp" class="rainbow">using Newtonsoft.Json;
+    // Somewhere in your namespace, outside other classes
+    public static class SessionExtensions
+    {
+        // We can call ".SetObjectAsJson" just like our other session set methods, by passing a key and a value
+        public static void SetObjectAsJson(this ISession session, string key, object value)
+        {
+            // This helper function simply serializes theobject to JSON and stores it as a string in session
+            session.SetString(key, JsonConvert.SerializeObject(value));
+        }
+           
+        // generic type T is a stand-in indicating that we need to specify the type on retrieval
+        public static T GetObjectFromJson&lt;T&gt;(this ISession session, string key)
+        {
+            string value = session.GetString(key);
+            // Upon retrieval the object is deserialized based on the type we specified
+            return value == null ? default(T) : JsonConvert.DeserializeObject&lt;T&gt;(value);
+        }
+    }
+    </pre>
+    <p>
+        If we copy this code into our project's namespace we can use it from anywhere we want.
+    </p>
+    <pre data-language="csharp" class="rainbow">    // *Inside a controller method*
+     
+    List&lt;object&gt; NewList = new List&lt;object&gt;();
+     
+    HttpContext.Session.SetObjectAsJson("TheList", NewList);
+      
+    // Notice that we specify the type ( List ) on retrieval
+    List&lt;object&gt; Retrieve = HttpContext.Session.GetObjectFromJson&lt;List&lt;object&gt;&gt;("TheList");
+    </pre>
