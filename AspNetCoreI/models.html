@@ -1,0 +1,26 @@
+<h1>Models</h1>
+<p>We have already discussed how model classes, particularly View Models, can help us display information on a page. These models can also play a role when we are working with forms. In the assignment you just completed, each field of the form must be received into the targeted method. If there are only 1-2 form fields, this may seem fine, but imagine having a form with 5 or even 10 fields. Not only is that a lot to manage, but each addition or change to the form also results in a change to the method signature. As it turns out, these View Models can also help us reduce this tight coupling!</p>
+<p>Suppose we have a form asking for a person's name, email, favorite word, and favorite number.</p>
+<pre data-language="csharp" class=" code-toolbar  language-csharp"><code class="  language-csharp">namespace YourNamespace.Models
+{
+    public class PersonViewModel
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string FavoriteWord { get; set; }
+        public double FavoriteNumber { get; set; }
+    }
+}</code></pre>
+<p>With a View Model constructed, we can now use an instance of this class to represent all the incoming information from a form. Instead of listing out each of the input fields separately as parameters, our method can accept a single instance of the View Model class:</p>
+
+<pre data-language="csharp" class="code-toolbar language-csharp"><code class="  language-csharp">
+    //in your controller
+    [HttpPost]
+    [Route("submit")]
+    public IActionResult PersonFormSubmitted(PersonViewModel allFieldsFromForm)
+    {
+        //process the data
+    }
+</code><div class="toolbar"></div>
+</pre>
+<p>Just like the parameter variable names had to match their associated form input names, the form input names must now match the property names of the incoming model. As long as the names match up, the framework can map the form's input values to the corresponding fields in your model.</p>

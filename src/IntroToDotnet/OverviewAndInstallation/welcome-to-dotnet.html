@@ -1,87 +1,37 @@
 <h1>Welcome to .NET</h1>
 <p>
-    By the late 1990's, developers of software for Microsoft platforms could choose from a few different languages.&nbsp;To attract a broad developer base, Microsoft had produced tools to support C++, BASIC, Assembly&nbsp;and even an implementation of Java (J++). However, over time the runtimes of these languages had diverged in both feature coverage and behavior, leading to headaches for developers inside and outside Microsoft. An initiative within the company&nbsp;was formed to create a new model for software developers, and this eventually became the
-    <strong>
-        <em>.NET Framework</em>
-    </strong>
-    .&nbsp;
+    By the late 1990's, developers of software for Microsoft platforms could choose from a few different languages.&nbsp;To attract a broad developer base, Microsoft had produced tools to support C++, BASIC, Assembly&nbsp;and even an implementation of Java (J++). However, over time the runtimes of these languages had diverged in both feature coverage and behavior, leading to headaches for developers inside and outside Microsoft. An initiative within the company was formed to create a new model for software developers, and this eventually became the <strong><em>.NET Framework</em></strong>.</p>
+<p>
+    The primary deliverable for this project, which was initially referred to as the Universal Runtime, was a code-generating runtime that could host a number of high-level programming languages, as well as a set of compilers that would reduce those different high-level languages into the same intermediate language (MSIL, often called Common Intermediate Language or CIL). Microsoft believed that with a single runtime, they could add emerging languages and provide features across those languages more consistently with less effort. They took this consistency further by producing <strong>Visual Studio .NET</strong>, a unified development environment for all .NET languages. Finally, by separating code generation from the previous compile stages, this runtime could minimize the amount of new code needed to support upcoming hardware platforms.
 </p>
 <p>
-    The primary deliverable for this project, which was initially referred to as the Universal Runtime, was a code-generating runtime that could host a number of high-level programming languages, as well as a set of compilers that would reduce those different high-level languages into the same intermediate language (MSIL, often called Common Intermediate Language or CIL). Microsoft believed that with a single runtime they could add emerging languages, and provide features across those languages more
-    <em>consistently</em>
-    , with less effort. They took this consistency further by producing
-    <strong>Visual Studio .NET</strong>
-    , a unified development environment for all .NET languages.&nbsp;Finally, by separating code generation from the previous compile stages, this runtime could minimize the amount of new code needed to support upcoming hardware platforms.&nbsp;
-</p>
-<p>
-    The .NET Framework v1.0 was released in 2002, along with Visual Studio .NET and the programming language
-    <strong>C#</strong>
-    . New versions have been released every 1-2 years since then.&nbsp;
+    The .NET Framework v1.0 was released in 2002, along with Visual Studio .NET and the programming language <strong>C#</strong>. New versions have been released every 1-2 years since then.
 </p>
 <h3>What's in the .NET?</h3>
 <p>
-    The .NET Framework consists of a number of significant components. The bottom layer is the
-    <strong>
-        <em>Common Language Runtime</em>
-    </strong>
-    (CLR). The CLR manages just-in-time compilation,&nbsp;type safety,&nbsp;memory, threads, security, and other services on behalf of applications. All source code in .NET languages are compiled beforehand into CIL, and at run-time, this code is then further compiled, managed, and run within the CLR. So it is accurate to call that source code
-    <i>
-        <strong>managed code</strong>
-    </i>
-    , and you could think of the&nbsp;CLR as an
-    <i>application virtual machine</i>
-    .&nbsp;
-</p>
+    The .NET Framework consists of a number of significant components. The bottom layer is the <strong><em>Common Language Runtime</em></strong> (CLR). The CLR manages just-in-time compilation, type safety, memory, threads, security, and other services on behalf of applications. All source code in .NET languages are compiled beforehand into CIL; at run-time, this code is then further compiled, managed, and run within the CLR. So it is accurate to call that source code <i><strong>managed code</strong></i>, and you could think of the CLR as an <i>application virtual machine</i>.</p>
 <p>
-    Sitting above the CLR, there is an extensive collection of libraries. The essential service, called the
-    <strong>
-        <em>Base Class Library</em>
-    </strong>
-    (BCL), have been included since v1.0. Since that first release in 2002, more libraries have been added with each new version of the framework. These include the following (that you should eventually learn about) and others&nbsp;(WPF, WF, WinForms, etc.):
-</p>
+    Sitting above the CLR, there is an extensive collection of libraries. The essential service, called the <strong><em>Base Class Library</em></strong> (BCL), have been included since v1.0. Since that first release in 2002, more libraries have been added with each new version of the framework. These include the following (that you should eventually learn about) and others (WPF, WF, WinForms, etc.):</p>
 <ul>
-    <li>
-        <strong>
-            <em>ASP.NET</em>
-        </strong>
-        - technology for building web apps
+    <li><strong><em>ASP.NET</em></strong> - technology for building web apps
     </li>
 
     <li>
-        Windows Communication Foundation (
-        <em>
-            <strong>WCF</strong>
-        </em>
-        ) - technology for service-oriented applications
+        Windows Communication Foundation (<em><strong>WCF</strong></em>) - technology for service-oriented applications
     </li>
 
     <li>
-        Windows Identity Foundation (
-        <strong>
-            <em>WIF</em>
-        </strong>
-        ) - authentication and claims-based identity support
+        Windows Identity Foundation (<strong><em>WIF</em></strong>) - authentication and claims-based identity support
     </li>
+
     <li>
-        Language-Integrated Natural Query (
-        <strong>
-            <em>LINQ</em>
-        </strong>
-        ) - adds query syntax directly into C# and VB
+        Language-Integrated Natural Query (<strong><em>LINQ</em></strong>) - adds query syntax directly into C# and VB
     </li>
+
     <li>
-        Entity Framework (
-        <strong>
-            <em>EF</em>
-        </strong>
-        ) - an ORM that uses LINQ
+        Entity Framework (<strong><em>EF</em></strong>) - an ORM that uses LINQ
     </li>
 </ul>
 <p>
-    Along with the CLR, the framework includes the compilers for languages with built-in support, such as C# and Visual Basic, and more recently, a functional language named
-    <em>F#</em>
-    . Additional languages that are or were previously supported by .NET include implementations of Java, Python, Ruby, Ada and Eiffel (J#, IronPython, IronRuby, A#). All of these featured compilers that produce CIL code consumable by the CLR.&nbsp;
-</p>
-<p>
-    We keep talking about our story's main character -- C# -- but we have not yet gotten 'up close and personal.' We'll start on that in the next section.&nbsp;
+    Along with the CLR, the framework includes the compilers for languages with built-in support, such as C# and Visual Basic, and more recently, a functional language named <em>F#</em>. Additional languages that are or were previously supported by .NET include implementations of Java, Python, Ruby, Ada and Eiffel (J#, IronPython, IronRuby, A#). All of these featured compilers that produce CIL code consumable by the CLR.
 </p>

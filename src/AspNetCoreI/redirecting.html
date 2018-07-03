@@ -1,6 +1,5 @@
 <h1>Redirecting</h1>
-<p>
-Sometimes we want to redirect to other controller methods rather than rendering a view. In ASP.NET Core MVC we use the <code>RedirectToAction()</code> response. Redirecting can also be done based on routes&nbsp;but <code>RedirectToAction</code> is preferable because our routes are more arbitrary and more&nbsp;likely to change as our code develops rather&nbsp;than our controller method names.
+<p>Sometimes we want to redirect to other controller methods rather than rendering a view, like after a successful POST request. In ASP.NET Core MVC we use the <code>RedirectToAction()</code> response. Redirecting can also be done based on routes&nbsp;but <code>RedirectToAction</code> is preferable because our routes are more arbitrary and more&nbsp;likely to change as our code develops rather&nbsp;than our controller method names.
 </p>
 <p>
 The <code>RedirectToAction</code> method accepts a string that corresponds to the name of another method in your controller.
@@ -22,7 +21,7 @@ public class FirstController : Controller
 }
 </code><div class="toolbar"></div></pre>
 <p>
-If the method you want to redirect to expects parameters you can include them too. We pass an anonymous object as an additional argument:
+If the method you want to redirect to expects parameters, you can include them too. We pass an anonymous object as an additional argument:
 </p>
 <pre data-language="csharp" class="code-toolbar language-csharp"><code class="  language-csharp">// Other code
 public IActionResult Method()
@@ -67,3 +66,4 @@ public class SecondController : Controller
 <p>
 We can also pass arguments when redirecting to a different controller, simply add an anonymous object as a third argument to the <code>RedirectToAction</code> method.
 </p>
+<!-- explain life cycle of a request/persistence; nothing really lasts a redirect -->

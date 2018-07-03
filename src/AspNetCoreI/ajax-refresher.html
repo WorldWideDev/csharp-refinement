@@ -1,18 +1,28 @@
-<h1>Ajax Refresher</h1>
+<h1>AJAX Refresher</h1>
+<h2>What is AJAX?</h2>
+<p>In our web applications thus far, we are utilizing the traditional request-response cycle, in which a client makes a request, and we send back a response (i.e. HTML/CSS/JS) which is fully rendered to the client. AJAX is a technique that allows the client to interact with a page and have the page get updated without being reloaded entirely. Instead of expecting a full HTML/CSS/JS response, an AJAX request works best when it receives a JSON response. Once the response is received, the DOM can be manipulated without a full page refresh. Querying our own routes that return JSON is no different from querying external APIs!</p>
+<h2>AJAX with JQuery</h2>
+<p>While we could make these AJAX requests with Vanilla JavaScript, the JQuery library makes these requests much simpler. For the full documentation, you can look <a href="http://api.jquery.com/jQuery.ajax/" target="_blank">here</a>. There are also 2 shorthand functions for making <a href="http://api.jquery.com/jQuery.get/" target="_blank">get</a> or <a href="http://api.jquery.com/jQuery.post/" target="_blank">post</a> requests, which are a little bit simpler to use. Basically, the format is:</p>
+<pre data-language="javascript" class="code-toolbar language-javascript">
+    <code class="language-javascript">
+        //what event should trigger each of these methods?
+
+        // to make a GET request
+        // the first argument is the string of the URL that will return JSON
+        // the second argument is a callback function that specifies what you want to do once the data from the specified URL is returned
+        $.get("localhost:5000/cats", function (data) {
+            // data refers to the results of the GET request to localhost:5000/cats; what do you think your "cats" GET method should return?
+            // DOM manipulation!
+        })
+        
+        // to make a POST request
+        // the first argument is the string of the URL that will return JSON
+        // the second argument is a JSON object of the data to post
+        // the third argument is a callback function that specifies what you want to do once the POST request is complete
+        $(.post("localhost:5000/cats", {name: "Fitz", breed: "domestic short-haired"}, function (data) {
+            // data refers to the results of the POST request to localhost:5000/cats; what do you think your "cats" POST method should return?
+            // DOM manipulation!
+        }))
+    </code>
+</pre>
 <p>
-Performing AJAX with ASP.NET Core isn't any different than with any other back-end. When we make our HTTP requests with JavaScript all that matters is that the response is formatted as JSON, which we already know how to do. We could make HTTP requests with Vanilla JavaScript if we really wanted to, but the syntax to do so is ugly and clunky. Instead we can use JQuery to make our lives much easier.
-</p>
-<p>
-Querying our own routes that return JSON is no different from querying external apis. Using the JQuery <code>.get</code> and <code>.post</code> methods is always the same, no matter what url we target.
-</p>
-<pre data-language="javascript" class=" code-toolbar language-javascript"><code class="  language-javascript">$(document).ready(function(){
-    // external request
-    $.get("http://pokeapi.co/api/v2/pokemon/1", function(response){
-        // Handle the response data
-    })
-    // back-end request
-    $.get("/getusers", function(response){
-        // Handle the response data
-    })
-})
-</code><div class="toolbar"></div></pre>

@@ -1,0 +1,50 @@
+<h1>View Models</h1>
+<p>You may have noticed in the last assignment that it's pretty cumbersome to box everything into an <code>object</code>, only to turn around and have to unbox each value into a specific type if you want to use that type's methods. Or maybe you considered using strings to hold all your information, but again, were then limited to only the methods available to strings.</p>
+<p>Because our page can only accept one model, we can use what we learned in OOP about writing our own classes, which were able to hold multiple properties of varying types. We can create a class that will represent the information we want to display, and then send it to the view with all types intact.</p>
+<p>By convention, all models should be grouped in a Models folder:</p>
+<p> <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3759/handouts/chapter3759_7251_ModelStructure.PNG"></p>
+<p>(In contrast to the Controllers and Views folders, the Models folder is convention and not required by the framework, so you have more flexibility with how you organize the contents of your Models folder.)</p>
+<p>Also by convention, we modify our models' namespaces to ProjNamespace<em>.Models</em>, as we did with our controllers.</p>
+<h3>StudentViewModel.cs</h3>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+    namespace YourNamespace.Models
+    {
+        public class StudentViewModel
+        {
+            public string Name { get; set; }
+            public DateTime Birthdate { get; set; }
+            public string House { get; set; }
+        }
+    }
+    </code>
+</pre>
+<h3>YourController.cs</h3>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+        //in our controller
+        public IActionResult Index()
+        {
+            StudentViewModel me = new StudentViewModel();
+            //set all values 
+            return View(me);
+        }
+    </code>
+</pre>
+<p>Now on my HTML, I'm able to reference the properties of the model directly, and even use methods specific to each.</p>
+<h3>Index.cshtml</h3>
+<pre data-language="csharp" class="code-toolbar language-csharp">
+    <code class="language-csharp">
+        //the reference to the model is still the same,
+        //but because it is not a built in, we must specify the namespace
+        //where Razor can find the given class
+        @model YourNamespace.Models.StudentViewModel
+        
+        &lt;ul&gt;
+            &lt;li&gt;Name: @Model.Name&lt;/li&gt;
+            &lt;li&gt;Birthdate: @Model.Birthdate.ToString("MMM dd")&lt;/li&gt;
+            &lt;li&gt;House: @Model.House&lt;/li&gt;
+        &lt;/ul&gt;
+    </code>
+</pre>
+    

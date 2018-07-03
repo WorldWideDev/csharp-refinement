@@ -1,75 +1,63 @@
 <h1>Language Integrated Queries</h1>
-<p>LINQ (pronounced "link") allows you to work with any dataset as if you were using SQL queries. It's a very valuable tool that exists in the .NET framework and makes sorting, ordering, and searching of datasets very simple and familiar feeling. The results of a LINQ expression are usually new enumerable collections. Due to this, type inference using the <strong>var</strong> keyword is the typical implementation of variables assigned to LINQ expressions.</p>
+<p>LINQ (pronounced "link") allows you to work with any dataset as if you were using SQL queries. It's a very valuable tool that exists in the .NET framework and makes sorting, ordering, and searching of datasets very simple once you learn the syntax. There are two different notations we can use with LINQ, and we will demonstrate both throughout the chapter. Anything you can write in one syntax can be written in the other, but those more comfortable with SQL may prefer the query syntax. (Query syntax is actually translated into method syntax during compilation.) Be sure to include the LINQ namespace (<code>System.Linq</code>) whenever you are using LINQ.</p>
+<h3>Method Syntax</h3>
+<p>When using method syntax, we have to learn about lambda expressions. A lambda expression is a way of writing an otherwise cumbersome function in a simplified inline expression. When we use a LINQ method and pass in a lambda function, we are specifying the condition or parameter on which we want the query to execute. The operator is the <code>=></code> symbol, read as "goes to." On the left of the arrow is an argument (a variable name of your choosing), which represents the iterated item. On the right of the arrow is typically the condition or parameter to be used for the given query. If the body of the function is more than one line, it should be wrapped in curly braces.</p>
+<h3>Query Syntax</h3>
+<p>Query syntax, on the other hand, looks much more like SQL, though in a slightly different order. In query syntax, we start with <code>from</code> and specify the dataset we will be iterating through. We can add additional clauses as our query requires (filtering conditions, joins, groupings, etc.). Finally, we use the <code>select</code> clause to specify what data we actually want to be returned.</p>
+<p>Let's take a look at a few examples to get familiar with LINQ. Suppose we have previously defined the Product class and have the following dataset:</p>
 <pre data-language="c-sharp" class="active_pre rainbow">Product[] products = {
      new Product { Name = "Jeans", Category = "Clothing", Price = 24.7 },
      new Product { Name = "Socks", Category = "Clothing", Price = 8.12 },
      new Product { Name = "Scooter", Category = "Vehicle", Price = 99.99 },
      new Product { Name = "Skateboard", Category = "Vehicle", Price = 24.99 },
+     new Product { Name = "Skirt", Category = "Clothing", Price = 17.5 }
 };
 </pre>
-<p>With this datasets, we can sort all the items by price then get exclusively the Name and Price field using LINQ. We must make sure to include the LINQ namespace in our code and from there can implement a query using the LINQ keywords.</p>
-<pre data-language="csharp" class="rainbow">//At the top of the code
-using System;
-using System.Collections.Generic;
-using System.Linq;
-//*****
-//Rest of program code
-//*****
-var foundProducts = from match in products
-                    orderby match.Price descending
-                    select new { match.Name, match.Price };
+<h5>Sorting</h5>
+<p>Let's sort all the products by price.</p>
+<pre data-language="csharp" class="rainbow">
+    // METHOD SYNTAX
+    IEnumerable<Product> orderedProducts = products.OrderByDescending(p => p.Price);
+
+    // QUERY SYNTAX
+    IEnumerable<Product> orderedProducts = from p in products
+                                           orderby p.Price descending
+                                           select p;
 </pre>
-<p>This is all that is needed to complete this operation! We have created a variable foundProducts that can be iterated through and contains anonymous objects holding Name and Price that are sorted by Price. You can change the operations here in any way to meet the needs of the query and there are quite a few more keywords available to improve your querying power. Below is a list of some of these keywords and a description of what they do.</p>
-<p>
- <img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3758/handouts/chapter3758_7229_Screen-Shot-2016-09-20-at-3.17.42-PM.png" alt="Query Keywords"></p>
-<p>Using keywords in this SQL-esque manner is typically what is referred to as "query syntax". Another way of performing the same query is called "dot-notation syntax".</p>
-<p>LINQ dot-notation consists of methods that can be chained together to perform either simple or complex operations. Any number of LINQ methods can be chained together as long as each returns a new collection to be operated on.</p>
-<p>LINQ queries return a form of IEnumerable in order to take advantage of a feature called "Deferred Query Evaluation". This means that if the source collection is changed the LINQ generated IEnumerable will re-evaluate itself based on the updated source.</p>
-<h5>Where</h5>
-<p>One of the most widely used LINQ methods is <code>.Where()</code>, which allows us to filter a collection based on a lambda function. The lambda function will be run on each entry in the collection, and return a boolean value that indicates whether it should be included in the result.</p>
-<pre data-language="csharp" class="rainbow">List&lt;string&gt; StringList = new List&lt;string&gt; {
-                              "apple",
-                              "banana",
-                              "carrot",
-                              "asparagus",
-                              "tomato",
-                              "artichoke"
-                          };
-IEnumerable&lt;string&gt; TransformedList = StringList.Where( str =&gt; str[0] == "a")
-// TransformedList == {"apple", "asparagus", "artichoke"}
-</pre>
-<p>The lambda functions used by LINQ methods can be as complicated as we need them to be; we can allow them to be multiple lines using a function body. Here's the same lambda function from the previous snippet written using a method or function body:</p>
-<pre data-language="csharp" class="rainbow">IEnumerable&lt;string&gt; TransformedList = StringList
-    .Where( str =&gt; {
-        if(str[0] == "a")
-        {
-            return true;
-        }
-        return false;
-    });
+
+<!-- color coded diagram with foreach loop to demonstrate how each of these pieces could be written out in a full for loop -->
+<p>What is this IEnumerable type? This is simply the interface for any data type that can be iterated over. LINQ can be used on sets of data, but that data may originate in many different forms (arrays, lists, dictionaries, etc.). To provide the same functionality for any type of dataset, LINQ works on any class that implements the IEnumerable interface. (Are you seeing the power of interfaces yet? :) ). Note also that none of these queries affect the original collection.</p>
+<h3>Filtering</h3>
+<p>One of the most common clauses you will use is the <code>where</code> clause or method. This allows us to filter on a specific condition(s).</p>
+<pre data-language="csharp" class="rainbow">
+    // METHOD SYNTAX
+    IEnumerable<Product> allClothing = products.Where(prod => prod.Category == "Clothing");
+
+    // QUERY SYNTAX
+    IEnumerable<Product> allClothing = from p in products
+                                      where p.Category == "Clothing"
+                                      select p;
 </pre>
 <h5>Select</h5>
-<p>The <code>.Select()</code> method accepts a lambda function that transforms each item in a collection and returns a new collection of the results.</p>
-<pre data-language="csharp" class="rainbow">List&lt;string&gt; StringList = new List&lt;string&gt; {
-                              "apple",
-                              "banana",
-                              "carrot",
-                              "asparagus",
-                              "tomato",
-                              "artichoke"
-                          };
-IEnumerable&lt;char&gt; TransformedList = StringList.Select( str =&gt; str[0])
-// TransformedList == {'a', 'b', 'c', 'a', 't', 'a'}
+<p>Most method syntax operations return an IEnumerable of the same type as the original source. If we wanted to select only some of the properties of that class, we can use <code>select</code>. The select clause or method transforms each item in a collection and returns a collection of the newly defined results in the form of an anonymous object. For anonymous objects, we can use type inference with the <strong>var</strong> keyword.</p>
+<pre data-language="csharp" class="rainbow">
+    // METHOD SYNTAX
+    var clothingNamesAndPrices = products.Where(p => p.Category == "Clothing").Select(p => new {p.Name, p.Price});
+
+    // QUERY SYNTAX
+    var clothingNamesAndPrices = from p in products
+                                 where p.Category == "Clothing"
+                                 select new {p.Name, p.Price};
 </pre>
 <h5>Join</h5>
-<p>If we have two collections and we want to combine their values we can use the <code>.Join()</code> method. <code>Join</code> operates on each value in both collections and combines them based on some equivalance. The <code>Join</code> method is very similar to the SQL "join" operation; it will return an entry for each match it finds in the two collections.</p>
+<p>If we have two collections and we want to combine their values we can use the <code>Join</code> method or <code>join</code> clause. A join operates on each value in both collections and combines them based on some equivalance. The <code>Join</code> method is very similar to the SQL "join" operation; it will return an entry for each match it finds in the two collections.</p>
 <p>
-<code>Join</code> accepts four arguments:</p>
+<code>Join</code> accepts four arguments, in this order:</p>
 <ol>
 <li>The second collection we want to join with</li>
-<li>A lambda function that defines how the products from the first collection are compared</li>
-<li>A lambda function that defines how the products from the second collection are compared</li>
-<li>A lambda function that defines how the matching values are combined</li>
+<li>A lambda function that defines the value from the first collection to use for comparison</li>
+<li>A lambda function that defines the value from the second collection to use for comparison</li>
+<li>A lambda function that defines how the matching values should be returned</li>
 </ol>
 <pre data-language="csharp" class="rainbow">List&lt;string&gt; Food = new List&lt;string&gt; {
                               "apple",
@@ -88,15 +76,22 @@ List&lt;string&gt; Adjective = new List&lt;string&gt; {
                               "toothsome"
                           };
  
-// This Join looks at  each foodItem and combines it with each adjective that has the same first character
-List&lt;string&gt; Combo = Food.Join(Adjective, 
-                               foodItem =&gt; foodItem[0],
-                               adjective =&gt; adjective[0],
-                               (foodItem, adjective) =&gt;
-                               {
-                                   return adjective + " " + foodItem;
-                               }).ToList();
+// each string in the Food list will be combined with each adjective from the Adjective list where their first characters match
+
+//METHOD SYNTAX
+IEnumerable&lt;string&gt; Combo = Food.Join(Adjective, 
+                                foodItem =&gt; foodItem[0],
+                                adjective =&gt; adjective[0],
+                                (foodItem, adjective) =&gt;
+                                {
+                                    return adjective + " " + foodItem;
+                                });
  
+//QUERY SYNTAX
+IEnumerable&lt;string&gt; Combo = from foodItem in Food
+                           join adjective in Adjective on foodItem[0] equals adjective[0]
+                           select adjective + " " + foodItem;
+
 //Combo == "best banana",
 //         "capital carrot",
 //         "flavorful fudge",
@@ -106,4 +101,9 @@ List&lt;string&gt; Combo = Food.Join(Adjective,
  
 // Notice that apple is not in the combination collection because it does not match an adjective
 </pre>
+<h3>More Method Syntax Methods</h3>
+<p>LINQ methods can be chained together as long as the previous one returns a new collection to be operated on.</p>
 <p><img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_4015/handouts/chapter4015_7325_LINQExtensionMethods.png"></p>
+
+<h3>More Query Syntax Clauses</h3>
+<img src="http://s3.amazonaws.com/General_V88/boomyeah/company_209/chapter_3758/handouts/chapter3758_7229_Screen-Shot-2016-09-20-at-3.17.42-PM.png" alt="Query Keywords">

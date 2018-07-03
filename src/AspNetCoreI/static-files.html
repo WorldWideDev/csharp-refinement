@@ -9,6 +9,7 @@
     // other configurations
     // We will now add the UseStaticFiles() middleware, which allows our app to access our static files.
     app.UseStaticFiles();
+    // order matters! For the duration of this course, app.UseMvc() should be last
     app.UseMvc();
 }
 </pre>

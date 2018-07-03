@@ -1,9 +1,10 @@
 <h1>Serving View Files</h1>
 <p>
-The most common return type for our controllers is a view, and ASP.NET Core makes serving them a breeze. Any time one of our Controllers returns a View, the framework attempts to use the name of your controller to find the appropriate view file. ASP.NET looks for a folder called "Views", then looks for a folder that matches the name of your controller, and if it fails to find the view there it will always look for a folder called <code>Shared</code> as a last resort.</p>
-<p><strong><em>Make sure your Views subfolders have names that match your controller names</em></strong>(Without "Controller")</p>
-<p>For example <code>UsersController</code> would look for its views in the <code>Users</code> subfolder. If a view needs to be rendered from multiple Controllers it must be in the <code>Shared</code> folder.&nbsp;Even though we're only working with static HTML, we'll&nbsp;have an easier time&nbsp;using&nbsp;<code>.cshtml</code> files. ASP.NET Core Mvc will not read standard <code>.html</code> files without some extra configuration.&nbsp;</p>
-<p>Let's make some content to display. Create a new folder called <code>Views</code> in your project directory, then make a subfolder that matches your controller name. Inside the subfolder add a new file called "index.cshtml"</p>
+While JSON can be useful, the most common return type for web applications is a View (HTML, and any accompanying CSS and JavaScript). ASP.NET Core makes serving them a breeze. When we want to specify that a controller method will return a View, we use the return type IActionResult. (Remember polymorphism? Since a method can only have one return type, this IActionResult interface specifies the appropriate behavior of the method, but also allows us to return different kinds of actions, like rendering (View) or redirecting (which we'll cover shortly)).</p>
+<p>When you call on the View method, you can provide no arguments, or 1 string argument that is the name of the .cshtml file you want to render (without the .cshtml extension; i.e. "Index" to render "Index.cshtml"). If you do not pass in any arguments, the View method will use the name of the controller method being called. To find this file, the MVC framework first looks for a folder called "Views." Then, inside that folder, it looks for a folder with the same name as the controller class from which the call is being made. Within that folder, it looks for the .cshtml file matching the argument passed into the View method. If there is no folder matching the name of the controller, it will look for a folder called "Shared" and try to find the corresponding .cshtml file there. If no matching view is found, you will get a 404 error.</p>
+<p><strong><em>Make sure your Views subfolders have names that match your controller names </em></strong>(without the word "Controller")</p>
+<p>For example <code>UsersController</code> would look for its views in the <code>Users</code> subfolder. If a view needs to be rendered from multiple controllers, it must be in the <code>Shared</code> folder.&nbsp;Even though we're only working with static HTML, we'll&nbsp;have an easier time&nbsp;using&nbsp;<code>.cshtml</code> files. ASP.NET Core Mvc will not read standard <code>.html</code> files without some extra configuration.&nbsp;</p>
+<p>Let's make some content to display. Create a new folder called <code>Views</code> in your project directory, then make a subfolder that matches your controller name. Inside the subfolder add a new file called "Index.cshtml"</p>
 <p><img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/ViewStructure2.PNG" alt="Folder Structure"></p>
 <h3>Index.cshtml</h3>
 <pre data-language="html" class="active_pre rainbow">&lt;!DOCTYPE html&gt;
@@ -39,6 +40,9 @@ namespace YourNamespace.Controllers
     }
 }
 </pre>
-<p>
-ASP.NET Core MVC is very flexible when it comes to designating our targeted view. If we have an empty <code>View()</code> then it will look for a view with the same name as the method serving the view. We can also specify the name of the file (without <code>.cshtml</code>) to render.
-</p>
+<p>To have VS Code still format .cshtml pages as .html pages (for snippets, etc.), you can update your VS Code User settings by adding the following:</p>
+<pre>
+    "emmet.includeLanguages": {
+        "razor": "html"
+    }
+</pre>
