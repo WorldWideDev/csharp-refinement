@@ -1,0 +1,61 @@
+<h1>Abstract Classes</h1>
+<p>There are times when you wish to create a class for the sole purpose of extending it into child classes.  You want to include a base set of features, but don't need to create objects of this parent class.  Think about our Vehicle class; even better, think about the concept of a vehicle in general.  If you were to close your eyes and try to imagine a "vehicle", it would be impossible not to imagine something more specific: a car, a truck, a skateboard.  A vehicle is a rather abstract idea.</p>
+<p>An abstract class is one that can not be instantiated, but rather is built with the intention of being <em>extended</em> into more fleshed out sub-classes.  You may provide the same members as any non-abstract class - to be inherited by its children - but you may also include abstract methods and properties, which like interfaces, must be implemented by classes inheriting from the abstract parent.</p>
+<p>Let's take our Vehicle class and make use of this idea.  First, we can simply add the <code>abstract</code> keyword to the class definition.</p>
+<pre data-language="cs_sharp">
+abstract class Vehicle
+{
+    public int NumPassengers;
+    public string Color;
+    public double Odometer;
+    &nbsp;
+    public Vehicle(int numPas, string col)
+    {   
+        NumPassengers = numPas;
+        Color = col;
+        Odometer = 0;
+    }
+    &nbsp;
+    public Vehicle(string col)
+    {
+        NumPassengers = 5;
+        Color = col;
+        Odometer = 0;
+    }
+    &nbsp;
+    public virtual void GetInfo()
+    {
+        Console.WriteLine($"Num Passengers: {NumPassengers}");
+        Console.WriteLine($"Color: {Color}");
+        Console.WriteLine($"Miles: {Odometer}");
+    }
+}
+</pre>
+<p>No other change is necessary for Vehicle to be abstract, however we will find we want to make more use of its abstract nature.  We will also find that we will be prevented from directly instantiating Vehicle objects.</p>
+<figure><img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/abstract-error.png"></figure>
+<p>The reason we are prevented from instantiating objects from abstract classes, aside from protecting our intention of keeping them "abstract", is that abstract classes may contain abstract methods.  This means we can provide only the method signature, and leave the implementation up to its child class.  Let's say we want all vehicles to be able to make a sound, but like we found in our thought experiment from before, we wouldn't be able to imagine a "sound" of a vehicle any more than we would be able to conjure up an image of one!  What we can do is provide an abstract method for MakeSound(), and allow sub-classes of Vehicle to implement this method is whichever way makes sense for that child class.  First, let's add this abstract method to Vehicle.</p>
+<pre data-language="c_sharp">
+abstract class Vehicle
+{
+    // previous Vehicle code here...
+    &nbsp;
+    // "abstract" methods only take a method "signature", just like interfaces
+    // they also must be either "public" or "protected", as they need to be
+    // accessible to their child classes
+    public abstract void MakeNoise();
+}
+</pre>
+<p>With this change, there is now a requirement for all sub-classes of Vehicle to "override" the abstract MakeNoise() method.  This is much like interfaces, where abstract class members form a kind of "contract" that must be fulfilled.  Until an implementation is provided on the child class, your code will not compile.  So let's fix our Car class, so that we fulfill this new requirement of Vehicle.  We need to define how a Car makes noise.</p>
+<pre data-language="c_sharp">
+class Car : Vehicle, IRideable
+{
+    // previous Car code here...
+    &nbsp;
+    // inherited "abstract" methods must be "overridden" by the child class
+    // the override keyword is used here, just like it is for overriding "virtual" parent methods
+    public override void MakeNoise()
+    {
+        Console.WriteLine("Beeeeep!");
+    }
+}
+</pre>

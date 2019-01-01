@@ -1,0 +1,16 @@
+<h1>var (Type Inference)</h1>
+
+<p>C# has a var keyword for creating variables, however if you are familiar with JavaScript, it may be confusing at first (as this var works quite a bit differently).  In C#, creating a variable with var lets the compiler decide what the type is based on the value assigned.  Once the variable is created, all the same rules apply to what you are able to do with that variable - just as if you provided an explicit type.</p>
+
+<pre data-language="c_sharp">
+var number = 10; // -> int
+var name = "Todd"; // -> string
+var pi = 3.14; // -> double
+
+// what if we operated on these variables?  we must take into account their inferred types!
+var resultOne = number/pi; // -> double (the result of this division operation produces a double)
+var resultTwo = name/pi; // -> compiler error (Operator '/' cannot be applied to operands of type 'string' and 'double')
+</pre>
+
+<p>The var keyword is important to know about, and can be convenient, but until you get the hang of things plan on using explicit types for your variables.</p>
+
