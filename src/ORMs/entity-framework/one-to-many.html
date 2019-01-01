@@ -1,0 +1,108 @@
+<h1>Relationships in EF Core</h1>
+<p>Of course, Entity Framework Core supports models with relationships to other models. MySQL does not support having fields that contain complex data (like another object) and so we use IDs to represent the relationship. However, our EF models will have a field for the ID <strong>as well as</strong> a field for the full object. This is the one exception to our rule that our models have exactly the same fields as our database tables. Entity Framework Core is able to detect that the Id and object fields represent the same relationship, based on their names.</p>
+<p>For example, consider the following schema:</p>
+<figure><img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/ef-relations-erd.png" style="width: 537px; height: 204px;" width="537" height="204"><br>And consider model classes that map exactly to these tables:<br><br></figure>
+<pre data-language="c_sharp" class="active_pre rainbow">
+public class User
+{
+    [Key]
+    public int UserId {get;set;}
+    public string Name {get;set;}
+    public string Email {get;set;}
+}
+</pre>
+<pre data-language="c_sharp" class="rainbow">
+public class Message
+{
+    [Key]
+    public int MessageId {get;set;}
+    public string Content {get;set;}
+    public int UserId {get;set;}
+}
+</pre>
+<h2>Navigation Properties</h2>
+<p>With Entity Framework, you can add a <em>reference</em> to the related model object, known as a <strong>navigation property</strong>.&nbsp; For a <strong>Message</strong>, that would be the <strong>User </strong>that is associated by way of <strong>Message </strong>containing a <strong>UserId </strong>(foreign key) matching a <strong>User </strong>model's <strong>UserId </strong>(primary key).&nbsp; Inversely, you can have a navigation property on <strong>User</strong> that maps a <em>collection</em> of related <strong>Message</strong> objects.<br></p>
+<pre data-language="c_sharp" class="rainbow">
+public class User
+{
+    [Key]
+    public int UserId {get;set;}
+    public string Name {get;set;}
+    public string Email {get;set;}
+    // Navigation property for related Message objects
+    public List&lt;Message&gt; CreatedMessages {get;set;}
+    
+}
+public class Message
+{
+    [Key]
+    public int MessageId {get;set;}
+    public string Content {get;set;}
+    public int UserId {get;set;}
+    // Navigation property for related User object
+    public User Creator {get;set;}
+}
+</pre>
+<p>We know that the <strong>messages</strong> SQL table doesn't have a <strong>Creator </strong>column, and that there is no <strong>User</strong> type for a column in SQL: this is all Entity Framework here.&nbsp; Because your <strong>Message&nbsp;</strong>model class has a <strong>UserId</strong>, and your <strong>User</strong> model class has a <strong>UserId</strong> as its primary key, Entity Framework knows to join data from a&nbsp;<strong>users&nbsp;</strong>table and map to a <strong>User</strong> type member on <strong>Message</strong>.&nbsp; You may name navigation properties whatever you like; here, since a <strong>User </strong>creates <strong>Messages</strong>, it makes sense to name this property&nbsp;<strong>Creator</strong>.</p>
+
+<h2>.Include()</h2>
+<p>By default, querying your DbSets will <strong>not</strong> populate your model's navigation properties with related objects, you must tell Entity Framework to <strong>include</strong> them. If, for example, you wish to query for all messages, and display the <strong>Name</strong> of the message <strong>Creator</strong>, you will need to add an additional method call to your query expression: <strong>.Include()</strong>, where you provide a lambda expression that selects the navigation property you want to populate with related objects.</p>
+<h3>In your Controller:</h3>
+<pre data-language="c_sharp" class="rainbow">
+public IActionResult Index()
+{
+    List&lt;Message&gt; messagesWithUser = _dbContext.Messages
+        // populates each Message with its related User object (Creator)
+        .Include(message =&gt; message.Creator)
+        .ToList();
+    
+    return View(messagesWithUser);
+}
+</pre>
+<h3>In your View:</h3>
+<pre data-language="html" class="rainbow">
+@model List&lt;Message&gt;
+@foreach(var message in Model)
+{
+    &lt;p&gt;@message.Creator.Name says: @message.Content&lt;/p&gt;
+}
+</pre>
+<h2>Querying Related Data</h2>
+<p>The use of a .Include() in your query expressions is the first step in making queries across tables/models, in that it will produce the related objects in your model's navigation properties.  This step will then allow you to query further into your model's relationships.  For example, if you wanted to know the number of CreatedMessages a User has produced, or the User with the longest Message, etc - you will need to follow a .Include() with the requisite LINQ expressions that target your model's relationships.  Let's see a few examples:</p>
+<h3>In your Controller:</h3>
+<pre data-language="c_sharp" class="rainbow">
+[HttpGet("{userId}")]    
+public IActionResult UserDetails(int userId)
+{
+    // Number of messages created by this User
+    int numMessages = dbContext.Users
+        // Including Messages, so that we may query on this field
+        .Include(user =&gt; user.CreatedMessages)
+        // Get a User with userId
+        .FirstOrDefault(user =&gt; user.UserId == userId)
+        // Now, with a reference to a User object, and access to a User's Messages
+        // We can get the .Count property of the Messages List
+        .CreatedMessages.Count;
+    &nbsp;
+    // User with the longest Message, we can do this in two stages
+    // First, find the Length of the longest Message
+    int longestMessageLength = dbContext.Messages.Max(message => message.Content.Length);
+    &nbsp;
+    // Second, select one User who's CreatedMessages has Any that matches this character count
+    // Note here that CreatedMessages is a List, and thus can take a LINQ expression: such as .Any()
+    User userWithLongest = dbContext.Users
+        .Include(user =&gt; user.CreatedMessages)
+        .FirstOrDefault(user =&gt; user.CreatedMessages
+            .Any(message => message.Content.Length == longestMessageLength));
+    &nbsp;
+    // Messages NOT related to this User:
+    // Since this query only requires checking a Message's UserId
+    // and doesn't require us to check data contained in a Message's Creator
+    // We can do this without a .Include()
+    List&lt;Message&gt; unrelatedMessages = dbContext.Messages
+        .Where(message =&gt; message.UserId != userId)
+        .ToList();
+    &nbsp;
+    return View();
+}
+</pre>

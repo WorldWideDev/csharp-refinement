@@ -1,0 +1,217 @@
+<h1>Multiple Forms, Single View</h1>
+<p>We have seen how to bind our forms to models, but we've been limited to the fact that a View can only define <strong>one </strong>model.&nbsp; What if we wanted to support multiple forms/models in a single View?</p>
+<figure><img src="https://s3.amazonaws.com/General_V88/boomyeah2015/codingdojo/curriculum/content/chapter/multi-form.png"></figure>
+<hr>
+<h4>While it is true that a View can define a single model, we can approach this problem a couple of ways.</h4>
+
+<p>We can start by defining our model classes, as these will not need to change for any approach we take.</p>
+<div>
+<div class="inline">
+<h3>Product.cs</h3>
+<pre data-language="c_sharp">
+public class Product
+{
+    [Required]
+    [Display(Name="Product Name")]
+    public string ProductName {get;set;}
+    [Required]
+    public double Price {get;set;}
+}
+</pre>
+</div>
+<div class="inline">
+<h3>User.cs</h3>
+<pre data-language="c_sharp">
+public class User
+{
+    [Required]
+    public string Username {get;set;}
+    [Required]
+    public int Age {get;set;}
+}
+</pre>
+</div>
+</div>
+<hr>
+<h2>Partials</h2>
+<p>Since partials can have their own models defined, we could break one or both of these forms into their own partial files.&nbsp; The parent View could just load each partial, and allow model binding to occur on the forms contained within the partial views.</p>
+<h3>Index.cshtml</h3>
+<pre data-language="html" class="rainbow active_pre">
+&lt;h1>Add a Product&lt;/h1&gt;
+&lt;partial name="ProductPartial" /&gt;
+&lt;h1&gt;Add a User&lt;/h1&gt;
+<partial name="UserPartial" />
+</pre>
+<div>
+<div class="inline">
+<h3>ProductPartial.cshtml</h3>
+<pre data-language="html" class="rainbow active_pre">@model Product
+&lt;form action="/create/product" method="post"&gt;
+    &lt;div class="form-group"&gt;
+        &lt;span asp-validation-for="ProductName"&gt;&lt;/span&gt;
+        &lt;label asp-for="ProductName"&gt;&lt;/label&gt;
+        &lt;input asp-for="ProductName"&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+        &lt;span asp-validation-for="Price"&gt;&lt;/span&gt;
+        &lt;label asp-for="Price"&gt;&lt;/label&gt;
+        &lt;input asp-for="Price"&gt;
+    &lt;/div&gt;
+    &lt;input type="submit" value="Add Product"&gt;
+&lt;/form&gt;    
+</pre>
+</div>
+<div class="inline">
+<h3>UserPartial.cshtml</h3>
+<pre data-language="html" class="rainbow active_pre">
+@model User
+&lt;form action="/create/user" method="post"&gt;
+    &lt;div class="form-group"&gt;
+        &lt;span asp-validation-for="Username"&gt;&lt;/span&gt;
+        &lt;label asp-for="Username"&gt;&lt;/label&gt;
+        &lt;input asp-for="Username"&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+        &lt;span asp-validation-for="Age"&gt;&lt;/span&gt;
+        &lt;label asp-for="Age"&gt;&lt;/label&gt;
+        &lt;input asp-for="Age"&gt;
+    &lt;/div&gt;
+    &lt;input type="submit" value="Add User"&gt;
+&lt;/form&gt;  
+</pre>
+</div>
+</div>
+<h3>HomeController.cs</h3>
+<p>In our Controller class, we can accept - as parameters - our <code>Product</code> and <code>User</code> objects for the two Post methods.</p>
+<pre data-language="c_sharp">
+public class HomeController : Controller
+{
+    [HttpGet("")]
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    [HttpPost("create/product")]
+    public IActionResult CreateProduct(Product newProduct)
+    {
+        if(ModelState.IsValid)
+        {
+            return RedirectToAction("Success");
+        }
+        return View("Index");
+    }
+
+    [HttpPost("create/user")]
+    public IActionResult CreateUser(User newProduct)
+    {
+        if(ModelState.IsValid)
+        {
+            return RedirectToAction("Success");
+        }
+        return View("Index");
+    }
+
+    [HttpGet("success")]
+    public string Success()
+    {
+        return "You have successfully submitted!";
+    }
+}
+</pre>
+<hr>
+<h2>View Model</h2>
+<p>Another approach we could take here is to create a View Model class that would contain properties for each of our <strong>Product</strong> and <strong>User</strong> model classes.  In this approach we could keep both forms in our Index view file, which we then could bind to the larger View Model class.  Let's see how this will work, starting with the View Model class.</p>
+<h3>IndexViewModel.cs</h3>
+<pre data-language="c_sharp">
+public class IndexViewModel
+{
+    public Product NewProduct {get;set;}
+    public User NewUser {get;set;}
+}
+</pre>
+<p>Note here, that <code>NewProduct</code> and <code>NewUser</code> are the names given to our Model class properties.  When we want to bind to - say <code>Price</code> - inside of the form, we will have to access it from <code>NewProduct.Price</code>.  Let's see how this looks in the single Index view file.</p>
+<h3>Index.cshtml</h3>
+<pre data-language="c_sharp">
+@model IndexViewModel
+&lt;h1&gt;Add a User&lt;/h1&gt;
+&lt;form action="/create/user" method="post"&gt;
+    &lt;div class="form-group"&gt;
+        &lt;label asp-for="NewUser.Username"&gt;&lt;/label&gt;
+        &lt;input asp-for="NewUser.Username"&gt;
+        &lt;span asp-validation-for="NewUser.Username"&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+        &lt;label asp-for="NewUser.Age"&gt;&lt;/label&gt;
+        &lt;input asp-for="NewUser.Age"&gt;
+        &lt;span asp-validation-for="NewUser.Age"&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;input type="submit" value="Add User"&gt;
+&lt;/form&gt;
+&lt;h1&gt;Add a Product&lt;/h1&gt;
+&lt;form action="/create/product" method="post"&gt;
+    &lt;div class="form-group"&gt;
+        &lt;label asp-for="NewProduct.ProductName"&gt;&lt;/label&gt;
+        &lt;input asp-for="NewProduct.ProductName"&gt;
+        &lt;span asp-validation-for="NewProduct.ProductName"&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+        &lt;label asp-for="NewProduct.Price"&gt;&lt;/label&gt;
+        &lt;input asp-for="NewProduct.Price"&gt;
+        &lt;span asp-validation-for="NewProduct.Price"&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;input type="submit" value="Add Product"&gt;
+&lt;/form&gt;
+</pre>
+
+<h3>HomeController.cs</h3>
+<p>In our Controller class, we will have to use the <code>IndexViewModel</code> as the input type for our two Post methods.  Because this is the model we defined in our view, this will be the object being submitted by both our Create Product and Create User forms.</p>
+<pre data-language="c_sharp">
+public class HomeController : Controller
+{
+    [HttpGet("")]
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    [HttpPost("create/product")]
+    public IActionResult CreateProduct(IndexViewModel modelData)
+    {
+        // To get the submitted Product from the submission, 
+        // we would just need to grab "NewProduct" from the modelData object
+        Product submittedProduct = modelData.NewProduct;
+        if(ModelState.IsValid)
+        {
+            return RedirectToAction("Success");
+        }
+        return View("Index");
+    }
+
+    [HttpPost("create/user")]
+    public IActionResult CreateUser(IndexViewModel modelData)
+    {
+        // To get the submitted User from the submission, 
+        // we would just need to grab "NewUser" from the modelData object
+        User submittedUser = modelData.NewUser;
+        if(ModelState.IsValid)
+        {
+            return RedirectToAction("Success");
+        }
+        return View("Index");
+    }
+
+    [HttpGet("success")]
+    public string Success()
+    {
+        return "You have successfully submitted!";
+    }
+}
+</pre>
+<style>
+.inline{
+    display: inline-block;
+    vertical-align: top;
+    margin: 10px;
+}
+</style>

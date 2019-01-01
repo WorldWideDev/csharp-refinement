@@ -1,0 +1,45 @@
+<h2>Assignment: Wizard, Ninja, Samurai</h2>
+<p>We are going to be revisiting our Human class and building out three new classes that all inherit from it.</p>
+<pre data-language="csharp" class="rainbow">
+class Human
+{
+    public string Name;
+    public int Strength;
+    public int Intelligence;
+    public int Dexterity;
+    private int health;
+    &nbsp;
+    public int Health
+    {
+        get { return health; }
+    }
+    &nbsp;
+    public Human(string name)
+    {
+        Name = name;
+        Strength = 3;
+        Intelligence = 3;
+        Dexterity = 3;
+        health = 100;
+    }
+    &nbsp;
+    public Human(string name, int str, int intel, int dex, int hp)
+    {
+        Name = name;
+        Strength = str;
+        Intelligence = intel;
+        Dexterity = dex;
+        health = hp;
+    }
+    &nbsp;
+    // Build Attack method
+    public int Attack(Human target)
+    {
+        int dmg = Strength * 3;
+        target.health -= dmg;
+        Console.WriteLine($"{Name} attacked {target.Name} for {dmg} damage!");
+        return target.health;
+    }
+}
+</pre>
+<p>Create a class for a Ninja, a Wizard, and a Samurai.  For this assignment, you will need to modify your Human class.</p>

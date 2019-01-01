@@ -1,0 +1,81 @@
+<h1>Many to Many</h1>
+<p>Many-to-many relationships in EF Core are set up in the same way as we've handled them with SQL in the past. We create a joining table that contains a pair of Ids to establish the connections between the two tables we want to join. Navigation properties are set up the same way as with One to Many relationships.</p>
+<div>
+<div class="inline">
+<h4>Magazine.cs</h4>
+<pre data-language="c_sharp">
+public class Magazine
+{
+    public int MagazineId { get; set; }
+    public string Title { get; set; } 
+    public List&lt;Subscription&gt; Readers { get; set; }
+}
+</pre>
+</div>
+<div class="inline">
+<h4>Person.cs</h4>
+<pre data-language="c_sharp">
+public class Person
+{
+    public int PersonId { get; set; }
+    public string Name { get; set; }
+    public List&lt;Subscription&gt; Subscriptions { get; set; }
+}
+</pre>
+</div>
+</div>
+<div>
+<div class="inline">
+<h4>Subscription.cs</h4>
+<pre data-language="c_sharp">
+public class Subscription
+{
+    public int SubscriptionId { get; set; }
+    public int PersonId { get; set; }
+    public int MagazineId { get; set; }
+    public Person Person { get; set; }
+    public Magazine Magazine { get; set; }
+}
+</pre>
+</div>
+<div class="inline">
+<h4>YourContext.cs</h4>
+<pre data-language="c_sharp">//Other code
+public DbSet&lt;Person&gt; Persons { get; set; }
+public DbSet&lt;Magazine&gt; Magazines { get; set; }
+public DbSet&lt;Subscription&gt; Subscriptions { get; set; }
+</pre>
+</div>
+</div>
+<h2>.ThenInclude()</h2>
+<p>Much like when querying for data with a One to Many relationship, you will need to tell Entity Framework to <strong>include </strong>data from your model's navigation properties.&nbsp; The difference here is that if you want to include the navigation property of a navigation property (ie. a <strong>Person</strong> with <strong>Subscriptions</strong> that contain a <strong>Magazine</strong>), you<strong> </strong>must then follow with a <strong>ThenInclude</strong><strong>() </strong>method, which takes a lamda expression selecting the navigation property you wish to select from the one before:<br></p>
+<p><strong>.</strong><strong>Include(person =&gt; person.Subscriptions)</strong> <br></p>
+<p><em>directly followed by </em><strong><br></strong></p>
+<p><strong>.ThenInclude(subscription =&gt; subscription.Magazine)</strong><br></p>
+<h3>In your Controller:</h3>
+<pre data-language="c_sharp">[HttpGet("{personId}")]
+public IActionResult Show(int personId)
+{
+    var personWithSubsAndMags = dbContext.Persons
+    	.Include(person =&gt; person.Subscriptions)
+        .ThenInclude(sub =&gt; sub.Magazine)
+        .FirstOrDefault(person =&gt; person.PersonId == personId);
+    
+    return View(personWithSubsAndMags);
+}
+</pre>
+<h3>In your View:</h3>
+<pre data-language="html">@model Person
+&lt;h1&gt;Subscriptions for @Model.Name&lt;/h1&gt;
+@foreach(var sub in Model.Subscriptions)
+{
+    &lt;p&gt;@sub.Magazine.Title&lt;/p&gt;
+}
+</pre>
+<style>
+.inline{
+    display: inline-block;
+    vertical-align: top;
+    margin: 10px;
+}
+</style>

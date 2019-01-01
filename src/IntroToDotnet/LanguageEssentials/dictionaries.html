@@ -1,6 +1,6 @@
 <h1>Dictionary Class</h1>
 <p>A dictionary is the final main collection type commonly used in C#. It is implemented very similarly to Lists and also makes use of Generics for how it is instantiated. The major difference that exists between a list and a dictionary is that dictionary values are not referenced by numerical indexes, but rather key-value pairs. The type of both the key and the value stored at that key must be specified when initializing a dictionary as such: Dictionary&lt;TKey, TValue&gt; <strong>It also is part of the Generic library so don't forget to include the using statement from the previous chapter on lists.</strong></p>
-<pre data-language="swift">Dictionary&lt;string,string&gt; profile = new Dictionary&lt;string,string&gt;();
+<pre data-language="c_sharp">Dictionary&lt;string,string&gt; profile = new Dictionary&lt;string,string&gt;();
 //Almost all the methods that exists with Lists are the same with Dictionaries
 profile.Add("Name", "Speros");
 profile.Add("Language", "PHP");
@@ -11,17 +11,14 @@ Console.WriteLine("From - " + profile["Location"]);
 Console.WriteLine("Favorite Language - " + profile["Language"]);
 </pre>
 <p>One major difference between Lists and Dictionaries when it comes to interacting with them is iterating through their collections. The way we had been using <em>foreach</em> loops with Lists needs to be changed slightly to work with dictionaries since rather than just wanting to return a value, due to their nature of containing key-value pairs dictionaries when being iterated over will return both. As such the temp variable that holds the values and how we work with them must be altered slightly.</p>
-<pre data-language="swift">foreach (KeyValuePair&lt;string,string&gt; entry in profile)
+<pre data-language="c_sharp">foreach (KeyValuePair&lt;string,string&gt; entry in profile)
 {
  Console.WriteLine(entry.Key + " - " + entry.Value);
 }
 </pre>
 <p>This is ok, but that <strong>KeyValuePair&lt;string,string&gt;</strong> line looks a little scary. We can clean this up by using a pretty cool technique called type inference. What type inference does is allows you to not have to directly type the type for the variable, but rather will cause the variable to INFER what the type will be based on the very first value assigned to it. A few out there might be feeling "This is awesome! Why weren't we taught this right away!?" &nbsp;This technique definitely saves some time&nbsp;and it can also greatly reduce clarity that specifying types provides. It is to be used sparingly when the type of a variable can easily be deduced.</p>
-<blockquote>
- 
-  "With Great Power Comes Great Responsibility"
- <br></blockquote>
-<pre data-language="swift">//The var keyword takes the place of a type in type-inference
+
+<pre data-language="c_sharp">//The var keyword takes the place of a type in type-inference
 foreach (var entry in profile)
 {
  Console.WriteLine(entry.Key + " - " + entry.Value);

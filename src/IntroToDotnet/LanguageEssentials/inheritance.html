@@ -1,188 +1,242 @@
 <h1>Inheritance</h1>
-<p>We have been building out our Vehicle class quite a bit in previous examples in the classes tab, let's now take it a step further and start specializing our different vehicles. By taking the generic code already in place and adding different details we can create things like a Bike, Car, or Boat from our Vehicle class, into their own separate classes, without repeating necessary code, by making these new classes <strong>inherit</strong> from Vehicle. When one class inherits from another it gains all the properties and methods of the parent class. In C# each class can only inherit from one other class, although any number of classes can inherit from any given class. Any properties or methods that a class inherits will also be passed to its child classes. This sequence of passing information down through multiple levels of classes is called the <strong>inheritance chain<strong>.</strong></strong>
- 
-</p>
-<pre data-language="csharp" class="rainbow">public class Vehicle
+<p>Consider the Vehicle class from the previous sections. This class possesses a general blueprint that can describe any vehicle, but what if we want to describe different <strong>types </strong>of vehicles. <br></p>
+<p>By taking the generic code already in place and adding different details, we can create things like a Bike, Car, or Boat from our Vehicle class into their own separate classes without repeating necessary code using <strong>inheritance</strong>. When one class inherits from another, it gains all the members of the parent class. Any members that a class inherits will also be passed to its child classes. This sequence of passing information down through multiple levels of classes is called the <strong>inheritance chain</strong>.</p>
+<iframe src="https://player.vimeo.com/video/307153302" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" width="640" height="360" frameborder="0"></iframe>
+<p>For our code to work, we will need to make sure to take in to account the <strong>constructor </strong>requirements of the parent class.</p>
+<pre data-language="c_sharp">
+class Vehicle
 {
-    // original Vehicle class
-}
-public class Car : Vehicle
-{
-    public int NumberOfWheels = 4;
-    public string Condition;
-    public Car() : base(5)
-    {
-        Condition = "New";
+    public int NumPassengers;
+    public string Color;
+    public double Odometer;
+
+    // Say Vechile has two overloaded constructors
+    // We will either need to pass up two values (int, string), from Car ...
+    public Vehicle(int numPas, string col)
+    {   
+        NumPassengers = numPas;
+        Color = col;
+        Odometer = 0;
     }
-    public Car(double odo) : base(5, odo)
+    // Or just one string value.  
+    public Vehicle(string col)
     {
-        Condition = "Used";
+        NumPassengers = 5;
+        Color = col;
+        Odometer = 0;
     }
+    
 }
-public class Program
+// Defining a child class of Vehicle
+class Car : Vehicle
 {
-    public static void Main(string[] args)
+    // We can add members that are unique to Cars, things that won't describe ALL vehicles
+    public string Make;
+    public string Model;
+
+    // but when we define a constructor for Car, we need to satisfy any constructor requirements
+    // for at least ONE constructor on the parent Vehicle class
+    public Car(string color, string make, string model) : base(color)
     {
-        Car oldCar = new Car(167263);
-        Console.WriteLine($"Car Condition: {oldCar.Condition}");
-        Console.WriteLine($"Max occupancy: {oldCar.NumPassengers}");
-        oldCar.Move(6);
-        Console.WriteLine($"Current Milage: {oldCar.Distance} miles");
-        Car myCar = new Car();
-        //Remember there are different forms of string construction
-        //but they all accomplish the same goal so it is simply preference
-        Console.WriteLine($"Car Condition: {myCar.Condition}");
-        Console.WriteLine("Max occupancy: {0}", myCar.NumPassengers);
-        myCar.Move(26.6);
-        Console.WriteLine("Current Milage: " + myCar.Distance + " miles");
-    }
-}
-</pre>
-<p>
-The base keyword following&nbsp;the new class constructor is done to pass the needed variables to the parent class' constructor methods. The parent class's constructor will be run, and then the child class's&nbsp;constructor will execute. Because of this, we can keep all the properties and functionality of the parent class while still having the ability to add to or overwrite them.
-Method Overriding
-</p>
-<p>
-It's great that we can inherit functionality from our parent class as well as add new functionality, but what if we want to change the functionality of one of these parent methods? The process for this is actually quite simple! If we just add a method to our new class that has the same name and parameters as a parent's, the child class method will take priority.</p>
-<pre data-language="csharp" class="active_pre rainbow">public class Vehicle
-{
-    //All past code for the Car Vehicle
-    //should still be present
-    public void GetInfo()
-    {
-        Console.WriteLine("This is just a basic Vehicle!");
-        Console.WriteLine($"Currently has travelled {Distance} miles");
-    }
-}
-public class Car : Vehicle
-{
-    //All past code for the Car Class
-    //should still be present
-    public new void GetInfo()
-    {
-        Console.WriteLine($"Car Condition:{Condition}");
-        Console.WriteLine($"Max occupancy: {NumPassengers}");
-        Console.WriteLine($"Current Milage: {Distance} miles");
-    }
-}
-public class Program
-{
-    public static void Main(string[] args)
-    {
-        Vehicle obj1 = new Vehicle(5);
-        Car obj2 = new Car(5);
-        obj1.GetInfo();
-        obj2.GetInfo();
+        Make = make;
+        Model = model;
     }
 }
 </pre>
 <p>
-Wait, but this again just solves one problem and creates another! We want to just add functionality to a method, not completely over-write everything it does! Well, we are in luck. With a simple additional line to what we have done above we can change the process of method overriding to not just replace all existing functionality, but extend this functionality.</p>
-<pre data-language="csharp" class="rainbow">public class Vehicle
+The <strong>base</strong> keyword following&nbsp;the new class constructor is done to pass the needed variables to the parent class' constructor method. The parent class's constructor will be run, and then the child class's&nbsp;constructor will execute. Because of this, we can keep all the properties and functionality of the parent class while still having the ability to add to or overwrite them.&nbsp;</p>
+<hr>
+<h2>Method Overriding</h2>
+<p>
+It's great that we can inherit functionality from our parent class as well as add new functionality, but what if we want to change the functionality of one of these parent methods? The process for this is actually quite simple! We can mark the parent method with the <code>virtual</code> keyword, which means that it can be overridden by a child class. Then we just add a method to our child class - with the same name and parameters as its parent - and with the <code>override</code> keyword.</p>
+<iframe src="https://player.vimeo.com/video/307354378" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<pre data-language="c_sharp">
+class Vehicle
 {
-    //All past code for the Car Vehicle
-    //should still be present
-    public void GetInfo()
+    //All past code for the Car Vehicle should still be present
+    public virtual void GetInfo()
     {
-        Console.WriteLine($"Max occupancy: {NumPassengers}");
-        Console.WriteLine($"Current Milage: {Distance} miles");
+        Console.WriteLine($"Num Passengers: {NumPassengers}");
+        Console.WriteLine($"Color: {Color}");
+        Console.WriteLine($"Miles: {Odometer}");
     }
 }
-public class Car : Vehicle
+&nbsp;
+class Car : Vehicle
 {
-    //All past code for the Car Class
-    //should still be present
-    public new void GetInfo()
+    //All past code for the Car Class should still be present
+    public override void GetInfo()
     {
-        //This line will call the parent's version of this method
-        //first then add any additional code to it!
+        Console.WriteLine($"Num Passengers: {NumPassengers}");
+        Console.WriteLine($"Color: {Color}");
+        Console.WriteLine($"Miles: {Odometer}");
+        Console.WriteLine($"Make: {Make}");
+        Console.WriteLine($"Model: {Model}");
+    }
+}
+&nbsp;
+class Program
+{
+    public static void Main(string[] args)
+    {
+        Vehicle someVehicle = new Vehicle("Green");
+        Car someCar = new Car("Yellow", "Dodge", "Dart");
+        someVehicle.GetInfo();
+        someCar.GetInfo();
+    }
+}
+</pre>
+<p>
+Wait, but this again just solves one problem and creates another! What if we want to just add functionality to a method, not completely over-write everything it does! Well, we are in luck. With a simple additional line to what we have done above, we can change the process of method overriding to not just replace all existing functionality, but extend this functionality.</p>
+<pre data-language="c_sharp">
+class Vehicle
+{
+    //All past code for the Vehicle should still be present
+    public virtual void GetInfo()
+    {
+        Console.WriteLine($"Num Passengers: {NumPassengers}");
+        Console.WriteLine($"Color: {Color}");
+        Console.WriteLine($"Miles: {Odometer}");
+    }
+}
+&nbsp;
+class Car : Vehicle
+{
+    //All past code for the Car Class should still be present
+    public override void GetInfo()
+    {
+        //This line will call the parent's version of this method first 
         base.GetInfo();
-        Console.WriteLine($"Car Condition:{Condition}");
+        //Then add any additional code to it!
+        Console.WriteLine($"Make: {Make}");
+        Console.WriteLine($"Model: {Model}");
     }
 }
-public class Program
+&nbsp;
+class Program
 {
     public static void Main(string[] args)
     {
-        Vehicle obj1 = new Vehicle(5);
-        Car obj2 = new Car(5);
-        obj1.GetInfo();
-        obj2.GetInfo();
-    }
-}
-    </pre>
-<h2>Inheritance and Accessibility</h2>
-<p>Earlier in the functions chapter, we talked about the difference between public and private and how public is visible to any code in the same program, but private is only visible by code within the same class. Well, these accessibility levels are more than&nbsp;that, particularly when talking about in regards to class inheritance. See, public methods are inherited as expected; however, private methods are not. If we want to have a method have the visibility of a private method, but still be inherited, we have to use the access modifier of protected in place of public.</p>
-<h2>Polymorphism</h2>
-<p>When our classes start inheriting from other classes we also have to consider polymorphism. Polymorphism is the idea that objects can be treated as if they belonged to any of the classes above them in the&nbsp;inheritance chain. We can instantiate an instance of a child class and store it in a variable of its parent type.</p>
-<pre data-language="csharp" class="rainbow">public class Program{
-    public static void Main(string[] args) {
-    Parent First = new Parent(); 
-    Parent Second = new Child(); 
-    Parent Third = new GrandChild(); 
-    First.Speak();// Will write "I am a parent" 
-    Second.Speak(); // Will write "I am a parent"
-    Third.Speak(); // Will write class="string from"operator from-rainbow"&gt;-rainbow"&gt;"I am a parent" 
-    (Second as Child).Speak(); // Will write "I am a child" 
-    (Third as Child).Speak(); // Will write "I am a Child" 
-    (Third as GrandChild).Speak();// Will write "I am a grandchild" 
-    (First as Child).Speak(); // THIS WILL FAIL!! Cannot cast down the inheritance chain
-    }
-}
-public class Parent { 
-    	public void Speak() {
-    		Console.WriteLine("I am a parent"); 
-    	}
-    }
-public class Child : Parent{ 
-    public new void Speak() { 
-        Console.WriteLine("I am a child"); 
-    }
-}
-public class GrandChild : Child{ 
-    public new void Speak() {
-        Console.WriteLine("I am a grandchild");
-} //}When an object is stored in a variable of a different type it will be treated as if it were that type unless we cast it. In this example, even though our Child and GrandChild classes have their own versions of Speak(), the Parent class implementation is executed. Keep in mind that polymorphism only works when travelling up the inheritance chain, not down.
-public class Program{ 
-    public static void Main(string[] args) { // THIS WILL NOT WORK!!!!! 
-        Child First = new Parent(); 
+        Vehicle someVehicle = new Vehicle("Green");
+        Car someCar = new Car("Yellow", "Dodge", "Dart");
+        someVehicle.GetInfo();
+        someCar.GetInfo();
     }
 }
 </pre>
-<pre data-language="csharp" class="rainbow">public class Vehicle
+<hr>
+<h2>Inheritance and Accessibility</h2>
+<p>Say we wanted to restrict access to <code>Odometer</code> in the Vehicle class.  If we made Odometer <code>private</code>, it would only be accessible to the Vehicle class <em>and not accessible</em> to Car.  This would make it impossible to implement a <code>Drive</code> method on Car!</p>
+<pre data-language="c_sharp">
+class Vehicle
 {
-    public int NumPassengers { get; set; }
-    public double Distance { get; set; }
-    //Constructors can be overloaded 
-    //The first maybe being for a new vehicle
-    public Vehicle(int val)
+    //All past code for the Vehicle should still be present
+    private double Odometer;
+}
+&nbsp;
+class Car : Vehicle
+{
+    //All past code for the Car Class should still be present
+    public void Drive(double distance)
     {
-        NumPassengers = val;
-        Distance = 0.0;
+        // 'Vehicle.Odometer' is inaccessible due to its protection level!!!
+        Odometer += distance;
+        Console.WriteLine("I'm driving!");
     }
-    //The second for preowned with milage already
-    public Vehicle(int val, double odo)
+}
+</pre>
+<p>To restrict access to all classes <em>outside</em> the inheritance chain, you can use <code>protected</code>.  That way, Odometer can remain safely inaccessible to any classes other than those that are a descendant of <code>Vehicle</code>, and thus be available to the <code>Car</code> class.</p>
+<pre data-language="c_sharp">
+class Vehicle
+{
+    // Now Car access Odometer!
+    protected double Odometer;
+}
+&nbsp;
+class Car : Vehicle
+{
+    
+    public void Drive(double distance)
     {
-        NumPassengers = val;
-        Distance = odo;
+        Odometer += distance;
+        Console.WriteLine("I'm driving!");
     }
-    //Method can also be overloaded for handling different parameters
-    public int Move(double miles)
+}
+</pre>
+<hr>
+<h2>Polymorphism</h2>
+<p>When our classes start inheriting from other classes, we also have to consider polymorphism. Polymorphism is the idea that objects can be treated as if they belonged to any of the classes above them in the inheritance chain. We can instantiate objects of a child class and store it in a variable of its parent type, group them together in arrays/lists as the parent type, or use the parent type as a member of an additional class.</p>
+<iframe src="https://player.vimeo.com/video/307359380" width="640" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<pre data-language="c_sharp">
+class Program
+{
+    public static void Main(string[] args) 
     {
-        Distance += miles;
-        return (int)Distance;
-    }
-    //If a boolean is included in this version of the method call
-    //it may be measuring in km rather than miles.
-    public int Move(double miles, bool km)
-    {
-        //Convert the KM measurement to miles
-        if (km == true)
+        Vehicle someVehicle = new Vehicle("Green");
+
+        // Constructing a Car "as a" Vehicle
+        Vehicle carAsVehicle = new Car("Yellow", "Dodge", "Dart");
+        
+        // Constructing a List of Vehicle, storing both Vehicle and Car objects
+        Car someCar = new Car("Red", "Toyota", "Carolla");
+        Car someOtherCar = new Car("Purple", "Ford", "Fiesta");
+        List&lt;Vechile&gt; vehicles = new List&lt;Vehicle&gt;()
         {
-            miles = miles * 0.62;
+            someVehicle, carAsVehicle, someCar, someOtherCar
+        };
+    }
+}
+</pre>
+<p>Say we wanted a Person class be able to own a collection of vehicles, regardless of what specific <em>type</em>, we could give this class a List of <code>Vehicle</code> objects, and be able to add any object from within the inheritance chain of the <code>Vehicle</code> class!</p>
+<pre data-language="c_sharp">
+class Person 
+{
+    public List&lt;Vechicle&gt; OwnedVehicles;
+    &nbsp;
+    public Person() 
+    {
+    	OwnedVehicles = new List&lt;Vechicle&gt;();
+    }
+    &nbsp;
+    // can add ANY type of vehicle
+    public void AddToVehicles(Vehicle newVehicle)
+    {
+        OwnedVehicles.Add(newVehicle);
+    }
+    &nbsp;
+    // can call DisplayInfo() on all vehicles, if DisplayInfo() is overridden on a child class,
+    // we will see the child's own implementation!
+    public void DisplayVehicles()
+    {
+        foreach(Vechicle v in OwnedVehicles)
+        {
+            v.DisplayInfo();
         }
-        Distance += miles;
-        return (int)Distance;
+    }
+}
+&nbsp;
+class Program
+{
+    public static void Main(string[] args) 
+    {
+        Vehicle someVehicle = new Vehicle("Green");
+        &nbsp;
+        // Constructing a Car "as a" Vehicle
+        Vehicle carAsVehicle = new Car("Yellow", "Dodge", "Dart");
+        
+        // Constructing a couple Cars
+        Car someCar = new Car("Red", "Toyota", "Carolla");
+        Car someOtherCar = new Car("Purple", "Ford", "Fiesta");
+        &nbsp;
+        // Constructing a Person, adding any Vehicle to their list of OwnedVehicles
+        Person somePerson = new Person();
+        somePerson.AddToVehicles(someVehicle);
+        somePerson.AddToVehicles(carAsVehicle);
+        somePerson.AddToVehicles(someCar);
+        somePerson.AddToVehicles(someOtherCar);
+        &nbsp;
+        // Calling DisplayVehicles!
+        somePerson.DisplayVehicles();
     }
 }
 </pre>
