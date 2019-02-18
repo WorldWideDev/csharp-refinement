@@ -2,6 +2,7 @@
 <p>There are times when you wish to create a class for the sole purpose of extending it into child classes.  You want to include a base set of features, but don't need to create objects of this parent class.  Think about our Vehicle class; even better, think about the concept of a vehicle in general.  If you were to close your eyes and try to imagine a "vehicle", it would be impossible not to imagine something more specific: a car, a truck, a skateboard.  A vehicle is a rather abstract idea.</p>
 <p>An abstract class is one that can not be instantiated, but rather is built with the intention of being <em>extended</em> into more fleshed out sub-classes.  You may provide the same members as any non-abstract class - to be inherited by its children - but you may also include abstract methods and properties, which like interfaces, must be implemented by classes inheriting from the abstract parent.</p>
 <p>Let's take our Vehicle class and make use of this idea.  First, we can simply add the <code>abstract</code> keyword to the class definition.</p>
+<iframe src="https://player.vimeo.com/video/309777637" width="640" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 <pre data-language="cs_sharp">
 abstract class Vehicle
 {

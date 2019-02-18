@@ -191,11 +191,11 @@ class Program
 <pre data-language="c_sharp">
 class Person 
 {
-    public List&lt;Vechicle&gt; OwnedVehicles;
+    public List&lt;Vehicle&gt; OwnedVehicles;
     &nbsp;
     public Person() 
     {
-    	OwnedVehicles = new List&lt;Vechicle&gt;();
+    	OwnedVehicles = new List&lt;Vehicle&gt;();
     }
     &nbsp;
     // can add ANY type of vehicle
@@ -208,7 +208,7 @@ class Person
     // we will see the child's own implementation!
     public void DisplayVehicles()
     {
-        foreach(Vechicle v in OwnedVehicles)
+        foreach(Vehicle v in OwnedVehicles)
         {
             v.DisplayInfo();
         }

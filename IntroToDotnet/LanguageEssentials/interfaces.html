@@ -1,6 +1,7 @@
 <h1>Interfaces</h1>
 <p>In C# we have already seen this idea of abstraction with class inheritance and polymorphism, where multiple classes such as Car and Boat that inherit from a similar parent class of Vehicle can both be treated as that more generic parent class. Abstraction with C# when dealing with classes is quite important to allow flexibility while also providing structure to how various objects are related. This could essentially be thought of as grouping these objects.</p>
 <p>In addition to inheritance, there is another way to group classes together. Where inheritance defines a hierarchy of parent/child relationships, an <strong>interface</strong> can be used to provide a shared set of <em>behavior</em> between any class - regardless of their inheritance chain! An interface is defined somewhat similarly to a class, however rather than providing a blueprint to what an object <em>is</em>, an interface describes what an object <em>is able to do</em>.</p>
+<iframe src="https://player.vimeo.com/video/307153465" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 <p>First, let's see an example of an interface we can define.  And then, we can <em>implement</em> this interface on two (or more) classes that would otherwise be unrelated, which will demonstrate the power of why interfaces are important.</p>
 <h2>Defining an Interface</h2>
 <p>We will define an interface that describes the ability to <strong>ride</strong>.  Within this interface we will include methods and properties that will form a set of requirements that a class must possess for it to be "rideable".  We will say that for a class to be "rideable" it must have a <code>Ride()</code> method, and a property that describes its overall "distance traveled".</p>
@@ -48,7 +49,7 @@ class Car : Vehicle, IRideable
     {
         // here we can choose implement this method however we wish
         // as long as we meet the requirements of the method
-        Console.WriteLine("... driving ...")
+        Console.WriteLine("... driving ...");
         DistanceTraveled += distance;
     }
 }
